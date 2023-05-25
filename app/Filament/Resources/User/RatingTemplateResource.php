@@ -27,7 +27,7 @@ class RatingTemplateResource extends Resource
 
     protected static ?string $pluralLabel = 'Шаблоны оценок';
 
-    protected static ?string $navigationLabel = 'Шаблон оценки';
+    protected static ?string $navigationLabel = 'Шаблоны оценок';
 
     public static function form(Form $form): Form
     {
