@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -9,6 +10,8 @@ use Illuminate\Support\Str;
 
 class UserSeeder extends Seeder
 {
+    use WithoutModelEvents;
+
     /**
      * Run the database seeds.
      */
@@ -58,12 +61,21 @@ class UserSeeder extends Seeder
                 }
             }
 
-            DB::table('users')->insert([
+            $userId = DB::table('users')->insertGetId([
                 'name' => $user->name,
                 'email' => $user->email,
                 'company_id' => $companyId,
                 'subdivision_id' => $subdivisionId,
                 'password' => Hash::make($password),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            DB::table('role_user')->insert([
+                'user_id' => $userId,
+                'role_id' => 3,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
         }
 
