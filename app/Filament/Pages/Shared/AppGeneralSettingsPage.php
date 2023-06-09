@@ -11,13 +11,15 @@ use Filament\Pages\SettingsPage;
 
 class AppGeneralSettingsPage extends SettingsPage
 {
-    protected static ?int $navigationSort = 100;
+    protected static ?string $navigationGroup = 'Настройки';
+
+    protected static ?int $navigationSort = 10;
 
     protected static ?string $navigationIcon = 'heroicon-o-cog';
 
     protected static ?string $slug = 'app-general-settings';
 
-    protected static ?string $title = 'Настройки';
+    protected static ?string $title = 'Общие';
 
     protected static string $settings = AppGeneralSettings::class;
 

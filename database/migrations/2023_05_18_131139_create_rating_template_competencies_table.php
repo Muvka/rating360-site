@@ -11,10 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('companies', function (Blueprint $table) {
+        Schema::create('rating_template_competences', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('rating_template_id')
+                ->constrained()
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
             $table->string('name', 255);
-            $table->timestamps();
+            $table->unsignedInteger('sort')
+                ->default(0);
         });
     }
 
@@ -23,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('companies');
+        Schema::dropIfExists('rating_template_competences');
     }
 };

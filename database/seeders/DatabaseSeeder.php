@@ -2,6 +2,11 @@
 
 namespace Database\Seeders;
 
+use Database\Seeders\Rating\EmployeeDivisionSeeder;
+use Database\Seeders\Rating\EmployeeLevelSeeder;
+use Database\Seeders\Rating\EmployeePositionSeeder;
+use Database\Seeders\Shared\CitySeeder;
+use Database\Seeders\Shared\UserSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -15,7 +20,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            RoleSeeder::class,
+            EmployeeLevelSeeder::class,
             UserSeeder::class,
         ]);
     }

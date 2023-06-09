@@ -12,24 +12,22 @@ return new class extends Migration {
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('first_name', 64)
+                ->index();
+            $table->string('last_name', 64)
+                ->nullable()
+                ->index();
+            $table->string('middle_name', 64)
+                ->nullable()
+                ->index();
             $table->string('email')
                 ->unique();
             $table->timestamp('email_verified_at')
                 ->nullable();
-            $table->foreignId('direct_manager_id')
-                ->nullable()
-                ->references('id')
-                ->on('users')
-                ->cascadeOnUpdate()
-                ->nullOnDelete();
-            $table->foreignId('functional_manager_id')
-                ->nullable()
-                ->references('id')
-                ->on('users')
-                ->cascadeOnUpdate()
-                ->nullOnDelete();
-            $table->string('password');
+            $table->string('password')
+                ->nullable();
+            $table->boolean('is_admin')
+                ->default(false);
             $table->rememberToken();
             $table->timestamps();
         });
