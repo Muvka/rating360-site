@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('rating_competences', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 255);
+            $table->string('name', 255)
+                ->index();
             $table->unsignedInteger('sort')
                 ->default(0);
             $table->timestamps();

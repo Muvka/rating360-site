@@ -7,6 +7,8 @@ use App\Filament\Resources\Rating\TemplateResource\Pages;
 use App\Models\Rating\Template;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Filament\Forms\Components\Card;
+use Filament\Forms\Components\MultiSelect;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -24,7 +26,7 @@ class TemplateResource extends Resource
 
     protected static ?string $navigationGroup = 'Оценка';
 
-    protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 30;
 
     protected static ?string $navigationIcon = 'heroicon-o-template';
 
@@ -80,7 +82,7 @@ class TemplateResource extends Resource
     public static function getRelations(): array
     {
         return [
-            CompetencesRelationManager::class
+//            CompetencesRelationManager::class
         ];
     }
 
@@ -101,6 +103,54 @@ class TemplateResource extends Resource
                 ->placeholder('Общий шаблон')
                 ->maxLength(128)
                 ->required(),
+            TableRepeater::make('markers')
+                ->relationship()
+                ->label('Маркеры')
+                ->headers(['Компетенция', 'Текст', 'Ценность', 'Ответы'])
+                ->createItemButtonLabel('Добавить маркер')
+                ->emptyLabel('Нет маркеров')
+                ->orderable()
+                ->columnWidths([
+                    'rating_competence_id' => '25%',
+                    'text' => '45%',
+                    'value' => '15%',
+                    'answer_type' => '15%',
+                ])
+                ->schema([
+                    Select::make('rating_competence_id')
+                        ->relationship('competence', 'name')
+                        ->label('Компетенция')
+                        ->disableLabel()
+                        ->disablePlaceholderSelection()
+                        ->required(),
+                    Textarea::make('text')
+                        ->label('Текст')
+                        ->disableLabel()
+                        ->placeholder('ведет за собой, показывает личный положительный пример')
+                        ->rows(2)
+                        ->maxLength(65535)
+                        ->required(),
+                    Select::make('value')
+                        ->label('Ценность')
+                        ->disableLabel()
+                        ->placeholder('Выберите')
+                        ->options([
+                            'respect' => 'Уважение и доверие',
+                            'responsibility' => 'Ответственность',
+                            'development' => 'Развитие',
+                            'team_leadership' => 'Командное лидерство',
+                        ]),
+                    Select::make('answer_type')
+                        ->label('Ответы')
+                        ->disableLabel()
+                        ->disablePlaceholderSelection()
+                        ->default('default')
+                        ->options([
+                            'default' => 'Из списка',
+                            'text' => 'Текст',
+                        ])
+                        ->required(),
+                ]),
         ];
     }
 
@@ -111,7 +161,7 @@ class TemplateResource extends Resource
                 ->label('Название')
                 ->maxLength(255)
                 ->required(),
-            TableRepeater::make('markers')
+            TableRepeater::make('templateMarkers')
                 ->relationship()
                 ->minItems(1)
                 ->defaultItems(1)

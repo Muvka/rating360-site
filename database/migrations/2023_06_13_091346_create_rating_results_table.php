@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('rating_matrices', function (Blueprint $table) {
+        Schema::create('rating_results', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 128);
+            $table->foreignId('rating_id')
+                ->constrained()
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -24,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('rating_matrices');
+        Schema::dropIfExists('rating_results');
     }
 };

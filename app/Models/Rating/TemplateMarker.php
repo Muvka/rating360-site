@@ -4,11 +4,10 @@ namespace App\Models\Rating;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Rating extends Model
+class TemplateMarker extends Model
 {
-    use SoftDeletes;
+    protected $table = 'rating_template_markers';
 
     protected $guarded = [];
 
@@ -16,7 +15,7 @@ class Rating extends Model
         return $this->belongsTo(Template::class, 'rating_template_id');
     }
 
-    public function matrix(): BelongsTo {
-        return $this->belongsTo(Matrix::class, 'rating_matrix_id');
+    public function competence(): BelongsTo {
+        return $this->belongsTo(Competence::class, 'rating_competence_id');
     }
 }

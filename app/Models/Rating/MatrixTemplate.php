@@ -6,9 +6,12 @@ use App\Models\Company\Employee;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MatrixTemplate extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'rating_matrix_templates';
 
     protected $guarded = [];

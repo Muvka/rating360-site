@@ -26,6 +26,7 @@ return new class extends Migration {
             $table->timestamps();
             $table->dateTime('launched_at')
                 ->nullable();
+            $table->softDeletes();
         });
     }
 

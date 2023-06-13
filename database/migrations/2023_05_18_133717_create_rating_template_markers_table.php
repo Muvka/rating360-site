@@ -17,6 +17,10 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
+            $table->foreignId('rating_competence_id')
+                ->constrained()
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
             $table->text('text');
             $table->set('value', ['respect', 'responsibility', 'development', 'team_leadership'])
                 ->nullable();
