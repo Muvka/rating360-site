@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\Shared\CityResource\RelationManagers;
 
-use App\Filament\Resources\Rating\EmployeeResource;
-use App\Models\Rating\Employee;
+use App\Filament\Resources\Company\EmployeeResource;
+use App\Models\Company\Employee;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
@@ -37,7 +37,7 @@ class EmployeesRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->url(fn(Employee $record): string => route('filament.resources.rating/employees.edit', $record->id)),
+                    ->url(fn(Employee $record): string => route('filament.resources.company/employees.edit', $record->id)),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

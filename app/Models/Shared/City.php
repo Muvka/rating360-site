@@ -2,7 +2,7 @@
 
 namespace App\Models\Shared;
 
-use App\Models\Rating\Employee;
+use App\Models\Company\Employee;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 

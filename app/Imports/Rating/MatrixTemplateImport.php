@@ -2,16 +2,16 @@
 
 namespace App\Imports\Rating;
 
-use App\Models\Rating\Employee;
-use App\Models\Rating\EmployeeDirection;
-use App\Models\Rating\EmployeeDivision;
-use App\Models\Rating\EmployeeLevel;
-use App\Models\Rating\EmployeePosition;
-use App\Models\Rating\EmployeeSubdivision;
+use App\Models\Company\Company;
+use App\Models\Company\Employee;
+use App\Models\Company\Direction;
+use App\Models\Company\Division;
+use App\Models\Company\EmployeeLevel;
+use App\Models\Company\EmployeePosition;
+use App\Models\Company\Subdivision;
 use App\Models\Rating\Matrix;
 use App\Models\Rating\MatrixTemplateClient;
 use App\Models\Shared\City;
-use App\Models\Shared\Company;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -36,7 +36,7 @@ class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows
             return;
         }
 
-        $matrixTemplate = $this->martix->templates()->create(['rating_employee_id' => $employee->id]);
+        $matrixTemplate = $this->martix->templates()->create(['company_employee_id' => $employee->id]);
 
         if ( ! $employee->city && $row['gorod']) {
             $city = $this->getRecord(City::class, 'name', $row['gorod']);
@@ -51,27 +51,27 @@ class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows
         }
 
         if ( ! $employee->division && $row['otdel']) {
-            $division = $this->getRecord(EmployeeDivision::class, 'name', $row['otdel']);
+            $division = $this->getRecord(Division::class, 'name', $row['otdel']);
 
-            $employee->rating_employee_division_id = $division->id;
+            $employee->company_division_id = $division->id;
         }
 
         if ( ! $employee->subdivision && $row['podrazdelenie']) {
-            $subdivision = $this->getRecord(EmployeeSubdivision::class, 'name', $row['podrazdelenie']);
+            $subdivision = $this->getRecord(Subdivision::class, 'name', $row['podrazdelenie']);
 
-            $employee->rating_employee_subdivision_id = $subdivision->id;
+            $employee->company_subdivision_id = $subdivision->id;
         }
 
         if ( ! $employee->position && $row['dolznost']) {
             $position = $this->getRecord(EmployeePosition::class, 'name', $row['dolznost']);
 
-            $employee->rating_employee_position_id = $position->id;
+            $employee->company_employee_position_id = $position->id;
         }
 
         if ( ! $employee->level && $row['uroven_sotrudnika']) {
             $level = $this->getRecord(EmployeeLevel::class, 'name', $row['uroven_sotrudnika']);
 
-            $employee->rating_employee_level_id = $level->id;
+            $employee->company_employee_level_id = $level->id;
         }
 
         if ( ! $employee->directManager && $row['rukovoditel_1_neposredstvennyi']) {
@@ -116,7 +116,7 @@ class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows
 
         if ( ! $employee->directions()->exists() && $directions) {
             foreach ($directions as $direction) {
-                $directionRecord = $this->getRecord(EmployeeDirection::class, 'name', $direction);
+                $directionRecord = $this->getRecord(Direction::class, 'name', $direction);
 
                 $employee->directions()->attach($directionRecord);
             }
@@ -131,7 +131,7 @@ class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows
                 }
 
                 MatrixTemplateClient::create([
-                    'rating_employee_id' => $client->id,
+                    'company_employee_id' => $client->id,
                     'rating_matrix_template_id' => $matrixTemplate->id,
                 ]);
             }
@@ -146,7 +146,7 @@ class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows
                 }
 
                 MatrixTemplateClient::create([
-                    'rating_employee_id' => $client->id,
+                    'company_employee_id' => $client->id,
                     'rating_matrix_template_id' => $matrixTemplate->id,
                     'outer' => true,
                 ]);

@@ -2,12 +2,10 @@
 
 namespace App\Filament\Resources\Rating;
 
-use App\Filament\Resources\Rating\MatrixResource\RelationManagers\MatrixTemplatesRelationManager;
 use App\Filament\Resources\Rating\MatrixResource\Pages;
-use App\Models\Rating\Employee;
+use App\Filament\Resources\Rating\MatrixResource\RelationManagers\MatrixTemplatesRelationManager;
+use App\Models\Company\Employee;
 use App\Models\Rating\Matrix;
-use App\Models\Rating\MatrixTemplate;
-use App\Models\Shared\User;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Closure;
 use Filament\Forms\Components\Card;
@@ -111,7 +109,7 @@ class MatrixResource extends Resource
     public static function getTemplateFormSchema(): array
     {
         return [
-            Select::make('rating_employee_id')
+            Select::make('company_employee_id')
                 ->getSearchResultsUsing(
                     fn(string $search) => Employee::with('user')
                         ->whereHas('user', function (Builder $query) use ($search) {
@@ -128,54 +126,54 @@ class MatrixResource extends Resource
                 ->reactive()
                 ->required(),
             Card::make()
-                ->visible(fn(Closure $get): bool => (bool) $get('rating_employee_id'))
+                ->visible(fn(Closure $get): bool => (bool) $get('company_employee_id'))
                 ->columns(3)
                 ->schema([
                     Placeholder::make('city')
                         ->label('Город')
-                        ->content(fn(Closure $get): ?string => Employee::find($get('rating_employee_id'))
+                        ->content(fn(Closure $get): ?string => Employee::find($get('company_employee_id'))
                             ?->city
                             ?->name),
                     Placeholder::make('company')
                         ->label('Компания')
-                        ->content(fn(Closure $get): ?string => Employee::find($get('rating_employee_id'))
+                        ->content(fn(Closure $get): ?string => Employee::find($get('company_employee_id'))
                             ?->company
                             ?->name),
                     Placeholder::make('division')
                         ->label('Отдел')
-                        ->content(fn(Closure $get): ?string => Employee::find($get('rating_employee_id'))
+                        ->content(fn(Closure $get): ?string => Employee::find($get('company_employee_id'))
                             ?->division
                             ?->name),
                     Placeholder::make('subdivision')
                         ->label('Подразделение')
-                        ->content(fn(Closure $get): ?string => Employee::find($get('rating_employee_id'))
+                        ->content(fn(Closure $get): ?string => Employee::find($get('company_employee_id'))
                             ?->subdivision
                             ?->name),
                     Placeholder::make('directions')
                         ->label('Направления')
-                        ->content(fn(Closure $get): ?string => Employee::find($get('rating_employee_id'))
+                        ->content(fn(Closure $get): ?string => Employee::find($get('company_employee_id'))
                             ?->directions
                             ->pluck('name')
                             ->join(', ')),
                     Placeholder::make('position')
                         ->label('Должность')
-                        ->content(fn(Closure $get): ?string => Employee::find($get('rating_employee_id'))
+                        ->content(fn(Closure $get): ?string => Employee::find($get('company_employee_id'))
                             ?->position
                             ?->name),
                     Placeholder::make('level')
                         ->label('Уровень сотрудника')
-                        ->content(fn(Closure $get): ?string => Employee::find($get('rating_employee_id'))
+                        ->content(fn(Closure $get): ?string => Employee::find($get('company_employee_id'))
                             ?->level
                             ?->name),
                     Placeholder::make('direct_manager')
                         ->label('Непосредственный руководитель')
-                        ->content(fn(Closure $get): ?string => Employee::find($get('rating_employee_id'))
+                        ->content(fn(Closure $get): ?string => Employee::find($get('company_employee_id'))
                             ?->directManager
                             ?->user
                             ->full_name),
                     Placeholder::make('functional_manager')
                         ->label('Функциональный руководитель')
-                        ->content(fn(Closure $get): ?string => Employee::find($get('rating_employee_id'))
+                        ->content(fn(Closure $get): ?string => Employee::find($get('company_employee_id'))
                             ?->functionalManager
                             ?->user
                             ->full_name),
@@ -188,7 +186,7 @@ class MatrixResource extends Resource
                 ->emptyLabel('Нет клиентов')
                 ->columnWidths(['outer' => '100px'])
                 ->schema([
-                    Select::make('rating_employee_id')
+                    Select::make('company_employee_id')
                         ->getSearchResultsUsing(
                             fn(string $search) => Employee::with('user')
                                 ->whereHas('user', function (Builder $query) use ($search) {

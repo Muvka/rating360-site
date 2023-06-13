@@ -2,6 +2,7 @@
 
 namespace App\Models\Rating;
 
+use App\Models\Company\Employee;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -13,7 +14,7 @@ class MatrixTemplate extends Model
     protected $guarded = [];
 
     public function employee(): BelongsTo {
-        return $this->belongsTo(Employee::class, 'rating_employee_id');
+        return $this->belongsTo(Employee::class, 'company_employee_id');
     }
 
     public function matrix(): BelongsTo {

@@ -3,7 +3,7 @@
 namespace App\Imports\Rating;
 
 use App\Models\Rating\Template;
-use App\Models\Rating\TemplateCompetence;
+use App\Models\Rating\Competence;
 use Illuminate\Support\Arr;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -13,7 +13,7 @@ class TemplateImport implements OnEachRow, WithHeadingRow
 {
     private Template $userRatingTemplate;
 
-    private TemplateCompetence $lastCompetence;
+    private Competence $lastCompetence;
 
     private int $competenceSort = 1;
 

@@ -20,7 +20,9 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?int $navigationSort = 60;
+    protected static ?string $navigationGroup = 'Общее';
+
+    protected static ?int $navigationSort = 10;
 
     protected static ?string $navigationIcon = 'heroicon-o-user';
 
@@ -67,12 +69,6 @@ class UserResource extends Resource
             ->filters([
             ])
             ->actions([
-//                Tables\Actions\Action::make('Тест')
-//                    ->icon('heroicon-o-user')
-//                    ->button()
-//                    ->action(fn (User $record) => $record->roles()->attach(1))
-//                    ->visible(fn (User $record): bool => !$record->isAdmin())
-//                    ->color('success'),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
                     ->requiresConfirmation(),

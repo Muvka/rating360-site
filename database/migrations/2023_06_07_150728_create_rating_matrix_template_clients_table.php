@@ -17,7 +17,7 @@ return new class extends Migration {
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete()
                 ->index('rt_matrix_template_client_matrix_template_foreign_id');
-            $table->foreignId('rating_employee_id')
+            $table->foreignId('company_employee_id')
                 ->constrained()
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();

@@ -27,7 +27,10 @@ class AppServiceProvider extends ServiceProvider
                     ->label('Оценка')
                     ->collapsed(),
                 NavigationGroup::make()
-                    ->label('Cотрудники')
+                    ->label('Компании')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Общее')
                     ->collapsed(),
                 NavigationGroup::make()
                     ->label('Настройки')

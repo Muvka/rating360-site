@@ -14,6 +14,6 @@ class TemplateCompetenceMarker extends Model
     public $timestamps = false;
 
     public function competence(): BelongsTo {
-        return $this->belongsTo(TemplateCompetence::class, 'rating_template_competence_id');
+        return $this->belongsTo(Competence::class, 'rating_template_competence_id');
     }
 }

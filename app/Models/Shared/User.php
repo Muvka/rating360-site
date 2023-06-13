@@ -2,7 +2,7 @@
 
 namespace App\Models\Shared;
 
-use App\Models\Rating\Employee;
+use App\Models\Company\Employee;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasName;
 use Illuminate\Database\Eloquent\Casts\Attribute;

@@ -2,10 +2,7 @@
 
 namespace Database\Seeders;
 
-use Database\Seeders\Rating\EmployeeDivisionSeeder;
-use Database\Seeders\Rating\EmployeeLevelSeeder;
-use Database\Seeders\Rating\EmployeePositionSeeder;
-use Database\Seeders\Shared\CitySeeder;
+use Database\Seeders\Company\EmployeeLevelSeeder;
 use Database\Seeders\Shared\UserSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
