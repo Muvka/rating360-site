@@ -29,12 +29,23 @@ class MatrixTemplatesRelationManager extends RelationManager
         return $table
             ->columns([
                 TextColumn::make('employee.user.full_name')
-                    ->wrap()
-                    ->label('Сотрудник'),
+                    ->label('Сотрудник')
+                    ->weight('bold'),
                 TextColumn::make('employee.city.name')
                     ->label('Город'),
                 TextColumn::make('employee.company.name')
                     ->label('Компания'),
+                TextColumn::make('employee.directManager.user.full_name')
+                    ->label('Непосредственный руководитель'),
+                TextColumn::make('employee.functionalManager.user.full_name')
+                    ->label('Функциональный руководитель')
+                    ->placeholder('-'),
+                TextColumn::make('inner_clients_count')
+                    ->label('Внутренних')
+                    ->counts('innerClients'),
+                TextColumn::make('outer_clients_count')
+                    ->label('Внешних')
+                    ->counts('outerClients'),
             ])
             ->defaultSort('sort')
             ->reorderable()
@@ -51,9 +62,11 @@ class MatrixTemplatesRelationManager extends RelationManager
                     }),
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
-                    ->modalWidth('4xl'),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\EditAction::make()
+                        ->modalWidth('4xl'),
+                    Tables\Actions\DeleteAction::make(),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),

@@ -14,6 +14,7 @@ use Filament\Tables;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
+use Illuminate\Database\Eloquent\Model;
 use stdClass;
 
 class RatingResource extends Resource
@@ -155,7 +156,7 @@ class RatingResource extends Resource
                 ]),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                //
             ]);
     }
 
@@ -164,6 +165,16 @@ class RatingResource extends Resource
         return [
             //
         ];
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return $record->status !== 'closed';
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return $record->status !== 'closed';
     }
 
     public static function getPages(): array

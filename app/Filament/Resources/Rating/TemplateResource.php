@@ -7,8 +7,6 @@ use App\Filament\Resources\Rating\TemplateResource\Pages;
 use App\Models\Rating\Template;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Filament\Forms\Components\Card;
-use Filament\Forms\Components\MultiSelect;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -26,7 +24,7 @@ class TemplateResource extends Resource
 
     protected static ?string $navigationGroup = 'Оценка';
 
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort = 40;
 
     protected static ?string $navigationIcon = 'heroicon-o-template';
 
@@ -113,7 +111,7 @@ class TemplateResource extends Resource
                 ->columnWidths([
                     'rating_competence_id' => '25%',
                     'text' => '45%',
-                    'value' => '15%',
+                    'rating_value_id' => '15%',
                     'answer_type' => '15%',
                 ])
                 ->schema([
@@ -121,7 +119,6 @@ class TemplateResource extends Resource
                         ->relationship('competence', 'name')
                         ->label('Компетенция')
                         ->disableLabel()
-                        ->disablePlaceholderSelection()
                         ->required(),
                     Textarea::make('text')
                         ->label('Текст')
@@ -130,16 +127,11 @@ class TemplateResource extends Resource
                         ->rows(2)
                         ->maxLength(65535)
                         ->required(),
-                    Select::make('value')
+                    Select::make('rating_value_id')
+                        ->relationship('value', 'name')
                         ->label('Ценность')
                         ->disableLabel()
-                        ->placeholder('Выберите')
-                        ->options([
-                            'respect' => 'Уважение и доверие',
-                            'responsibility' => 'Ответственность',
-                            'development' => 'Развитие',
-                            'team_leadership' => 'Командное лидерство',
-                        ]),
+                        ->placeholder('Выберите'),
                     Select::make('answer_type')
                         ->label('Ответы')
                         ->disableLabel()
@@ -184,15 +176,11 @@ class TemplateResource extends Resource
                         ->rows(2)
                         ->maxLength(65535)
                         ->required(),
-                    Select::make('value')
+                    Select::make('rating_value_id')
+                        ->relationship('value', 'name')
                         ->label('Ценность')
                         ->disableLabel()
-                        ->options([
-                            'respect' => 'Уважение и доверие',
-                            'responsibility' => 'Ответственность',
-                            'development' => 'Развитие',
-                            'team_leadership' => 'Командное лидерство',
-                        ]),
+                        ->placeholder('Выберите'),
                     Select::make('answer_type')
                         ->label('Ответы')
                         ->disableLabel()

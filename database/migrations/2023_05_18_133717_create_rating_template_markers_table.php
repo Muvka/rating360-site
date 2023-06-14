@@ -21,9 +21,14 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
+            $table->foreignId('rating_value_id')
+                ->nullable()
+                ->constrained()
+                ->cascadeOnUpdate()
+                ->nullOnDelete();
             $table->text('text');
-            $table->set('value', ['respect', 'responsibility', 'development', 'team_leadership'])
-                ->nullable();
+//            $table->set('value', ['respect', 'responsibility', 'development', 'team_leadership'])
+//                ->nullable();
             $table->set('answer_type', ['default', 'text'])
                 ->default('default');
             $table->unsignedInteger('sort')

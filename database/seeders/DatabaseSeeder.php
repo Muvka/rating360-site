@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Database\Seeders\Company\EmployeeLevelSeeder;
+use Database\Seeders\Rating\ValueSeeder;
 use Database\Seeders\Shared\UserSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -19,6 +20,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             EmployeeLevelSeeder::class,
             UserSeeder::class,
+            ValueSeeder::class,
         ]);
     }
 }

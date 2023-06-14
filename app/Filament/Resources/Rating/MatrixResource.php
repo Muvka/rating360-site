@@ -28,7 +28,7 @@ class MatrixResource extends Resource
 
     protected static ?string $navigationGroup = 'Оценка';
 
-    protected static ?int $navigationSort = 40;
+    protected static ?int $navigationSort = 50;
 
     protected static ?string $navigationIcon = 'heroicon-o-view-grid';
 
@@ -181,10 +181,10 @@ class MatrixResource extends Resource
             TableRepeater::make('clients')
                 ->relationship('clients')
                 ->label('Клиенты')
-                ->headers(['Клиент', 'Внешний'])
+                ->headers(['Сотрудник', 'Клиент'])
                 ->createItemButtonLabel('Добавить клиента')
                 ->emptyLabel('Нет клиентов')
-                ->columnWidths(['outer' => '100px'])
+                ->columnWidths(['outer' => '20%'])
                 ->schema([
                     Select::make('company_employee_id')
                         ->getSearchResultsUsing(
@@ -198,12 +198,18 @@ class MatrixResource extends Resource
                         ->getOptionLabelUsing(fn($value): ?string => Employee::find($value)
                             ?->user
                             ->full_name)
-                        ->label('Клиент')
+                        ->label('Сотрудник')
                         ->disableLabel()
                         ->searchable()
                         ->required(),
-                    Toggle::make('outer')
-                        ->label('Внешний')
+                    Select::make('outer')
+                        ->label('Клиент')
+                        ->options([
+                            '0' => 'Внутренний',
+                            '1' => 'Внешний',
+                        ])
+                        ->disablePlaceholderSelection()
+                        ->default('0')
                         ->disableLabel(),
                 ])
         ];

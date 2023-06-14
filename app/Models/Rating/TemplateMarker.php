@@ -18,4 +18,8 @@ class TemplateMarker extends Model
     public function competence(): BelongsTo {
         return $this->belongsTo(Competence::class, 'rating_competence_id');
     }
+
+    public function value(): BelongsTo {
+        return $this->belongsTo(Value::class, 'rating_value_id');
+    }
 }

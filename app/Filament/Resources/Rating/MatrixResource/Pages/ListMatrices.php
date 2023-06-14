@@ -49,15 +49,15 @@ class ListMatrices extends ListRecords
                                 ->label('Выбрать')
                                 ->disableLabel()
                                 ->options(Matrix::all()->pluck('name', 'id'))
-                                ->hidden(fn(Closure $get) => (boolean) $get('is_new'))
+                                ->hidden(fn(Closure $get) => (boolean) $get('create'))
                                 ->required(),
-                            Toggle::make('is_new')
+                            Toggle::make('create')
                                 ->reactive()
-                                ->label('Создать'),
+                                ->label('Создать новую матрицу'),
                             TextInput::make('name')
                                 ->label('Название')
                                 ->placeholder('Общая матрица')
-                                ->visible(fn(Closure $get) => $get('is_new'))
+                                ->visible(fn(Closure $get) => $get('create'))
                                 ->maxLength(128)
                                 ->required(),
                         ]),
@@ -68,8 +68,6 @@ class ListMatrices extends ListRecords
 
     private function import(array $data): void
     {
-        $matrix = null;
-
         if ( ! empty($data['matrix_id'])) {
             $matrix = Matrix::findOrFail($data['matrix_id']);
         } else {

@@ -18,7 +18,7 @@ class ResultResource extends Resource
 
     protected static ?string $navigationGroup = 'Оценка';
 
-    protected static ?int $navigationSort = 50;
+    protected static ?int $navigationSort = 60;
 
     protected static ?string $navigationIcon = 'heroicon-o-chart-bar';
 

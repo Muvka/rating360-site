@@ -10,6 +10,7 @@ use App\Models\Company\EmployeeLevel;
 use App\Models\Company\EmployeePosition;
 use App\Models\Company\Subdivision;
 use App\Models\Rating\Matrix;
+use App\Models\Rating\MatrixTemplate;
 use App\Models\Rating\MatrixTemplateClient;
 use App\Models\Shared\City;
 use Illuminate\Support\Str;
@@ -28,11 +29,18 @@ class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows
 
     public function model(array $row): void
     {
-//        dd($row);
-
         $employee = $this->getEmployeeByFullName($row['sotrudnik']);
 
         if ( ! $employee) {
+            return;
+        }
+
+
+        $foundTemplate = $this->martix->templates->filter(function (MatrixTemplate $template) use ($employee) {
+            return $template->company_employee_id === $employee->id;
+        });
+
+        if ($foundTemplate->isNotEmpty()) {
             return;
         }
 

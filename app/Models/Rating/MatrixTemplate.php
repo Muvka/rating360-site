@@ -27,4 +27,14 @@ class MatrixTemplate extends Model
     public function clients(): HasMany {
         return $this->hasMany(MatrixTemplateClient::class, 'rating_matrix_template_id');
     }
+
+    public function innerClients(): HasMany {
+        return $this->hasMany(MatrixTemplateClient::class, 'rating_matrix_template_id')
+            ->where('outer', false);
+    }
+
+    public function outerClients(): HasMany {
+        return $this->hasMany(MatrixTemplateClient::class, 'rating_matrix_template_id')
+            ->where('outer', true);
+    }
 }

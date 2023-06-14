@@ -47,38 +47,11 @@ class TemplateImport implements OnEachRow, WithHeadingRow, SkipsEmptyRows
             return;
         }
 
-        $value = null;
-
-        if (isset($row['nomer_cennosti']) && trim($row['nomer_cennosti']) && (int) $row['nomer_cennosti']) {
-            switch ((int) $row['nomer_cennosti']) {
-                case 1:
-                {
-                    $value = 'respect';
-                    break;
-                }
-                case 2:
-                {
-                    $value = 'responsibility';
-                    break;
-                }
-                case 3:
-                {
-                    $value = 'development';
-                    break;
-                }
-                case 4:
-                {
-                    $value = 'team_leadership';
-                    break;
-                }
-            }
-        }
-
         TemplateMarker::create([
             'rating_template_id' => $this->template->id,
             'rating_competence_id' => $this->competence->id,
             'text' => trim($row['povedenceskie_markery']),
-            'value' => $value,
+            'rating_value_id' => $row['nomer_cennosti'] ?? null,
             'answer_type' => isset($row['varianty_otvetov']) && trim($row['varianty_otvetov']) ? 'text' : 'default',
             'sort' => $this->markerSort++,
         ]);

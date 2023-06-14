@@ -4,6 +4,9 @@ namespace App\Observers\Rating;
 
 use App\Mail\Rating\RatingLaunchMail;
 use App\Models\Rating\Rating;
+use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Notification;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Mail;
 
 class RatingObserver
@@ -22,32 +25,52 @@ class RatingObserver
         }
     }
 
-    private function sendEmails(Rating $rating) {
+    private function sendEmails(Rating $rating)
+    {
         if (empty($rating->matrix->templates)) {
             return;
         }
 
         foreach ($rating->matrix->templates as $template) {
-            Mail::to($template->employee->user->email)
-                ->send(new RatingLaunchMail($template->employee, true));
+            $recipients = [$template->employee->user];
+            $failedSending = [];
 
             if ($template->employee->directManager) {
-                Mail::to($template->employee->directManager->user->email)
-                    ->send(new RatingLaunchMail($template->employee));
+                $recipients[] = $template->employee->directManager->user;
             }
 
             if ($template->employee->functionalManager) {
-                Mail::to($template->employee->functionalManager->user->email)
-                    ->send(new RatingLaunchMail($template->employee));
+                $recipients[] = $template->employee->functionalManager->user;
             }
 
-            if ($template->clients->isEmpty()) {
-                return;
+            if ($template->clients->isNotEmpty()) {
+                foreach ($template->clients as $client) {
+                    $recipients[] = $client->employeeUser;
+                }
             }
 
-            foreach ($template->clients as $client) {
-                Mail::to($client->employeeUser->email)
-                    ->send(new RatingLaunchMail($template->employee));
+            foreach ($recipients as $index => $recipient) {
+                try {
+                    Mail::to($recipient->email)
+                        ->send(new RatingLaunchMail($template->employee, $index === 0));
+                } catch (\Throwable $exception) {
+                    $failedSending[] = sprintf('%s (**%s**)', $recipient->fullName, $recipient->email);
+                }
+            }
+
+            if ( ! empty($failedSending)) {
+                Notification::make()
+                    ->title('Внимание')
+                    ->body('Не удалось отправить уведомление следующим сотрудникам - '.Arr::join($failedSending, ', '))
+                    ->danger()
+                    ->persistent()
+                    ->actions([
+                        Action::make('close')
+                            ->label('Закрыть')
+                            ->button()
+                            ->close(),
+                    ])
+                    ->send();
             }
         }
     }

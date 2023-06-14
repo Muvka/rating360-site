@@ -88,19 +88,33 @@ class EmployeeResource extends Resource
                     ->schema([
                         Select::make('direct_manager_id')
                             ->label('Непосредственный')
-                            ->options(function () {
-                                return Employee::where('is_manager', true)
+                            ->getSearchResultsUsing(
+                                fn(string $search) => Employee::with('user')
+                                    ->whereHas('user', function (Builder $query) use ($search) {
+                                        $query->where('last_name', 'like', "%{$search}%");
+                                    })
+                                    ->limit(20)
                                     ->get()
-                                    ->pluck('user.full_name', 'id');
-                            })
+                                    ->pluck('user.full_name', 'id'))
+                            ->getOptionLabelUsing(fn($value): ?string => Employee::find($value)
+                                ?->user
+                                ->full_name)
+                            ->searchable()
                             ->required(),
                         Select::make('functional_manager_id')
                             ->label('Функциональный')
-                            ->options(function () {
-                                return Employee::where('is_manager', true)
+                            ->getSearchResultsUsing(
+                                fn(string $search) => Employee::with('user')
+                                    ->whereHas('user', function (Builder $query) use ($search) {
+                                        $query->where('last_name', 'like', "%{$search}%");
+                                    })
+                                    ->limit(20)
                                     ->get()
-                                    ->pluck('user.full_name', 'id');
-                            }),
+                                    ->pluck('user.full_name', 'id'))
+                            ->getOptionLabelUsing(fn($value): ?string => Employee::find($value)
+                                ?->user
+                                ->full_name)
+                            ->searchable(),
                     ]),
             ]);
     }
