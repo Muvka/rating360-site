@@ -32,8 +32,7 @@ class AppGeneralSettingsPage extends SettingsPage
                         ->label('Текст'),
                     TextInput::make('instruction_video')
                         ->label('Видео')
-                        ->hint('Ссылка на видео')
-                        ->url(),
+                        ->hint('Идентификатор видео'),
                 ]),
             Section::make('Контакты')
                 ->schema([

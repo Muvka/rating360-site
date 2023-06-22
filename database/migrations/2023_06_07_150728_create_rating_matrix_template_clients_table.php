@@ -21,8 +21,7 @@ return new class extends Migration {
                 ->constrained()
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
-            $table->boolean('outer')
-                ->default(false);
+            $table->set('type', ['self', 'manager', 'inner', 'outer']);
             $table->timestamps();
         });
     }

@@ -1,0 +1,21 @@
+.empty-message__text {
+    margin: 0;
+}
+
+@media (max-width: 599px) {
+    .empty-message__button {
+        margin-top: 16px;
+    }
+}
+
+@media (min-width: 600px) and (max-width: 1199px) {
+    .empty-message__button {
+        margin-top: 20px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .empty-message__button {
+        margin-top: 24px;
+    }
+}

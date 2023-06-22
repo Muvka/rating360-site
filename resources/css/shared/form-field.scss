@@ -1,0 +1,25 @@
+.form-field {
+    padding: 0;
+
+    border: none;
+}
+
+.form-field__label {
+    display: block;
+    padding: 0;
+    margin-bottom: 12px;
+}
+
+.form-field__input {
+    width: 100%;
+}
+
+.form-field__error-message {
+    margin: 8px 0 0;
+
+    font-family: var(--font-body-primary);
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 1.5em;
+    color: var(--color-danger);
+}

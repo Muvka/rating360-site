@@ -1,0 +1,33 @@
+.detailed-rating-results__list {
+    display: grid;
+    grid-template-columns: 100%;
+    padding: 0;
+    margin: 0;
+
+    list-style-type: none;
+}
+
+.detailed-rating-results__caption {
+    margin: 0 0 12px;
+}
+
+@media (max-width: 599px) {
+    .detailed-rating-results__list {
+        grid-row-gap: 16px;
+        row-gap: 16px;
+    }
+}
+
+@media (min-width: 600px) and (max-width: 1199px) {
+    .detailed-rating-results__list {
+        grid-row-gap: 20px;
+        row-gap: 20px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .detailed-rating-results__list {
+        grid-row-gap: 24px;
+        row-gap: 24px;
+    }
+}

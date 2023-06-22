@@ -28,13 +28,18 @@ class MatrixTemplate extends Model
         return $this->hasMany(MatrixTemplateClient::class, 'rating_matrix_template_id');
     }
 
+    public function editableClients(): HasMany {
+        return $this->hasMany(MatrixTemplateClient::class, 'rating_matrix_template_id')
+            ->whereIn('type', ['inner', 'outer']);
+    }
+
     public function innerClients(): HasMany {
         return $this->hasMany(MatrixTemplateClient::class, 'rating_matrix_template_id')
-            ->where('outer', false);
+            ->where('type', 'inner');
     }
 
     public function outerClients(): HasMany {
         return $this->hasMany(MatrixTemplateClient::class, 'rating_matrix_template_id')
-            ->where('outer', true);
+            ->where('type', 'outer');
     }
 }

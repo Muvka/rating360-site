@@ -1,0 +1,10 @@
+.rating-result-list__list {
+    display: grid;
+    grid-template-columns: 100%;
+    grid-row-gap: 8px;
+    row-gap: 8px;
+    padding: 0;
+    margin: 0;
+
+    list-style-type: none;
+}

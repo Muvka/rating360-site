@@ -11,7 +11,6 @@ use App\Models\Company\EmployeePosition;
 use App\Models\Company\Subdivision;
 use App\Models\Rating\Matrix;
 use App\Models\Rating\MatrixTemplate;
-use App\Models\Rating\MatrixTemplateClient;
 use App\Models\Shared\City;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
@@ -35,7 +34,6 @@ class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows
             return;
         }
 
-
         $foundTemplate = $this->martix->templates->filter(function (MatrixTemplate $template) use ($employee) {
             return $template->company_employee_id === $employee->id;
         });
@@ -43,8 +41,6 @@ class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows
         if ($foundTemplate->isNotEmpty()) {
             return;
         }
-
-        $matrixTemplate = $this->martix->templates()->create(['company_employee_id' => $employee->id]);
 
         if ( ! $employee->city && $row['gorod']) {
             $city = $this->getRecord(City::class, 'name', $row['gorod']);
@@ -82,28 +78,6 @@ class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows
             $employee->company_employee_level_id = $level->id;
         }
 
-        if ( ! $employee->directManager && $row['rukovoditel_1_neposredstvennyi']) {
-            $directManager = $this->getEmployeeByFullName($row['rukovoditel_1_neposredstvennyi']);
-
-            if ($directManager) {
-                $directManager->is_manager = true;
-                $directManager->save();
-
-                $employee->direct_manager_id = $directManager->id;
-            }
-        }
-
-        if ( ! $employee->directManager && $row['rukovoditel_2_funkcionalnyi']) {
-            $functionalManager = $this->getEmployeeByFullName($row['rukovoditel_2_funkcionalnyi']);
-
-            if ($functionalManager) {
-                $functionalManager->is_manager = true;
-                $functionalManager->save();
-
-                $employee->functional_manager_id = $functionalManager->id;
-            }
-        }
-
         $directions = [];
         $innerClients = [];
         $outerClients = [];
@@ -130,6 +104,30 @@ class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows
             }
         }
 
+        if ( ! $employee->directManager && $row['rukovoditel_1_neposredstvennyi']) {
+            $directManager = $this->getEmployeeByFullName($row['rukovoditel_1_neposredstvennyi']);
+
+            if ($directManager) {
+                $directManager->is_manager = true;
+                $directManager->save();
+
+                $employee->direct_manager_id = $directManager->id;
+            }
+        }
+
+        if ( ! $employee->directManager && $row['rukovoditel_2_funkcionalnyi']) {
+            $functionalManager = $this->getEmployeeByFullName($row['rukovoditel_2_funkcionalnyi']);
+
+            if ($functionalManager) {
+                $functionalManager->is_manager = true;
+                $functionalManager->save();
+
+                $employee->functional_manager_id = $functionalManager->id;
+            }
+        }
+
+        $matrixTemplate = $this->martix->templates()->create(['company_employee_id' => $employee->id]);
+
         if (!empty($innerClients)) {
             foreach ($innerClients as $innerClient) {
                 $client = $this->getEmployeeByFullName($innerClient);
@@ -138,9 +136,9 @@ class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows
                     continue;
                 }
 
-                MatrixTemplateClient::create([
+                $matrixTemplate->clients()->create([
                     'company_employee_id' => $client->id,
-                    'rating_matrix_template_id' => $matrixTemplate->id,
+                    'type' => 'inner',
                 ]);
             }
         }
@@ -153,10 +151,9 @@ class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows
                     continue;
                 }
 
-                MatrixTemplateClient::create([
+                $matrixTemplate->clients()->create([
                     'company_employee_id' => $client->id,
-                    'rating_matrix_template_id' => $matrixTemplate->id,
-                    'outer' => true,
+                    'type' => 'outer',
                 ]);
             }
         }

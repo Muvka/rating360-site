@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Rating\MatrixTemplate;
 use App\Models\Rating\Rating;
+use App\Observers\Rating\MatrixTemplateObserver;
 use App\Observers\Rating\RatingObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -28,6 +30,7 @@ class EventServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Rating::observe(RatingObserver::class);
+        MatrixTemplate::observe(MatrixTemplateObserver::class);
     }
 
     /**

@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Rating;
 
 use App\Filament\Resources\Rating\RatingResource\Pages;
 use App\Models\Rating\Rating;
+use App\Models\Rating\Result;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -15,6 +16,7 @@ use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Model;
+use RyanChandler\FilamentProgressColumn\ProgressColumn;
 use stdClass;
 
 class RatingResource extends Resource
@@ -80,6 +82,16 @@ class RatingResource extends Resource
                             );
                         }
                     ),
+                ProgressColumn::make('progress')
+                    ->label('Прогресс')
+                    ->progress(function ($record) {
+                        return RatingResource::calculateProgress($record);
+                    })
+                    ->color(function ($record) {
+                        $progress = RatingResource::calculateProgress($record);
+
+                        return $progress === 100 ? 'success' : ($progress < 50 ? 'danger' : 'primary');
+                    }),
                 TextColumn::make('created_at')
                     ->label('Дата создания')
                     ->date('d.m.Y')
@@ -185,4 +197,15 @@ class RatingResource extends Resource
             'edit' => Pages\EditRating::route('/{record}/edit'),
         ];
     }
+
+    public static function calculateProgress($record): int {
+        $clientsCount = $record->matrix->templates()->withCount('clients')->get()->sum('clients_count');
+        $completedClients = Result::where('rating_id', $record->id)->withCount('clients')->get()->sum('clients_count');
+dd($completedClients);
+        if ($clientsCount === 0) return 0;
+
+        return (int)round((5 / $clientsCount) * 100);
+    }
+
+//    private function
 }

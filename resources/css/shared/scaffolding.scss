@@ -1,0 +1,88 @@
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+*:focus {
+	outline: none;
+}
+
+input[type="range"]:-moz-focusring,
+//input[type="password"]:-moz-focusring,
+//input[type="text"]:-moz-focusring,
+//input[type="tel"]:-moz-focusring,
+//input[type="email"]:-moz-focusring,
+//textarea:-moz-focusring,
+select:-moz-focusring,
+button:-moz-focusring,
+a:-moz-focusring,
+summary:focus-visible,
+[tabindex]:-moz-focusring {
+	outline: 3px solid var(--color-brand-primary);
+	outline-offset: 3px;
+}
+
+input[type="range"]:focus-visible,
+//input[type="password"]:focus-visible,
+//input[type="text"]:focus-visible,
+//input[type="tel"]:focus-visible,
+//input[type="email"]:focus-visible,
+//textarea:focus-visible,
+select:focus-visible,
+button:focus-visible,
+a:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+	outline: 3px solid var(--color-brand-primary);
+	outline-offset: 3px;
+}
+
+img,
+video {
+	max-width: 100%;
+	height: auto;
+}
+
+button {
+	cursor: pointer;
+}
+
+fieldset {
+    margin: 0;
+}
+
+[hidden] {
+	display: none !important;
+}
+
+[inert] {
+	pointer-events: none;
+	cursor: default;
+}
+
+[inert],
+[inert] * {
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+}
+
+/*:not(:focus):not(:active),*/
+/*input[type="file"].visually-hidden,*/
+/*input[type="checkbox"].visually-hidden,*/
+/*input[type="radio"].visually-hidden*/
+.visually-hidden {
+	position: absolute;
+
+	width: 1px;
+	height: 1px;
+	padding: 0;
+
+	white-space: nowrap;
+
+	border: none;
+	clip: rect(0 0 0 0);
+	overflow: hidden;
+}

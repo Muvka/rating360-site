@@ -69,7 +69,7 @@ class User extends Authenticatable implements FilamentUser, HasName
     protected function fullName(): Attribute
     {
         return Attribute::make(
-            get: fn (mixed $value, array $attributes) => "{$attributes['last_name']} {$attributes['first_name']} {$attributes['middle_name']}",
+            get: fn (mixed $value, array $attributes) => trim("{$attributes['last_name']} {$attributes['first_name']} {$attributes['middle_name']}"),
         );
     }
 

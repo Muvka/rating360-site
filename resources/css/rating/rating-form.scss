@@ -1,0 +1,132 @@
+.rating-form__header {
+    display: flex;
+    flex-direction: column;
+}
+
+.rating-form__description {
+    order: 2;
+}
+
+.rating-form__progress {
+    position: relative;
+
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 18px;
+
+    border-radius: var(--border-radius-tertiary);
+    background-color: var(--color-background-quaternary);
+    overflow: hidden;
+}
+
+.rating-form__progress::before {
+    content: '';
+
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+
+    width: 100%;
+
+    background-color: var(--color-success);
+
+    transform-origin: center left;
+    transform: scaleX(var(--progress-scale));
+
+    transition: transform 200ms ease;
+}
+
+.rating-form__progress-text {
+    z-index: 2;
+
+    font-family: var(--font-body-primary);
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 1.5em;
+    color: var(--color-text-primary);
+    text-align: center;
+}
+
+.rating-form__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.rating-form__footer {
+    border-top: 1px solid var(--color-border-primary);
+}
+
+.rating-form__button--right {
+    margin-left: auto;
+}
+
+@media (max-width: 599px) {
+    .rating-form__header {
+        margin-bottom: 16px;
+    }
+
+    .rating-form__description {
+        margin: 16px 0 0;
+    }
+
+    .rating-form__block {
+        margin-bottom: 24px;
+    }
+
+    .rating-form__footer {
+        gap: 8px 12px;
+        padding-top: 24px;
+    }
+
+    .rating-form__button {
+        min-width: 142px;
+    }
+}
+
+@media (min-width: 600px) {
+    .rating-form__button {
+        min-width: 176px;
+    }
+}
+
+@media (min-width: 600px) and (max-width: 1199px) {
+    .rating-form__header {
+        margin-bottom: 20px;
+    }
+
+    .rating-form__description {
+        margin: 20px 0 0;
+    }
+
+    .rating-form__block {
+        margin-bottom: 28px;
+    }
+
+    .rating-form__footer {
+        gap: 12px 18px;
+        padding-top: 28px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .rating-form__header {
+        margin-bottom: 24px;
+    }
+
+    .rating-form__description {
+        margin: 24px 0 0;
+    }
+
+    .rating-form__block {
+        margin-bottom: 32px;
+    }
+
+    .rating-form__footer {
+        gap: 16px 24px;
+        padding-top: 32px;
+    }
+}

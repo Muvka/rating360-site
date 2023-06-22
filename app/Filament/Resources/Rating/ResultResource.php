@@ -49,6 +49,9 @@ class ResultResource extends Resource
                             );
                         }
                     ),
+                TextColumn::make('employee.user.full_name')
+                    ->label('Сотрудник')
+                    ->sortable(),
                 TextColumn::make('rating.launched_at')
                     ->label('Дата запуска')
                     ->date('d.m.Y')
@@ -62,11 +65,10 @@ class ResultResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                //
             ]);
     }
 
@@ -86,8 +88,9 @@ class ResultResource extends Resource
     {
         return [
             'index' => Pages\ListResults::route('/'),
-            'create' => Pages\CreateResult::route('/create'),
-            'edit' => Pages\EditResult::route('/{record}/edit'),
+//            'create' => Pages\CreateResult::route('/create'),
+            'view' => Pages\ViewResult::route('/{record}'),
+//            'edit' => Pages\EditResult::route('/{record}/edit'),
         ];
     }
 }

@@ -17,6 +17,21 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
+            $table->foreignId('company_employee_id')
+                ->constrained()
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
+            $table->string('city', 128)
+                ->index();
+            $table->string('company', 255)
+                ->index();
+            $table->string('division', 255)
+                ->index();
+            $table->string('subdivision', 255)
+                ->index();
+//            $table->text('direction');
+            $table->string('position', 255);
+            $table->string('level', 64);
             $table->timestamps();
             $table->softDeletes();
         });

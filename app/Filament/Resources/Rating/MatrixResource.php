@@ -6,13 +6,13 @@ use App\Filament\Resources\Rating\MatrixResource\Pages;
 use App\Filament\Resources\Rating\MatrixResource\RelationManagers\MatrixTemplatesRelationManager;
 use App\Models\Company\Employee;
 use App\Models\Rating\Matrix;
+use App\Models\Rating\MatrixTemplateClient;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Closure;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
@@ -179,12 +179,12 @@ class MatrixResource extends Resource
                             ->full_name),
                 ]),
             TableRepeater::make('clients')
-                ->relationship('clients')
+                ->relationship('editableClients')
                 ->label('Клиенты')
                 ->headers(['Сотрудник', 'Клиент'])
                 ->createItemButtonLabel('Добавить клиента')
                 ->emptyLabel('Нет клиентов')
-                ->columnWidths(['outer' => '20%'])
+                ->columnWidths(['type' => '20%'])
                 ->schema([
                     Select::make('company_employee_id')
                         ->getSearchResultsUsing(
@@ -202,14 +202,14 @@ class MatrixResource extends Resource
                         ->disableLabel()
                         ->searchable()
                         ->required(),
-                    Select::make('outer')
+                    Select::make('type')
                         ->label('Клиент')
                         ->options([
-                            '0' => 'Внутренний',
-                            '1' => 'Внешний',
+                            'inner' => 'Внутренний',
+                            'outer' => 'Внешний',
                         ])
                         ->disablePlaceholderSelection()
-                        ->default('0')
+                        ->default('inner')
                         ->disableLabel(),
                 ])
         ];

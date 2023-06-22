@@ -1,0 +1,17 @@
+.radio-group {
+    display: flex;
+    gap: 12px;
+}
+
+@media (max-width: 499px) {
+    .radio-group {
+        flex-direction: column;
+    }
+}
+
+@media (min-width: 500px) {
+    .radio-group {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+}

@@ -1,0 +1,122 @@
+.rating-link {
+    display: flex;
+    align-items: center;
+
+    font-family: var(--font-body-primary);
+    font-weight: 400;
+    line-height: 1.5em;
+    color: var(--color-text-primary);
+    text-decoration: none;
+
+    border-radius: var(--border-radius-primary);
+    background-color: var(--color-background-secondary);
+
+    transition: color 200ms ease;
+}
+
+.rating-link::before {
+    content: '';
+
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+
+    border-radius: 50%;
+}
+
+.rating-link:not(.rating-link--disabled)::before {
+    border: 2px solid var(--color-border-primary);
+}
+
+.rating-link:not(.rating-link--disabled) .rating-link__icon {
+    color: var(--color-brand-primary);
+}
+
+.rating-link--disabled {
+    pointer-events: none;
+}
+
+.rating-link--disabled::before {
+    background-color: var(--color-success);
+    background-image: url('../images/rating/rating-link/check.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 12px;
+}
+
+.rating-link--disabled .rating-link__icon {
+    opacity: 0.3;
+}
+
+.rating-link:hover {
+    color: var(--color-brand-primary);
+}
+
+.rating-link:hover .rating-link__icon-container {
+    background-color: var(--color-brand-primary);
+}
+
+.rating-link:hover .rating-link__icon {
+    color: var(--color-text-tertiary);
+}
+
+.rating-link__icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-left: auto;
+
+    border-radius: 50%;
+    background-color: var(--color-background-tertiary);
+
+    transition: background-color 200ms ease;
+}
+
+.rating-link__icon {
+    transition: color 200ms ease;
+}
+
+@media (max-width: 599px) {
+    .rating-link {
+        column-gap: 6px;
+        padding: 8px 12px;
+
+        font-size: 15px;
+    }
+
+    .rating-link__icon-container {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+@media (min-width: 600px) {
+    .rating-link {
+        font-size: 16px;
+    }
+}
+
+@media (min-width: 600px) and (max-width: 1199px) {
+    .rating-link {
+        column-gap: 7px;
+        padding: 10px 14px;
+    }
+
+    .rating-link__icon-container {
+        width: 26px;
+        height: 26px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .rating-link {
+        column-gap: 8px;
+        padding: 12px 16px;
+    }
+
+    .rating-link__icon-container {
+        width: 28px;
+        height: 28px;
+    }
+}

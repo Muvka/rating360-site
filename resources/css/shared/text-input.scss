@@ -1,0 +1,63 @@
+.text-input {
+    font-family: var(--font-body-primary);
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.5em;
+    color: var(--color-text-primary);
+
+    border: none;
+    border-radius: var(--border-radius-primary);
+    background-color: var(--color-background-secondary);
+
+    transition: box-shadow 200ms ease;
+}
+
+.text-input::placeholder {
+    color: var(--color-text-quaternary);
+}
+
+textarea.text-input {
+    resize: none;
+}
+
+.text-input:hover {
+    box-shadow: inset 0 0 0 2px var(--color-border-primary);
+}
+
+.text-input:focus {
+    box-shadow: inset 0 0 0 2px var(--color-brand-primary);
+}
+
+.text-input--invalid {
+    box-shadow: inset 0 0 0 2px var(--color-danger);
+}
+
+@media (max-width: 599px) {
+    .text-input {
+        padding: 9px 16px 7px;
+    }
+
+    textarea.text-input {
+        padding: 12px 16px;
+    }
+}
+
+@media (min-width: 600px) and (max-width: 1199px) {
+    .text-input {
+        padding: 11px 18px 9px;
+    }
+
+    textarea.text-input {
+        padding: 14px 18px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .text-input {
+        padding: 13px 20px 11px;
+    }
+
+    textarea.text-input {
+        padding: 16px 20px;
+    }
+}

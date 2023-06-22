@@ -1,0 +1,17 @@
+@media (max-width: 599px) {
+    .page-sidebar {
+        padding: 12px;
+    }
+}
+
+@media (min-width: 600px) and (max-width: 1199px) {
+    .page-sidebar {
+        padding: 18px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .page-sidebar {
+        padding: 24px;
+    }
+}
