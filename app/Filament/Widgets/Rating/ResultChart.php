@@ -174,7 +174,7 @@ class ResultChart extends ApexChartWidget
                 ],
             ];
         } else {
-            $result = $query->get()->pluck('avg_rating', 'client');
+            $result = $query->get()->pluck('avg_rating', 'type');
 
             $xaxis = [
                 'categories' => ['Самооценка', 'Руководители', 'Внунтренние', 'Внешние'],
