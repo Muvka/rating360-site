@@ -37,10 +37,6 @@ class TemplateImport implements OnEachRow, WithHeadingRow, SkipsEmptyRows
             $this->competence = $foundCompetence ?? Competence::create([
                 'name' => trim($row['kompetencii']),
             ]);
-
-            $this->template->competences()->attach($this->competence->id);
-
-//            $this->markerSort = 1;
         }
 
         if ( ! isset($row['povedenceskie_markery']) || ! trim($row['povedenceskie_markery']) || ! $this->competence) {
