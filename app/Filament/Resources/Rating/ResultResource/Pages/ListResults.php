@@ -21,7 +21,7 @@ class ListResults extends ListRecords
     protected function getHeaderWidgets(): array
     {
         return [
-            ResultChart::class,
+//            ResultChart::class,
         ];
     }
 }
