@@ -1,6 +1,8 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Validator;
 
 /*
 |--------------------------------------------------------------------------
@@ -166,7 +168,14 @@ Route::get('/test2', function () {
 
 Route::get('/rating', function () {
     $templateId = 1;
-
+//    $template = \App\Models\Rating\Template::with('markers')->find(1);
+//dd($template->markers, $template->markers->filter(function ($marker) {
+//    return $marker->answer_type === 'default';
+//})->map(function ($marker) {
+//    return [
+//        'marker' . $marker->id => 'required'
+//    ];
+//})->collapse()->toArray());
     return \Inertia\Inertia::render('Rating/RatingPage', [
         'title' => 'Оценка сотрудника - Ольга Валова',
         'employeeName' => 'Ольга Валова',
@@ -186,3 +195,21 @@ Route::get('/rating', function () {
             ->get(),
     ]);
 })->name('client.shared.rating');
+
+Route::post('/rating', function (Request $request) {
+    $template = \App\Models\Rating\Template::with('markers')->find(1);
+
+    $validator = Validator::make($request->all(), $template->markers->filter(function ($marker) {
+        return $marker->answer_type === 'default';
+    })->map(function ($marker) {
+        return [
+            'marker' . $marker->id => 'required'
+        ];
+    })->collapse()->toArray(), [
+        '*' => 'Нужно выбрать один из вариантов'
+    ])->validate();
+
+    dd($validator);
+
+    return redirect(route('client.shared.home'));
+})->name('client.shared.rating.store');

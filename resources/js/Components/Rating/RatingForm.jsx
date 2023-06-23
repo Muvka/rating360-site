@@ -7,19 +7,35 @@ import arrowLeftIconId from '../../../images/shared/icons/icon-arrow-left.svg';
 import arrowRightIconId from '../../../images/shared/icons/icon-arrow-right.svg';
 
 const RatingForm = ({ blocks = [], employeeName = '', className = '' }) => {
-	const initialFormData = useMemo(() => {
+	const flatMarkers = useMemo(() => {
 		return blocks
 			.map(block => {
 				return block.markers;
 			})
-			.flat()
-			.reduce((acc, marker) => {
-				acc[`marker${marker.id}`] = '';
-				return acc;
-			}, {});
+			.flat();
 	}, [blocks]);
+	const initialFormData = useMemo(() => {
+		return flatMarkers.reduce((acc, marker) => {
+			acc[`marker${marker.id}`] = '';
+			return acc;
+		}, {});
+	}, [flatMarkers]);
 	const { data, setData, post, processing, errors } = useForm(initialFormData);
 	const [step, setStep] = useState(0);
+	const markers = Object.keys(errors).length
+		? Object.keys(errors).reduce((acc, key) => {
+				const markerId = key.replace('marker', '');
+				const foundMarker = flatMarkers.find(
+					marker => marker.id.toString() === markerId
+				);
+
+				if (foundMarker) {
+					acc.push(foundMarker);
+				}
+
+				return acc;
+		  }, [])
+		: blocks[step].markers;
 	const progressText = useMemo(() => {
 		if (!blocks.length) return 0;
 
@@ -30,6 +46,7 @@ const RatingForm = ({ blocks = [], employeeName = '', className = '' }) => {
 
 	const submitHandler = event => {
 		event.preventDefault();
+		post(route('client.shared.rating.store'));
 	};
 
 	if (!blocks.length) {
@@ -55,7 +72,7 @@ const RatingForm = ({ blocks = [], employeeName = '', className = '' }) => {
 				data={data}
 				setData={setData}
 				errors={errors}
-				markers={blocks[step].markers}
+				markers={markers}
 				className='rating-form__block'
 			/>
 			<footer className='rating-form__footer'>

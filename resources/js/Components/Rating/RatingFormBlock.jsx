@@ -72,6 +72,7 @@ const RatingFormBlock = ({
 						) : (
 							<textarea
 								rows={5}
+								value={data[`marker${marker.id}`]}
 								placeholder='Ваш ответ'
 								className={clsx('text-input', {
 									'text-input--invalid': errors[`marker${marker.id}`]
@@ -79,9 +80,7 @@ const RatingFormBlock = ({
 								onChange={event =>
 									setData(`marker${marker.id}`, event.target.value)
 								}
-							>
-								{data[`marker${marker.id}`]}
-							</textarea>
+							/>
 						)}
 					</FormField>
 				</div>

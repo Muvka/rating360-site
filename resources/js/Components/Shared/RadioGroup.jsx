@@ -4,7 +4,7 @@ import RadioButton from './RadioButton.jsx';
 
 const RadioGroup = ({
 	name = '',
-	options = '',
+	options = [],
 	value = '',
 	className = '',
 	onChange = () => {}
