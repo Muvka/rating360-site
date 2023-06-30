@@ -10,11 +10,11 @@
     border-radius: var(--border-radius-primary);
 }
 
-.employee-feedback__block--positive {
+.employee-feedback__block:nth-child(2n + 1) {
     background-color: #E1F2E7;
 }
 
-.employee-feedback__block--negative {
+.employee-feedback__block:nth-child(2n + 2) {
     background-color: #FFF4DD;
 }
 

@@ -2,8 +2,10 @@ import React, { useId } from 'react';
 import clsx from 'clsx';
 import MarkerResultsTable from './MarkerResultsTable.jsx';
 
-const DetailedRatingResults = ({ data = [], className = '' }) => {
+const DetailedRatingResults = ({ results = [], className = '' }) => {
 	const titleId = useId();
+
+	if (!results.length) return false;
 
 	return (
 		<section
@@ -13,14 +15,17 @@ const DetailedRatingResults = ({ data = [], className = '' }) => {
 			<h2 id={titleId} className='visually-hidden'>
 				Подробные результаты оценки
 			</h2>
-			{Boolean(data.length) ? (
+			{Boolean(results.length) ? (
 				<ul className='detailed-rating-results__list'>
-					{data.map(item => (
-						<li key={item.id} className='detailed-rating-results__item'>
+					{results.map(result => (
+						<li
+							key={result.competence}
+							className='detailed-rating-results__item'
+						>
 							<h3 className='title title--tiny detailed-rating-results__caption'>
-								{item.competence}
+								{result.competence}
 							</h3>
-							<MarkerResultsTable markers={item.markers} />
+							<MarkerResultsTable markers={result.markers} />
 						</li>
 					))}
 				</ul>

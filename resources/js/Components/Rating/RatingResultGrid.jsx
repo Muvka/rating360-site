@@ -7,7 +7,7 @@ const RatingResultGrid = ({ results = [], className = '' }) => {
 	const titleId = useId();
 
 	if (!results.length) {
-		return null;
+		return false;
 	}
 
 	return (
@@ -21,9 +21,9 @@ const RatingResultGrid = ({ results = [], className = '' }) => {
 			<ul className='rating-result-grid__list'>
 				{results.map(result => (
 					<RatingResultBlock
-						key={result.id}
+						key={result.competence}
 						competence={result.competence}
-						averageRatingByClient={result.averageRatingByClient}
+						averageRatingByClient={result.ratings}
 						averageRating={result.averageRating}
 						averageRatingWithoutSelf={result.averageRatingWithoutSelf}
 					/>

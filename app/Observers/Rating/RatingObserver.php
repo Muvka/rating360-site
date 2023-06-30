@@ -25,7 +25,7 @@ class RatingObserver
         }
     }
 
-    private function sendEmails(Rating $rating)
+    private function sendEmails(Rating $rating): void
     {
         if (empty($rating->matrix->templates)) {
             return;
@@ -45,7 +45,7 @@ class RatingObserver
 
             if ($template->clients->isNotEmpty()) {
                 foreach ($template->clients as $client) {
-                    $recipients[] = $client->employeeUser;
+                    $recipients[] = $client->user;
                 }
             }
 

@@ -3,10 +3,10 @@ import clsx from 'clsx';
 import { usePage } from '@inertiajs/react';
 
 const UserWidget = ({ className = '' }) => {
-	const user = usePage().props?.auth?.user;
+	const user = usePage().props?.shared?.auth?.user;
 
 	if (!user) {
-		return null;
+		return false;
 	}
 
 	return (

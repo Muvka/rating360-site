@@ -5,7 +5,7 @@ import SubordinateItem from './SubordinateItem.jsx';
 
 const SubordinateList = ({ subordinates = [], className = '' }) => {
 	if (!subordinates.length) {
-		return null;
+		return false;
 	}
 
 	return (

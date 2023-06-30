@@ -22,7 +22,7 @@ const Logotype = ({ className = '' }) => {
 					'logotype__link--inactive': url === '/'
 				})}
 			>
-				{props.app?.name}
+				{props.shared?.app?.name}
 			</Link>
 		</div>
 	);

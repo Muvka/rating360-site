@@ -6,7 +6,7 @@ const YoutubePlayer = ({ videoId = '', className = '' }) => {
 	const videoUrl = `https://www.youtube.com/embed/${videoId}?rel=0&showinfo=0&autoplay=1`;
 
 	if (!videoId) {
-		return null;
+		return false;
 	}
 
 	return (

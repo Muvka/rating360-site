@@ -46,7 +46,7 @@ class TemplateImport implements OnEachRow, WithHeadingRow, SkipsEmptyRows
         TemplateMarker::create([
             'rating_template_id' => $this->template->id,
             'rating_competence_id' => $this->competence->id,
-            'text' => trim($row['povedenceskie_markery']),
+            'text' => Str::ucfirst(trim($row['povedenceskie_markery'])),
             'rating_value_id' => $row['nomer_cennosti'] ?? null,
             'answer_type' => isset($row['varianty_otvetov']) && trim($row['varianty_otvetov']) ? 'text' : 'default',
             'sort' => $this->markerSort++,

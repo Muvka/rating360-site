@@ -1,12 +1,18 @@
 import React, { useMemo, useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import clsx from 'clsx';
+import toast from 'react-hot-toast';
 
+import RatingFormHeader from './RatingFormHeader.jsx';
 import RatingFormBlock from './RatingFormBlock.jsx';
-import arrowLeftIconId from '../../../images/shared/icons/icon-arrow-left.svg';
-import arrowRightIconId from '../../../images/shared/icons/icon-arrow-right.svg';
+import RatingFormFooter from './RatingFormFooter.jsx';
 
-const RatingForm = ({ blocks = [], employeeName = '', className = '' }) => {
+const RatingForm = ({
+	blocks = [],
+	ratingId = '0',
+	employee = {},
+	className = ''
+}) => {
 	const flatMarkers = useMemo(() => {
 		return blocks
 			.map(block => {
@@ -36,38 +42,37 @@ const RatingForm = ({ blocks = [], employeeName = '', className = '' }) => {
 				return acc;
 		  }, [])
 		: blocks[step].markers;
-	const progressText = useMemo(() => {
-		if (!blocks.length) return 0;
-
-		return `${((step / blocks.length) * 100).toFixed(0)}% (${step + 1} из ${
-			blocks.length
-		})`;
-	}, [step, blocks]);
 
 	const submitHandler = event => {
 		event.preventDefault();
-		post(route('client.shared.rating.store'));
+
+		post(
+			route('client.rating.rating.saveResult', {
+				ratingId: ratingId,
+				employeeId: employee.id
+			}),
+			{
+				onSuccess: () => {
+					toast.success('Результаты оценки успешно сохранены.');
+				},
+				onError: data => {
+					toast.error('При отправке формы произошла ошибка!');
+				}
+			}
+		);
 	};
 
 	if (!blocks.length) {
-		return null;
+		return false;
 	}
 
 	return (
 		<form className={clsx('rating-form', className)} onSubmit={submitHandler}>
-			<header className='rating-form__header'>
-				{Boolean(employeeName) && (
-					<p className='title title--small rating-form__description'>
-						Я считаю, что.. {employeeName}
-					</p>
-				)}
-				<div
-					className='rating-form__progress'
-					style={{ '--progress-scale': step / blocks.length }}
-				>
-					<span className='rating-form__progress-text'>{progressText}</span>
-				</div>
-			</header>
+			<RatingFormHeader
+				employee={employee.fullName}
+				blocksNumber={blocks.length}
+				step={step}
+			/>
 			<RatingFormBlock
 				data={data}
 				setData={setData}
@@ -75,51 +80,14 @@ const RatingForm = ({ blocks = [], employeeName = '', className = '' }) => {
 				markers={markers}
 				className='rating-form__block'
 			/>
-			<footer className='rating-form__footer'>
-				{Boolean(step !== 0) && (
-					<button
-						type='button'
-						disabled={processing}
-						className='button rating-form__button'
-						onClick={() => setStep(step - 1)}
-					>
-						<svg
-							width='24'
-							height='24'
-							className='button__icon'
-							aria-hidden='true'
-						>
-							<use xlinkHref={`#${arrowLeftIconId}`} />
-						</svg>
-						Назад
-					</button>
-				)}
-				{step + 1 !== blocks.length ? (
-					<button
-						type='button'
-						className='button button--accent rating-form__button rating-form__button--right'
-						onClick={() => setStep(step + 1)}
-					>
-						Вперед
-						<svg
-							width='24'
-							height='24'
-							className='button__icon'
-							aria-hidden='true'
-						>
-							<use xlinkHref={`#${arrowRightIconId}`} />
-						</svg>
-					</button>
-				) : (
-					<button
-						type='submit'
-						disabled={processing}
-						className='button button--accent rating-form__button rating-form__button--right'
-					>
-						Завершить
-					</button>
-				)}
-			</footer>
+			<RatingFormFooter
+				step={step}
+				processing={processing}
+				showBackButton={step !== 0 && !Object.keys(errors).length}
+				showSubmitButton={step + 1 === blocks.length}
+				changeStep={setStep}
+				onSubmitClick={submitHandler}
+			/>
 		</form>
 	);
 };

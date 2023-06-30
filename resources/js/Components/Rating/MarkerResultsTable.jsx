@@ -2,9 +2,7 @@ import React from 'react';
 import clsx from 'clsx';
 
 const MarkerResultsTable = ({ markers = [], className = '' }) => {
-	if (!markers.length) {
-		return null;
-	}
+	if (!markers.length) return false;
 
 	return (
 		<div className={clsx('table', className)}>
@@ -28,19 +26,19 @@ const MarkerResultsTable = ({ markers = [], className = '' }) => {
 				</thead>
 				<tbody>
 					{markers.map(marker => (
-						<tr key={marker.id} className='table__row'>
+						<tr key={marker.text} className='table__row'>
 							<td className='table__cell'>{marker.text}</td>
 							<td className='table__cell table__cell--center'>
-								{marker.ratings?.outer}
+								{marker.ratings.outer}
 							</td>
 							<td className='table__cell table__cell--center'>
-								{marker.ratings?.inner}
+								{marker.ratings.inner}
 							</td>
 							<td className='table__cell table__cell--center'>
-								{marker.ratings?.manager}
+								{marker.ratings.manager}
 							</td>
 							<td className='table__cell table__cell--center'>
-								{marker.ratings?.self}
+								{marker.ratings.self}
 							</td>
 						</tr>
 					))}

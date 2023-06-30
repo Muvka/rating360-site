@@ -24,4 +24,14 @@ class ListResults extends ListRecords
 //            ResultChart::class,
         ];
     }
+
+    protected function getDefaultTableSortColumn(): ?string
+    {
+        return 'id';
+    }
+
+    protected function getDefaultTableSortDirection(): ?string
+    {
+        return 'desc';
+    }
 }

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Head, Link } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
+
 import SubordinateList from '../../Components/Rating/SubordinateList.jsx';
 import EmptyMessage from '../../Components/Shared/EmptyMessage.jsx';
 

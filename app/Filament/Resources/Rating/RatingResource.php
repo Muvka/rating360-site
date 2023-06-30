@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Rating;
 
 use App\Filament\Resources\Rating\RatingResource\Pages;
+use App\Models\Rating\MatrixTemplate;
 use App\Models\Rating\Rating;
 use App\Models\Rating\Result;
 use Filament\Forms\Components\Card;
@@ -15,6 +16,7 @@ use Filament\Tables;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use RyanChandler\FilamentProgressColumn\ProgressColumn;
 use stdClass;
@@ -84,14 +86,62 @@ class RatingResource extends Resource
                     ),
                 ProgressColumn::make('progress')
                     ->label('Прогресс')
-                    ->progress(function ($record) {
-                        return RatingResource::calculateProgress($record);
-                    })
-                    ->color(function ($record) {
-                        $progress = RatingResource::calculateProgress($record);
+                    ->progress(function (Rating $record): int {
+                        if ($record->status === 'closed') {
+                            return 100;
+                        }
 
-                        return $progress === 100 ? 'success' : ($progress < 50 ? 'danger' : 'primary');
-                    }),
+                        $totalClients = 0;
+                        $finishedClients = 0;
+                        $matrixTemplates = $record->matrix
+                            ->templates()
+                            ->with('clients')
+                            ->get();
+                        $results = Result::with('clients')
+                            ->where('rating_id', $record->id)
+                            ->get();
+
+                        foreach ($matrixTemplates as $matrixTemplate) {
+                            $matrixClients = $matrixTemplate->clients
+                                ->pluck('company_employee_id');
+                            $resultClients = $results->firstWhere('company_employee_id', $matrixTemplate->company_employee_id)
+                                ?->clients
+                                ?->pluck('company_employee_id');
+
+                            $intersect = $matrixClients->intersect($resultClients);
+
+                            $totalClients += $matrixClients->count();
+                            $finishedClients += $intersect->count();
+                        }
+
+//                        $clients = $record->matrix
+//                            ->templates()
+//                            ->select('id', 'company_employee_id')
+//                            ->with('clients:id,rating_matrix_template_id,company_employee_id')
+//                            ->get()
+//                            ->reduce(function (array $carry, MatrixTemplate $matrixTemplate) use ($record) {
+//                                $result = Result::select('id', 'rating_id', 'company_employee_id')
+//                                    ->withCount([
+//                                        'clients' => function (Builder $query) use ($matrixTemplate) {
+//                                            $query->whereIn('company_employee_id', $matrixTemplate->clients->pluck('company_employee_id'));
+//                                        }
+//                                    ])
+//                                    ->where('rating_id', $record->id)
+//                                    ->where('company_employee_id', $matrixTemplate->company_employee_id)
+//                                    ->first();
+//
+//                                $carry['total'] += $matrixTemplate->clients->count();
+//                                $carry['finished'] += $result ? $result->clients_count : 0;
+//
+//                                return $carry;
+//                            }, [
+//                                'total' => 0,
+//                                'finished' => 0,
+//                            ]);
+
+                        return (int) $totalClients === 0 ? $totalClients : round(($finishedClients / $totalClients) * 100);
+                    })
+                    ->color('success'),
                 TextColumn::make('created_at')
                     ->label('Дата создания')
                     ->date('d.m.Y')
@@ -197,15 +247,4 @@ class RatingResource extends Resource
             'edit' => Pages\EditRating::route('/{record}/edit'),
         ];
     }
-
-    public static function calculateProgress($record): int {
-        $clientsCount = $record->matrix->templates()->withCount('clients')->get()->sum('clients_count');
-        $completedClients = Result::where('rating_id', $record->id)->withCount('clients')->get()->sum('clients_count');
-dd($completedClients);
-        if ($clientsCount === 0) return 0;
-
-        return (int)round((5 / $clientsCount) * 100);
-    }
-
-//    private function
 }

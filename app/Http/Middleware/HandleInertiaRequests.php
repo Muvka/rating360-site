@@ -3,6 +3,8 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -37,10 +39,42 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         return array_merge(parent::share($request), [
-            'app.name' => config('app.name'),
-            'auth.user' => fn () => $request->user()
+            'shared.app.name' => config('app.name'),
+            'shared.auth.user' => fn() => $request->user()
                 ? $request->user()->only('fullName')
                 : null,
+            'shared.navigation.main' => $this->getMainNavigation()
         ]);
+    }
+
+    private function getMainNavigation(): array
+    {
+        $currentRouteName = Route::currentRouteName();
+
+        $items = [
+            [
+                'id' => 'home',
+                'label' => 'Доступные оценки',
+                'href' => route('client.shared.home'),
+                'isCurrent' => $currentRouteName === 'client.shared.home',
+            ],
+            [
+                'id' => 'report',
+                'label' => 'Мой отчёт',
+                'href' => route('client.rating.report.index'),
+                'isCurrent' => $currentRouteName === 'client.rating.report.index',
+            ],
+        ];
+
+        if (Auth::user()?->employee?->isManager()) {
+            $items[] = [
+                'id' => 'manager',
+                'label' => 'Результаты сотрудников',
+                'href' => route('client.company.subordinates.index'),
+                'isCurrent' => $currentRouteName === 'client.company.subordinates.index',
+            ];
+        }
+
+        return $items;
     }
 }

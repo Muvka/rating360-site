@@ -21,8 +21,6 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
-            $table->float('avg_rating', 5, 4)
-                ->nullable();
             $table->set('type', ['self', 'manager', 'inner', 'outer']);
             $table->timestamps();
             $table->softDeletes();

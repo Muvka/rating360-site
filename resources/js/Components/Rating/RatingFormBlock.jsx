@@ -39,7 +39,7 @@ const RatingFormBlock = ({
 	className = ''
 }) => {
 	if (!markers.length) {
-		return null;
+		return false;
 	}
 
 	return (

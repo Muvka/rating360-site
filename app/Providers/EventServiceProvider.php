@@ -4,8 +4,10 @@ namespace App\Providers;
 
 use App\Models\Rating\MatrixTemplate;
 use App\Models\Rating\Rating;
+use App\Models\Rating\ResultClient;
 use App\Observers\Rating\MatrixTemplateObserver;
 use App\Observers\Rating\RatingObserver;
+use App\Observers\Rating\ResultClientObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -31,6 +33,7 @@ class EventServiceProvider extends ServiceProvider
     {
         Rating::observe(RatingObserver::class);
         MatrixTemplate::observe(MatrixTemplateObserver::class);
+        ResultClient::observe(ResultClientObserver::class);
     }
 
     /**

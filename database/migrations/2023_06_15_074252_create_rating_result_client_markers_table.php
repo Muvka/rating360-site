@@ -16,7 +16,11 @@ return new class extends Migration {
                 ->constrained()
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
-            $table->string('competence', 255);
+            $table->string('competence', 255)
+                ->index();
+            $table->string('value', 128)
+                ->index()
+                ->nullable();
             $table->text('text');
             $table->tinyInteger('rating')
                 ->nullable();

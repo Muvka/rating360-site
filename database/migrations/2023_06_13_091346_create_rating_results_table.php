@@ -30,8 +30,10 @@ return new class extends Migration
             $table->string('subdivision', 255)
                 ->index();
 //            $table->text('direction');
-            $table->string('position', 255);
-            $table->string('level', 64);
+            $table->string('position', 255)
+                ->index();
+            $table->string('level', 64)
+                ->index();
             $table->timestamps();
             $table->softDeletes();
         });

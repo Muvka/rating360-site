@@ -24,7 +24,7 @@ class MatrixTemplateClient extends Model
         return $this->belongsTo(Employee::class, 'company_employee_id');
     }
 
-    public function employeeUser(): BelongsToThrough {
+    public function user(): BelongsToThrough {
         return $this->belongsToThrough(User::class, Employee::class);
     }
 }

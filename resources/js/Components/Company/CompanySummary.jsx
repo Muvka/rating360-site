@@ -2,6 +2,8 @@ import React from 'react';
 import clsx from 'clsx';
 
 const CompanySummary = ({ data = [], className = '' }) => {
+	if (!data.length) return false;
+
 	return (
 		<section className={clsx('company-summary', className)}>
 			<h2 className='title title--small company-summary__title'>
@@ -21,12 +23,12 @@ const CompanySummary = ({ data = [], className = '' }) => {
 					</thead>
 					<tbody>
 						{data.map(item => (
-							<tr key={item.id} className='company-summary__row'>
+							<tr key={item.competence} className='company-summary__row'>
 								<td className='text company-summary__cell'>
 									{item.competence}
 								</td>
 								<td className='text text--right company-summary__cell'>
-									{item.rating}
+									{item.averageRating}
 								</td>
 							</tr>
 						))}

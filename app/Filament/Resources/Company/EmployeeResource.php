@@ -3,11 +3,15 @@
 namespace App\Filament\Resources\Company;
 
 use App\Filament\Resources\Company\EmployeeResource\Pages;
+use App\Filament\Resources\Company\EmployeeResource\RelationManagers\SubordinatesRelationManager;
 use App\Filament\Resources\Shared\UserResource;
 use App\Models\Company\Employee;
 use Closure;
+use Filament\Forms\Components\HasManyRepeater;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -19,6 +23,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use stdClass;
 
 class EmployeeResource extends Resource
@@ -189,7 +194,7 @@ class EmployeeResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            SubordinatesRelationManager::class,
         ];
     }
 

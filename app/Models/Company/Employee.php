@@ -15,6 +15,10 @@ class Employee extends Model
 
     protected $table = 'company_employees';
 
+    public function isManager() {
+        return $this->is_manager;
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');

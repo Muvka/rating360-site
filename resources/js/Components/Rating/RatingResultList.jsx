@@ -7,7 +7,7 @@ const RatingResultList = ({ results = [], className = '' }) => {
 	const titleId = useId();
 
 	if (!results.length) {
-		return null;
+		return false;
 	}
 
 	return (
@@ -21,7 +21,7 @@ const RatingResultList = ({ results = [], className = '' }) => {
 			<ul className='rating-result-list__list'>
 				{results.map(result => (
 					<RatingResultItem
-						key={result.id}
+						key={result.competence}
 						name={result.competence}
 						averageRating={result.averageRating}
 						averageRatingWithoutSelf={result.averageRatingWithoutSelf}

@@ -9,7 +9,7 @@ const RatingInstruction = ({ className = '' }) => {
 	const titleId = useId();
 
 	if (!instruction) {
-		return null;
+		return false;
 	}
 
 	return (

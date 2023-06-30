@@ -1,11 +1,9 @@
 import React from 'react';
 import clsx from 'clsx';
 
-const EmployeeFeedback = ({
-	positives = [],
-	negatives = [],
-	className = ''
-}) => {
+const EmployeeFeedback = ({ data = {}, className = '' }) => {
+	if (!Object.keys(data).length) return false;
+
 	return (
 		<section className={clsx('employee-feedback', className)}>
 			<h2 className='title title--small employee-feedback__title'>
@@ -15,34 +13,20 @@ const EmployeeFeedback = ({
 				Отзывы, пожелания, замечания от коллег:
 			</p>
 			<div className='employee-feedback__grid'>
-				{Boolean(positives.length) && (
-					<div className='employee-feedback__block employee-feedback__block--positive'>
+				{Object.entries(data).map(([key, value], index) => (
+					<div key={index.toString()} className='employee-feedback__block'>
 						<h3 className='title title--tiny employee-feedback__caption'>
-							Что получается
+							{key}
 						</h3>
 						<ul className='employee-feedback__list'>
-							{positives.map((positive, index) => (
-								<li key={index.toString()} className='text'>
-									{positive}
+							{value.map(item => (
+								<li key={item.id} className='text'>
+									{item.answer}
 								</li>
 							))}
 						</ul>
 					</div>
-				)}
-				{Boolean(negatives.length) && (
-					<div className='employee-feedback__block employee-feedback__block--negative'>
-						<h3 className='title title--tiny employee-feedback__caption'>
-							Области развития
-						</h3>
-						<ul className='employee-feedback__list'>
-							{negatives.map((negative, index) => (
-								<li key={index.toString()} className='text'>
-									{negative}
-								</li>
-							))}
-						</ul>
-					</div>
-				)}
+				))}
 			</div>
 		</section>
 	);

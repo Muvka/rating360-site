@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import clsx from 'clsx';
 
 import RatingValue from './RatingValue.jsx';
@@ -10,6 +10,33 @@ const RatingResultBlock = ({
 	averageRatingWithoutSelf = 0,
 	className = ''
 }) => {
+	const clientData = useMemo(() => {
+		if (!Object.keys(averageRatingByClient).length) return [];
+
+		return [
+			{
+				id: 'outer',
+				label: 'Оценка внешних клиентов',
+				rating: averageRatingByClient.outer
+			},
+			{
+				id: 'inner',
+				label: 'Оценка внутренних клиентов',
+				rating: averageRatingByClient.inner
+			},
+			{
+				id: 'manager',
+				label: 'Оценка руководителя',
+				rating: averageRatingByClient.manager
+			},
+			{
+				id: 'self',
+				label: 'Самооценка',
+				rating: averageRatingByClient.self
+			}
+		];
+	}, [averageRatingByClient]);
+
 	return (
 		<li className={clsx('rating-result-block', className)}>
 			<header className='rating-result-block__header'>
@@ -21,64 +48,24 @@ const RatingResultBlock = ({
 					extraValue={averageRatingWithoutSelf}
 				/>
 			</header>
-			{Boolean(Object.keys(averageRatingByClient).length) && (
+			{Boolean(clientData.length) && (
 				<ul className='rating-result-block__list'>
-					<li className='rating-result-block__item'>
-						<p className='rating-result-block__text'>
-							Оценка внешних клиентов
-							<span className='rating-result-block__rating'>
-								{averageRatingByClient.outer.toFixed(1)} из 5
-							</span>
-						</p>
-						<div
-							className='rating-result-block__progress'
-							style={{
-								'--progress-scale': `${averageRatingByClient.outer / 5}`
-							}}
-						/>
-					</li>
-					<li className='rating-result-block__item'>
-						<p className='rating-result-block__text'>
-							Оценка внутренних клиентов
-							<span className='rating-result-block__rating'>
-								{averageRatingByClient.inner.toFixed(1)} из 5
-							</span>
-						</p>
-						<div
-							className='rating-result-block__progress'
-							style={{
-								'--progress-scale': `${averageRatingByClient.inner / 5}`
-							}}
-						/>
-					</li>
-					<li className='rating-result-block__item'>
-						<p className='rating-result-block__text'>
-							Оценка руководителя
-							<span className='rating-result-block__rating'>
-								{averageRatingByClient.manager.toFixed(1)} из 5
-							</span>
-						</p>
-						<div
-							className='rating-result-block__progress'
-							style={{
-								'--progress-scale': `${averageRatingByClient.manager / 5}`
-							}}
-						/>
-					</li>
-					<li className='rating-result-block__item'>
-						<p className='rating-result-block__text'>
-							Самооценка
-							<span className='rating-result-block__rating'>
-								{averageRatingByClient.self.toFixed(1)} из 5
-							</span>
-						</p>
-						<div
-							className='rating-result-block__progress'
-							style={{
-								'--progress-scale': `${averageRatingByClient.self / 5}`
-							}}
-						/>
-					</li>
+					{clientData.map(client => (
+						<li key={client.id} className='rating-result-block__item'>
+							<p className='rating-result-block__text'>
+								{client.label}
+								<span className='rating-result-block__rating'>
+									{client.rating} из 5
+								</span>
+							</p>
+							<div
+								className='rating-result-block__progress'
+								style={{
+									'--progress-scale': `${client.rating / 5}`
+								}}
+							/>
+						</li>
+					))}
 				</ul>
 			)}
 		</li>

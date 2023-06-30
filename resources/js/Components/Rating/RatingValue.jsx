@@ -25,7 +25,7 @@ const RatingValue = ({
 					className
 				)}
 			>
-				{value.toFixed(1)}
+				{Boolean(value) && value.toFixed(1)}
 				{Boolean(extraValue) && `/${extraValue.toFixed(1)}`}
 			</span>
 			<Tooltip

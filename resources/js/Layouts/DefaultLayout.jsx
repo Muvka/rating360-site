@@ -1,5 +1,6 @@
 import React from 'react';
 import { Head } from '@inertiajs/react';
+import { Toaster } from 'react-hot-toast';
 
 import PageHeader from '../Components/Shared/PageHeader';
 import PageSidebar from '../Components/Shared/PageSidebar.jsx';
@@ -20,6 +21,12 @@ const DefaultLayout = ({ children }) => {
 					{children}
 				</main>
 			</div>
+			<Toaster
+				toastOptions={{
+					className: 'toast',
+					duration: 5000
+				}}
+			/>
 		</>
 	);
 };

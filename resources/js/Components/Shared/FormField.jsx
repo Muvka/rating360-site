@@ -12,7 +12,7 @@ const FormField = ({
 	const inputId = useId();
 
 	if (!children) {
-		return null;
+		return false;
 	}
 
 	const ContainerComponent = fieldset ? 'fieldset' : 'div';
