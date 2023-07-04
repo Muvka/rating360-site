@@ -53,6 +53,11 @@ class AppGeneralSettingsPage extends SettingsPage
                                 ->required(),
                         ]),
                 ]),
+            Section::make('Разное')
+                ->schema([
+                    TextInput::make('moodle_token')
+                        ->label('Токен Moodle')
+                ])
         ];
     }
 }

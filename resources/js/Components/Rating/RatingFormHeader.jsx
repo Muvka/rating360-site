@@ -8,8 +8,6 @@ const RatingFormHeader = ({
 	className = ''
 }) => {
 	const progressText = useMemo(() => {
-		if (!blocksNumber) return 0;
-
 		return `${((step / (blocksNumber - 1)) * 100).toFixed(0)}% (${
 			step + 1
 		} из ${blocksNumber})`;

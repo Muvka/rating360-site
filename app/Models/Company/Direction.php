@@ -3,6 +3,7 @@
 namespace App\Models\Company;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Direction extends Model
@@ -11,8 +12,9 @@ class Direction extends Model
 
     protected $table = 'company_directions';
 
-    public function employees(): HasMany
+    public function employees(): BelongsToMany
     {
-        return $this->hasMany(Employee::class, 'company_direction_id');
+        return $this->belongsToMany(Employee::class, 'company_direction_employee', 'company_direction_id', 'company_employee_id')
+            ->withTimestamps();
     }
 }

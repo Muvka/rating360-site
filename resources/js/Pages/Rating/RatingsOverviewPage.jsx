@@ -5,7 +5,11 @@ import SeparateWrapper from '../../Components/Shared/SeparateWrapper.jsx';
 import RatingInstruction from '../../Components/Rating/RatingInstruction.jsx';
 import RatingList from '../../Components/Rating/RatingList.jsx';
 
-const HomePage = ({ title = '', instruction = {}, ratings = [] }) => {
+const RatingsOverviewPage = ({
+	title = '',
+	instruction = {},
+	ratings = []
+}) => {
 	const hasInstruction = Boolean(instruction.text || instruction.video);
 	const hasRatings = Boolean(ratings.length);
 
@@ -23,4 +27,4 @@ const HomePage = ({ title = '', instruction = {}, ratings = [] }) => {
 	);
 };
 
-export default HomePage;
+export default RatingsOverviewPage;

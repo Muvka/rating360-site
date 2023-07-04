@@ -1,9 +1,8 @@
 <?php
 
-use App\Http\Controllers\Company\SubordinateController;
 use App\Http\Controllers\Rating\RatingController;
-use App\Http\Controllers\Rating\ReportController;
-use App\Http\Controllers\Shared\HomeController;
+use App\Http\Controllers\Rating\ResultController;
+use App\Http\Controllers\User\AuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,30 +19,27 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth')
     ->name('client.')
     ->group(function () {
-        Route::get('/', HomeController::class)
-            ->name('shared.home');
+        Route::get('/', [RatingController::class, 'index'])
+            ->name('rating.ratings.index');
 
-        Route::prefix('rating')
-            ->controller(RatingController::class)
-            ->name('rating.')
+        Route::prefix('results')
+            ->controller(ResultController::class)
+            ->name('rating.results.')
             ->group(function () {
-                Route::get('/{rating}/{employee}', 'showForm')
-                    ->name('rating.showForm')
-                    ->can('view', 'rating');
-                Route::post('/{ratingId}/{employeeId}', 'saveResult')
-                    ->name('rating.saveResult');
-            });
-
-        Route::get('report', [ReportController::class, 'index'])
-            ->name('rating.report.index');
-        Route::get('report/export', [ReportController::class, 'export'])
-            ->name('rating.report.export');
-
-        Route::middleware('manager')
-            ->prefix('subordinates')
-            ->name('company.subordinates.')
-            ->group(function () {
-                Route::get('/', [SubordinateController::class, 'index'])->name('index');
-                Route::get('/{employeeId}', [SubordinateController::class, 'show'])->name('show');
+                Route::get('/', 'index')
+                    ->name('index');
+                Route::get('create/{rating}/{employee}', 'create')
+                    ->name('create')
+                    ->can('create', [\App\Models\Rating\Result::class, 'rating', 'employee']);
+                Route::get('{employee}', 'show')
+                    ->name('show');
+                Route::post('/{rating}/{employee}', 'store')
+                    ->name('store')
+                    ->can('create', [\App\Models\Rating\Result::class, 'rating', 'employee']);
+                Route::get('export/{employee}', 'export')
+                    ->name('export');
             });
     });
+
+Route::get('login', [AuthController::class, 'login'])
+    ->name('client.user.auth.login');

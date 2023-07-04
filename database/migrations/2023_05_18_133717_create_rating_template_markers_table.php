@@ -27,8 +27,6 @@ return new class extends Migration
                 ->cascadeOnUpdate()
                 ->nullOnDelete();
             $table->text('text');
-//            $table->set('value', ['respect', 'responsibility', 'development', 'team_leadership'])
-//                ->nullable();
             $table->set('answer_type', ['default', 'text'])
                 ->default('default');
             $table->unsignedInteger('sort')

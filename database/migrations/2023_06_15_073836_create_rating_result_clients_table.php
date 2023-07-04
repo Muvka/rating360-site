@@ -23,7 +23,6 @@ return new class extends Migration
                 ->cascadeOnDelete();
             $table->set('type', ['self', 'manager', 'inner', 'outer']);
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

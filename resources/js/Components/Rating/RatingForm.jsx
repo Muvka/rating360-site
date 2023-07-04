@@ -46,20 +46,14 @@ const RatingForm = ({
 	const submitHandler = event => {
 		event.preventDefault();
 
-		post(
-			route('client.rating.rating.saveResult', {
-				ratingId: ratingId,
-				employeeId: employee.id
-			}),
-			{
-				onSuccess: () => {
-					toast.success('Результаты оценки успешно сохранены.');
-				},
-				onError: data => {
-					toast.error('При отправке формы произошла ошибка!');
-				}
+		post(route('client.rating.results.store', [ratingId, employee.id]), {
+			onSuccess: () => {
+				toast.success('Результаты оценки успешно сохранены.');
+			},
+			onError: data => {
+				toast.error('При отправке формы произошла ошибка!');
 			}
-		);
+		});
 	};
 
 	if (!blocks.length) {

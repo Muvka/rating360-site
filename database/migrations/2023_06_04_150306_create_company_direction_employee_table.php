@@ -20,7 +20,6 @@ return new class extends Migration {
                 ->constrained()
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
-//                ->index('employee_direction_employee_id_foreign');
             $table->timestamps();
         });
     }

@@ -17,7 +17,7 @@ const Logotype = ({ className = '' }) => {
 				className='logotype__image'
 			/>
 			<Link
-				href={route('client.shared.home')}
+				href={route('client.rating.ratings.index')}
 				className={clsx('logotype__link', {
 					'logotype__link--inactive': url === '/'
 				})}

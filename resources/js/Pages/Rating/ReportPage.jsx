@@ -11,6 +11,7 @@ import downloadIconId from '../../../images/shared/icons/icon-download.svg';
 
 const ReportPage = ({
 	title = '',
+	exportRoute = '',
 	companySummary = [],
 	employeeFeedback = {},
 	shortResults = [],
@@ -28,11 +29,8 @@ const ReportPage = ({
 			</Head>
 			<div className='page-content__header'>
 				<h1 className='title title--light page-content__title'>{title}</h1>
-				{hasResults && (
-					<a
-						href={route('client.rating.report.export')}
-						className='button button--small'
-					>
+				{hasResults && Boolean(exportRoute) && (
+					<a href={exportRoute} className='button button--small'>
 						<svg
 							width='24'
 							height='24'

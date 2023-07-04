@@ -2,9 +2,8 @@
 
 namespace App\Providers;
 
-// use Illuminate\Support\Facades\Gate;
-use App\Models\Rating\Rating;
-use App\Policies\Rating\RatingPolicy;
+use App\Models\Rating\Result;
+use App\Policies\Rating\ResultPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -15,7 +14,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        Rating::class => RatingPolicy::class
+        Result::class => ResultPolicy::class,
     ];
 
     /**

@@ -7,7 +7,7 @@ const EmptyMessage = ({ text = '', className = '' }) => {
 		<div className={clsx('empty-message', className)}>
 			<p className='text empty-message__text'>{text}</p>
 			<Link
-				href={route('client.shared.home')}
+				href={route('client.rating.ratings.index')}
 				className='button button--accent empty-message__button'
 			>
 				На главную

@@ -108,9 +108,6 @@ class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows
             $directManager = $this->getEmployeeByFullName($row['rukovoditel_1_neposredstvennyi']);
 
             if ($directManager) {
-                $directManager->is_manager = true;
-                $directManager->save();
-
                 $employee->direct_manager_id = $directManager->id;
             }
         }
@@ -119,9 +116,6 @@ class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows
             $functionalManager = $this->getEmployeeByFullName($row['rukovoditel_2_funkcionalnyi']);
 
             if ($functionalManager) {
-                $functionalManager->is_manager = true;
-                $functionalManager->save();
-
                 $employee->functional_manager_id = $functionalManager->id;
             }
         }
@@ -186,8 +180,10 @@ class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows
 
     private function getRecord($model, string $attribute, string $value)
     {
+        $valueSearch = str_replace(['"', "'", '«', '»'], '', $value);
+
         $record = $model::whereRaw('REPLACE(REPLACE(REPLACE(REPLACE(LOWER(' . $attribute . '), \'"\', \'\'), \'«\', \'\'), \'»\', \'\'), "\'", \'\') = ?',
-            [strtolower($value)])
+            [Str::lower(trim($valueSearch))])
             ->first();
 
         if ( ! $record) {

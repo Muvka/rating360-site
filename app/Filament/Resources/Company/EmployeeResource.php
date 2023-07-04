@@ -3,27 +3,27 @@
 namespace App\Filament\Resources\Company;
 
 use App\Filament\Resources\Company\EmployeeResource\Pages;
-use App\Filament\Resources\Company\EmployeeResource\RelationManagers\SubordinatesRelationManager;
+use App\Filament\Resources\Company\EmployeeResource\RelationManagers\DirectSubordinatesRelationManager;
+use App\Filament\Resources\Company\EmployeeResource\RelationManagers\FunctionalSubordinatesRelationManager;
+use App\Filament\Resources\Company\EmployeeResource\RelationManagers\ManagerAccessRelationManager;
 use App\Filament\Resources\Shared\UserResource;
 use App\Models\Company\Employee;
+
+/**/
+
 use Closure;
-use Filament\Forms\Components\HasManyRepeater;
-use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Resources\Form;
+use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Contracts\HasTable;
-use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use stdClass;
 
 class EmployeeResource extends Resource
@@ -81,14 +81,15 @@ class EmployeeResource extends Resource
                         Select::make('company_employee_level_id')
                             ->label('Уровень сотрудника')
                             ->relationship('level', 'name')
-                            ->required(),
-                        Toggle::make('is_manager')
-                            ->label('Руководитель')
                             ->reactive()
-                            ->columnSpanFull(),
+                            ->required()
+                            ->afterStateUpdated(function (?Employee $record, Select $component, $state) {
+                                $record->{$component->getName()} = $state;
+                                $record->saveQuietly();
+                            }),
                     ]),
                 Section::make('Руководители')
-                    ->hidden(fn(Closure $get) => $get('is_manager'))
+                    ->visible(fn(Closure $get) => ! $get('company_employee_level_id') || $get('company_employee_level_id') === '5')
                     ->columns()
                     ->schema([
                         Select::make('direct_manager_id')
@@ -121,6 +122,44 @@ class EmployeeResource extends Resource
                                 ->full_name)
                             ->searchable(),
                     ]),
+//                Section::make('Подчинённые')
+//                    ->visible(fn(Closure $get) => $get('company_employee_level_id') && $get('company_employee_level_id') !== '5')
+//                    ->columns()
+//                    ->schema([
+//                        Placeholder::make('Непосредтсвенные')
+//                            ->content(fn(Employee $record) => $record->directSubordinates()
+//                                ->with('user')
+//                                ->get()
+//                                ->pluck('user.fullName')
+//                                ->join(', ')),
+//                        Placeholder::make('Функциональные')
+//                            ->content(fn(Employee $record) => $record->functionalSubordinates()
+//                                ->with('user')
+//                                ->get()
+//                                ->pluck('user.fullName')
+//                                ->join(', ')),
+////                        TableRepeater::make('managerAccess')
+////                            ->relationship('managerAccess')
+////                        ->schema([
+////                            Select::make()
+////                        ]),
+//                        Select::make('managerAccess')
+//                            ->label('Тест')
+////                            ->relationship('managerAccess', 'user_id')
+//                            ->getSearchResultsUsing(
+//                                fn(string $search) => Employee::with('user')
+//                                    ->whereHas('user', function (Builder $query) use ($search) {
+//                                        $query->where('last_name', 'like', "%{$search}%");
+//                                    })
+//                                    ->limit(20)
+//                                    ->get()
+//                                    ->pluck('user.full_name', 'id'))
+//                            ->getOptionLabelUsing(fn($value): ?string => Employee::find($value)
+//                                ?->user
+//                                ->full_name)
+//                            ->searchable()
+//                            ->multiple(),
+//                    ]),
             ]);
     }
 
@@ -147,8 +186,8 @@ class EmployeeResource extends Resource
                 TextColumn::make('company.name')
                     ->label('Компания')
                     ->sortable(),
-                ToggleColumn::make('is_manager')
-                    ->label('Руководитель')
+                TextColumn::make('level.name')
+                    ->label('Уровень сотрудника')
                     ->sortable(),
             ])
             ->filters([
@@ -176,11 +215,6 @@ class EmployeeResource extends Resource
                 SelectFilter::make('level')
                     ->label('Уровень')
                     ->relationship('level', 'name'),
-                Filter::make('is_manager')
-                    ->query(fn(Builder $query): Builder => $query->where('is_manager', true))
-                    ->label('Только руководители')
-                    ->toggle()
-                    ->columnSpan(2),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -194,7 +228,11 @@ class EmployeeResource extends Resource
     public static function getRelations(): array
     {
         return [
-            SubordinatesRelationManager::class,
+            RelationGroup::make('Подчинённые', [
+                DirectSubordinatesRelationManager::class,
+                FunctionalSubordinatesRelationManager::class,
+            ]),
+            ManagerAccessRelationManager::class,
         ];
     }
 
@@ -210,10 +248,10 @@ class EmployeeResource extends Resource
     public static function getRelationTableSchema($withCompany = true): array
     {
         $tableSchema = [
-            TextColumn::make('user.full_name')
+            TextColumn::make('user.fullName')
                 ->label('Имя')
-                ->sortable()
-                ->searchable(),
+                ->sortable(['last_name'])
+                ->searchable(['first_name', 'last_name']),
         ];
 
         if ($withCompany) {

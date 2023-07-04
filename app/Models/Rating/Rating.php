@@ -14,14 +14,20 @@ class Rating extends Model
     protected $guarded = [];
 
     public function template(): BelongsTo {
-        return $this->belongsTo(Template::class, 'rating_template_id');
+        return $this->belongsTo(Template::class, 'rating_template_id')
+            ->withTrashed();
     }
 
     public function matrix(): BelongsTo {
-        return $this->belongsTo(Matrix::class, 'rating_matrix_id');
+        return $this->belongsTo(Matrix::class, 'rating_matrix_id')
+            ->withTrashed();
     }
 
     public function matrixTemplates(): HasMany {
         return $this->hasMany(MatrixTemplate::class, 'rating_matrix_id', 'rating_matrix_id');
+    }
+
+    public function results() :HasMany {
+        return $this->hasMany(Result::class);
     }
 }

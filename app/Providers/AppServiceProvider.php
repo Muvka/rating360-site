@@ -22,8 +22,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Auth::loginUsingId(273);
-
+        Auth::loginUsingId(1);
+//        Auth::logout();
         Filament::serving(function () {
             Filament::registerNavigationGroups([
                 NavigationGroup::make()

@@ -8,16 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Employee extends Model
 {
+    use SoftDeletes;
+
     protected $guarded = [];
 
     protected $table = 'company_employees';
-
-    public function isManager() {
-        return $this->is_manager;
-    }
 
     public function user(): BelongsTo
     {
@@ -46,7 +45,7 @@ class Employee extends Model
 
     public function directions(): BelongsToMany
     {
-        return $this->belongsToMany(Direction::class, 'company_direction_employee', 'company_employee_id','company_direction_id')
+        return $this->belongsToMany(Direction::class, 'company_direction_employee', 'company_employee_id', 'company_direction_id')
             ->withTimestamps();
     }
 
@@ -60,11 +59,6 @@ class Employee extends Model
         return $this->belongsTo(EmployeeLevel::class, 'company_employee_level_id');
     }
 
-    public function subordinates(): HasMany
-    {
-        return $this->hasMany(Employee::class, 'direct_manager_id', 'id');
-    }
-
     public function directManager(): BelongsTo
     {
         return $this->belongsTo(Employee::class, 'direct_manager_id');
@@ -73,5 +67,26 @@ class Employee extends Model
     public function functionalManager(): BelongsTo
     {
         return $this->belongsTo(Employee::class, 'functional_manager_id');
+    }
+
+    public function directSubordinates(): HasMany
+    {
+        return $this->hasMany(Employee::class, 'direct_manager_id', 'id');
+    }
+
+    public function functionalSubordinates(): HasMany
+    {
+        return $this->hasMany(Employee::class, 'functional_manager_id', 'id');
+    }
+
+    public function managerAccess(): BelongsToMany
+    {
+        return $this->belongsToMany(Employee::class, 'company_manager_access', 'manager_id', 'employee_id')
+            ->withTimestamps();
+    }
+
+    public function isManager(): bool
+    {
+        return $this->level || $this->level !== '5';
     }
 }

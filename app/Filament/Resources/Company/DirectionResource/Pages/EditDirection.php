@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Company\DirectionResource\Pages;
 
 use App\Filament\Resources\Company\DirectionResource;
+use App\Models\Company\Direction;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\EditRecord;
 
@@ -13,7 +14,9 @@ class EditDirection extends EditRecord
     protected function getActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            Actions\DeleteAction::make()
+                ->using(fn(Direction $record) => DirectionResource::deleteAction($record))
+                ->successRedirectUrl(DirectionResource::getUrl()),
         ];
     }
 }

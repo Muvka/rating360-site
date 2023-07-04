@@ -13,11 +13,11 @@ class EmployeeLevelSeeder extends Seeder
     public function run(): void
     {
         $levels = [
-            'Cпециалист',
             'Руководитель (ген.дир.)',
             'Руководитель 1 уровня',
             'Руководитель 2 уровня',
             'Руководитель 3 уровня',
+            'Специалист',
         ];
 
         foreach ($levels as $level) {

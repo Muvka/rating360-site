@@ -3,15 +3,18 @@
 namespace App\Filament\Resources\Company;
 
 use App\Filament\Resources\Company\SubdivisionResource\Pages;
+use App\Filament\Resources\Company\SubdivisionResource\RelationManagers\EmployeesRelationManager;
 use App\Models\Company\Subdivision;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
+use Illuminate\Support\Collection;
 use stdClass;
 
 class SubdivisionResource extends Resource
@@ -22,7 +25,7 @@ class SubdivisionResource extends Resource
 
     protected static ?int $navigationSort = 40;
 
-    protected static ?string $navigationIcon = 'heroicon-o-view-list';
+    protected static ?string $navigationIcon = 'heroicon-o-view-grid';
 
     protected static ?string $label = 'Подразделение';
 
@@ -68,17 +71,21 @@ class SubdivisionResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->action(fn(Subdivision $record) => static::deleteAction($record)),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\DeleteBulkAction::make()
+                    ->action(fn(Collection $records) => $records->each(
+                        fn(Subdivision $record) => static::deleteAction($record))
+                    ),
             ]);
     }
 
     public static function getRelations(): array
     {
         return [
-            //
+            EmployeesRelationManager::class,
         ];
     }
 
@@ -89,5 +96,22 @@ class SubdivisionResource extends Resource
             'create' => Pages\CreateSubdivision::route('/create'),
             'edit' => Pages\EditSubdivision::route('/{record}/edit'),
         ];
+    }
+
+    public static function deleteAction(Subdivision $record): bool
+    {
+        if ($record->employees->count()) {
+            Notification::make()
+                ->title('Внимание')
+                ->body('Подразделение "'.$record->name.'" нельзя удалить, пока у него есть сотрудники!')
+                ->danger()
+                ->send();
+
+            return false;
+        } else {
+            $record->delete();
+
+            return true;
+        }
     }
 }

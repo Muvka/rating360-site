@@ -7,7 +7,7 @@ const CompanySummary = ({ data = [], className = '' }) => {
 	return (
 		<section className={clsx('company-summary', className)}>
 			<h2 className='title title--small company-summary__title'>
-				Cводка о компании
+				Сводные данные по компании
 			</h2>
 			{Boolean(data.length) ? (
 				<table className='company-summary__table'>

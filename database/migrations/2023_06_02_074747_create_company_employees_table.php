@@ -16,8 +16,6 @@ return new class extends Migration {
                 ->constrained()
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
-            $table->boolean('is_manager')
-                ->default(false);
             $table->foreignId('direct_manager_id')
                 ->nullable()
                 ->references('id')
@@ -59,6 +57,7 @@ return new class extends Migration {
                 ->cascadeOnUpdate()
                 ->restrictOnDelete();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -55,14 +55,14 @@ class HandleInertiaRequests extends Middleware
             [
                 'id' => 'home',
                 'label' => 'Доступные оценки',
-                'href' => route('client.shared.home'),
-                'isCurrent' => $currentRouteName === 'client.shared.home',
+                'href' => route('client.rating.ratings.index'),
+                'isCurrent' => $currentRouteName === 'client.rating.ratings.index',
             ],
             [
                 'id' => 'report',
                 'label' => 'Мой отчёт',
-                'href' => route('client.rating.report.index'),
-                'isCurrent' => $currentRouteName === 'client.rating.report.index',
+                'href' => route('client.rating.results.show', Auth::user()?->employee?->id ?? 0),
+                'isCurrent' => $currentRouteName === 'client.rating.results.show',
             ],
         ];
 
@@ -70,8 +70,8 @@ class HandleInertiaRequests extends Middleware
             $items[] = [
                 'id' => 'manager',
                 'label' => 'Результаты сотрудников',
-                'href' => route('client.company.subordinates.index'),
-                'isCurrent' => $currentRouteName === 'client.company.subordinates.index',
+                'href' => route('client.rating.results.index'),
+                'isCurrent' => $currentRouteName === 'client.rating.results.index',
             ];
         }
 

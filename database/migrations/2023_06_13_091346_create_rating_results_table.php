@@ -29,7 +29,6 @@ return new class extends Migration
                 ->index();
             $table->string('subdivision', 255)
                 ->index();
-//            $table->text('direction');
             $table->string('position', 255)
                 ->index();
             $table->string('level', 64)

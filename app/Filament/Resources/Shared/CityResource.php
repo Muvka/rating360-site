@@ -7,12 +7,14 @@ use App\Filament\Resources\Shared\CityResource\RelationManagers\EmployeesRelatio
 use App\Models\Shared\City;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
+use Illuminate\Support\Collection;
 use stdClass;
 
 class CityResource extends Resource
@@ -70,10 +72,14 @@ class CityResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->action(fn(City $record) => static::deleteAction($record)),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\DeleteBulkAction::make()
+                    ->action(fn(Collection $records) => $records->each(
+                        fn(City $record) => static::deleteAction($record))
+                    ),
             ]);
     }
 
@@ -91,5 +97,22 @@ class CityResource extends Resource
             'create' => Pages\CreateCity::route('/create'),
             'edit' => Pages\EditCity::route('/{record}/edit'),
         ];
+    }
+
+    public static function deleteAction(City $record): bool
+    {
+        if ($record->employees->count()) {
+            Notification::make()
+                ->title('Внимание')
+                ->body('Город "'.$record->name.'" нельзя удалить, пока есть сотрудники, привязанные к городу!')
+                ->danger()
+                ->send();
+
+            return false;
+        } else {
+            $record->delete();
+
+            return true;
+        }
     }
 }

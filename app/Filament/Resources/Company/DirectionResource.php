@@ -3,15 +3,18 @@
 namespace App\Filament\Resources\Company;
 
 use App\Filament\Resources\Company\DirectionResource\Pages;
+use App\Filament\Resources\Company\DirectionResource\RelationManagers\EmployeesRelationManager;
 use App\Models\Company\Direction;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
+use Illuminate\Support\Collection;
 use stdClass;
 
 class DirectionResource extends Resource
@@ -68,17 +71,21 @@ class DirectionResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->action(fn(Direction $record) => static::deleteAction($record)),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\DeleteBulkAction::make()
+                    ->action(fn(Collection $records) => $records->each(
+                        fn(Direction $record) => static::deleteAction($record))
+                    ),
             ]);
     }
 
     public static function getRelations(): array
     {
         return [
-            //
+            EmployeesRelationManager::class,
         ];
     }
 
@@ -89,5 +96,22 @@ class DirectionResource extends Resource
             'create' => Pages\CreateDirection::route('/create'),
             'edit' => Pages\EditDirection::route('/{record}/edit'),
         ];
+    }
+
+    public static function deleteAction(Direction $record): bool
+    {
+        if ($record->employees->count()) {
+            Notification::make()
+                ->title('Внимание')
+                ->body('Направление "'.$record->name.'" нельзя удалить, пока у него есть сотрудники!')
+                ->danger()
+                ->send();
+
+            return false;
+        } else {
+            $record->delete();
+
+            return true;
+        }
     }
 }

@@ -36,7 +36,6 @@ class CreateMatrix extends CreateRecord
                                 ->disableItemMovement(false)
                                 ->createItemButtonLabel('Добавить шаблон')
                                 ->orderable()
-                                ->columns()
                                 ->required()
                                 ->schema(MatrixResource::getTemplateFormSchema()),
                         ]),

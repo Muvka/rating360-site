@@ -3,15 +3,18 @@
 namespace App\Filament\Resources\Company;
 
 use App\Filament\Resources\Company\EmployeePositionResource\Pages;
+use App\Filament\Resources\Company\EmployeePositionResource\RelationManagers\EmployeesRelationManager;
 use App\Models\Company\EmployeePosition;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
+use Illuminate\Support\Collection;
 use stdClass;
 
 class EmployeePositionResource extends Resource
@@ -68,17 +71,21 @@ class EmployeePositionResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->action(fn(EmployeePosition $record) => static::deleteAction($record)),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\DeleteBulkAction::make()
+                    ->action(fn(Collection $records) => $records->each(
+                        fn(EmployeePosition $record) => static::deleteAction($record))
+                    ),
             ]);
     }
 
     public static function getRelations(): array
     {
         return [
-            //
+            EmployeesRelationManager::class,
         ];
     }
 
@@ -89,5 +96,22 @@ class EmployeePositionResource extends Resource
             'create' => Pages\CreateEmployeePosition::route('/create'),
             'edit' => Pages\EditEmployeePosition::route('/{record}/edit'),
         ];
+    }
+
+    public static function deleteAction(EmployeePosition $record): bool
+    {
+        if ($record->employees->count()) {
+            Notification::make()
+                ->title('Внимание')
+                ->body('Должность "'.$record->name.'" нельзя удалить, пока у неё есть сотрудники!')
+                ->danger()
+                ->send();
+
+            return false;
+        } else {
+            $record->delete();
+
+            return true;
+        }
     }
 }
