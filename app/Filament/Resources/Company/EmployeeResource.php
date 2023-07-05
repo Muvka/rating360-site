@@ -105,7 +105,9 @@ class EmployeeResource extends Resource
                                 ?->user
                                 ->full_name)
                             ->searchable()
-                            ->required(),
+                            ->required(
+                                fn(Closure $get) => ! in_array($get('company_employee_level_id'), ['1', '2'])
+                            ),
                         Select::make('functional_manager_id')
                             ->label('Функциональный')
                             ->getSearchResultsUsing(
