@@ -89,7 +89,6 @@ class EmployeeResource extends Resource
                             }),
                     ]),
                 Section::make('Руководители')
-                    ->visible(fn(Closure $get) => ! $get('company_employee_level_id') || $get('company_employee_level_id') === '5')
                     ->columns()
                     ->schema([
                         Select::make('direct_manager_id')
@@ -122,44 +121,6 @@ class EmployeeResource extends Resource
                                 ->full_name)
                             ->searchable(),
                     ]),
-//                Section::make('Подчинённые')
-//                    ->visible(fn(Closure $get) => $get('company_employee_level_id') && $get('company_employee_level_id') !== '5')
-//                    ->columns()
-//                    ->schema([
-//                        Placeholder::make('Непосредтсвенные')
-//                            ->content(fn(Employee $record) => $record->directSubordinates()
-//                                ->with('user')
-//                                ->get()
-//                                ->pluck('user.fullName')
-//                                ->join(', ')),
-//                        Placeholder::make('Функциональные')
-//                            ->content(fn(Employee $record) => $record->functionalSubordinates()
-//                                ->with('user')
-//                                ->get()
-//                                ->pluck('user.fullName')
-//                                ->join(', ')),
-////                        TableRepeater::make('managerAccess')
-////                            ->relationship('managerAccess')
-////                        ->schema([
-////                            Select::make()
-////                        ]),
-//                        Select::make('managerAccess')
-//                            ->label('Тест')
-////                            ->relationship('managerAccess', 'user_id')
-//                            ->getSearchResultsUsing(
-//                                fn(string $search) => Employee::with('user')
-//                                    ->whereHas('user', function (Builder $query) use ($search) {
-//                                        $query->where('last_name', 'like', "%{$search}%");
-//                                    })
-//                                    ->limit(20)
-//                                    ->get()
-//                                    ->pluck('user.full_name', 'id'))
-//                            ->getOptionLabelUsing(fn($value): ?string => Employee::find($value)
-//                                ?->user
-//                                ->full_name)
-//                            ->searchable()
-//                            ->multiple(),
-//                    ]),
             ]);
     }
 
