@@ -51,7 +51,7 @@ class ResultResource extends Resource
                             );
                         }
                     ),
-                TextColumn::make('employee.user.full_name')
+                TextColumn::make('employee.full_name')
                     ->label('Сотрудник')
                     ->sortable(),
                 TextColumn::make('rating.launched_at')
