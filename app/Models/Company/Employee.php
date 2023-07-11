@@ -87,6 +87,6 @@ class Employee extends Model
 
     public function isManager(): bool
     {
-        return $this->level || $this->level !== '5';
+        return $this->level && (int)$this->level->id !== 5;
     }
 }

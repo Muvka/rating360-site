@@ -16,10 +16,10 @@
                 <td>{{$result['competence']}}</td>
                 <td>{{$result['averageRating']}}</td>
                 <td>{{$result['averageRatingWithoutSelf']}}</td>
-                <td>{{$result['ratings']['outer']}}</td>
-                <td>{{$result['ratings']['inner']}}</td>
-                <td>{{$result['ratings']['manager']}}</td>
-                <td>{{$result['ratings']['self']}}</td>
+                <td>{{$result['ratings']['outer'] ?? '?'}}</td>
+                <td>{{$result['ratings']['inner'] ?? '?'}}</td>
+                <td>{{$result['ratings']['manager'] ?? '?'}}</td>
+                <td>{{$result['ratings']['self'] ?? '?'}}</td>
             </tr>
         @endforeach
     </tbody>

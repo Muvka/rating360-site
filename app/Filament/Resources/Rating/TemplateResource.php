@@ -2,12 +2,10 @@
 
 namespace App\Filament\Resources\Rating;
 
-use App\Filament\Resources\Rating\TemplateResource\RelationManagers\MarkersRelationManager;
+use App\Filament\Resources\Rating\TemplateResource\RelationManagers\CompetencesRelationManager;
 use App\Filament\Resources\Rating\TemplateResource\Pages;
 use App\Models\Rating\Template;
 use Filament\Forms\Components\Card;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -38,7 +36,13 @@ class TemplateResource extends Resource
         return $form
             ->schema([
                 Card::make()
-                    ->schema(static::getGeneralFormSchema()),
+                    ->schema([
+                        TextInput::make('name')
+                            ->label('Название')
+                            ->placeholder('Общий шаблон')
+                            ->maxLength(128)
+                            ->required(),
+                    ]),
             ]);
     }
 
@@ -79,7 +83,7 @@ class TemplateResource extends Resource
     public static function getRelations(): array
     {
         return [
-            MarkersRelationManager::class
+            CompetencesRelationManager::class
         ];
     }
 
@@ -89,17 +93,6 @@ class TemplateResource extends Resource
             'index' => Pages\ListTemplates::route('/'),
             'create' => Pages\CreateTemplate::route('/create'),
             'edit' => Pages\EditTemplate::route('/{record}/edit'),
-        ];
-    }
-
-    public static function getGeneralFormSchema(): array
-    {
-        return [
-            TextInput::make('name')
-                ->label('Название')
-                ->placeholder('Общий шаблон')
-                ->maxLength(128)
-                ->required(),
         ];
     }
 }

@@ -46,9 +46,9 @@ const ReportPage = ({
 			<SeparateWrapper>
 				{hasResults && <RatingResultList results={shortResults} />}
 				{hasResults && <RatingResultGrid results={shortResults} />}
-				{hasSummary && <CompanySummary data={companySummary} />}
 				{hasFeedback && <EmployeeFeedback data={employeeFeedback} />}
 				{hasDetailed && <DetailedRatingResults results={detailedResults} />}
+				{hasSummary && <CompanySummary data={companySummary} />}
 			</SeparateWrapper>
 		</>
 	);

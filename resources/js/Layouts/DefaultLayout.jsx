@@ -17,7 +17,7 @@ const DefaultLayout = ({ children }) => {
 			<PageHeader className='page__header' />
 			<div className='page__grid container'>
 				<PageSidebar className='background-box page__sidebar' />
-				<main className='page-content background-box page__content'>
+				<main className='page-content page-content--with-padding background-box page__content page__content--fluid'>
 					{children}
 				</main>
 			</div>

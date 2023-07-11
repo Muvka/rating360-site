@@ -24,28 +24,16 @@
     border-radius: 50%;
 }
 
-.rating-link:not(.rating-link--disabled)::before {
+.rating-link:not(.rating-link--completed)::before {
     border: 2px solid var(--color-border-primary);
 }
 
-.rating-link:not(.rating-link--disabled) .rating-link__icon {
-    color: var(--color-brand-primary);
-}
-
-.rating-link--disabled {
-    pointer-events: none;
-}
-
-.rating-link--disabled::before {
+.rating-link--completed::before {
     background-color: var(--color-success);
     background-image: url('../images/rating/rating-link/check.svg');
     background-repeat: no-repeat;
     background-position: center;
     background-size: 12px;
-}
-
-.rating-link--disabled .rating-link__icon {
-    opacity: 0.3;
 }
 
 .rating-link:hover {
@@ -74,6 +62,8 @@
 }
 
 .rating-link__icon {
+    color: var(--color-brand-primary);
+
     transition: color 200ms ease;
 }
 

@@ -11,7 +11,7 @@ use App\Models\Rating\MatrixTemplateClient;
 use App\Models\Rating\Rating;
 use App\Models\Rating\Result;
 use App\Models\Rating\ResultClientMarker;
-use App\Models\Rating\TemplateMarker;
+use App\Models\Rating\CompetenceMarker;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -27,6 +27,8 @@ class ResultController extends Controller
 {
     public function index(): Response
     {
+        $this->authorize('viewAny', Result::class);
+
         $subordinates = Employee::with('user')
             ->where('direct_manager_id', Auth::user()?->employee?->id)
             ->get();
@@ -45,26 +47,24 @@ class ResultController extends Controller
 
     public function create(Rating $rating, Employee $employee): Response
     {
+        $this->authorize('create', [Result::class, $rating, $employee]);
+
         $rating->load('template');
         $employee->load('user');
 
         $competences = Competence::select('id', 'name', 'sort')
-            ->with('markers', function (Builder $query) use ($rating) {
+            ->with('markers', function (Builder $query) {
                 $query->select(
                     'id',
                     'rating_competence_id',
-                    'rating_template_id',
                     'text',
                     'answer_type',
                     'sort'
                 )
-                    ->where('rating_template_id', $rating->template->id)
                     ->orderBy('sort');
-            }
-            )
-            ->whereHas('markers', function (Builder $query) use ($rating) {
-                $query->select('id', 'rating_competence_id', 'rating_template_id')
-                    ->where('rating_template_id', $rating->template->id);
+            })
+            ->whereHas('templates', function (Builder $query) use ($rating) {
+                $query->where('rating_templates.id', $rating->template->id);
             })
             ->orderBy('sort')
             ->groupBy('id')
@@ -83,6 +83,8 @@ class ResultController extends Controller
 
     public function show(Employee $employee): Response
     {
+        $this->authorize('view', [Result::class, $employee]);
+
         $employee->load('user', 'company');
 
         $results = ResultClientMarker::select(
@@ -173,22 +175,12 @@ class ResultController extends Controller
 
     public function store(Rating $rating, Employee $employee, Request $request)
     {
-        $rating = $rating->load([
-            'template' => function (Builder $query) {
-                $query->select('id')
-                    ->with('markers', function (Builder $query) {
-                        $query->select(
-                            'id',
-                            'rating_template_id',
-                            'rating_competence_id',
-                            'rating_value_id',
-                            'text',
-                            'answer_type'
-                        )
-                            ->with('competence:id,name', 'value:id,name');
-                    });
-            }
-        ]);
+        $this->authorize('create', [Result::class, $rating, $employee]);
+
+        $markers = CompetenceMarker::whereHas('competence.templates.ratings', function (Builder $query) use ($rating) {
+            $query->where('id', $rating->id);
+        })
+            ->get();
 
         $employee->load(
             'city:id,name',
@@ -207,7 +199,7 @@ class ResultController extends Controller
             })
             ->firstOrFail();
 
-        $validateData = $rating->template->markers->reduce(function (array $carry, TemplateMarker $marker) {
+        $validateData = $markers->reduce(function (array $carry, CompetenceMarker $marker) {
             if ($marker->answer_type === 'default') {
                 $carry['rules']['marker'.$marker->id] = 'required';
                 $carry['messages']['marker'.$marker->id] = 'Нужно выбрать один из вариантов';
@@ -248,18 +240,17 @@ class ResultController extends Controller
             });
         }
 
-        $client = $result->clients()->create([
+        $client = $result->clients()->firstOrCreate([
             'company_employee_id' => $client->company_employee_id,
             'type' => $client->type,
         ]);
 
+        $client->markers()->delete();
+
         foreach ($validator as $key => $answer) {
             $markerId = Str::replace('marker', '', $key);
 
-            $marker = $rating
-                ->template
-                ->markers
-                ->first(function ($marker) use ($markerId) {
+            $marker = $markers->first(function ($marker) use ($markerId) {
                     return $markerId === (string) $marker->id;
                 });
 

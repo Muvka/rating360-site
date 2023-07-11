@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Rating\Result;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -49,31 +50,63 @@ class HandleInertiaRequests extends Middleware
 
     private function getMainNavigation(): array
     {
-        $currentRouteName = Route::currentRouteName();
+        $route = Route::current();
 
         $items = [
             [
-                'id' => 'home',
+                'icon' => 'moreCircle',
                 'label' => 'Доступные оценки',
                 'href' => route('client.rating.ratings.index'),
-                'isCurrent' => $currentRouteName === 'client.rating.ratings.index',
+
+                'isCurrent' => $route->getName() === 'client.rating.ratings.index',
             ],
             [
-                'id' => 'report',
+                'icon' => 'document',
                 'label' => 'Мой отчёт',
                 'href' => route('client.rating.results.show', Auth::user()?->employee?->id ?? 0),
-                'isCurrent' => $currentRouteName === 'client.rating.results.show',
+                'isCurrent' => $route->getName() === 'client.rating.results.show' && $route->parameter('employee')?->id === Auth::user()?->employee?->id,
             ],
         ];
 
-        if (Auth::user()?->employee?->isManager()) {
+        if (Auth::user()?->can('viewAny', Result::class)) {
             $items[] = [
-                'id' => 'manager',
+                'icon' => 'users',
                 'label' => 'Результаты сотрудников',
                 'href' => route('client.rating.results.index'),
-                'isCurrent' => $currentRouteName === 'client.rating.results.index',
+                'isCurrent' => $route->getName() === 'client.rating.results.index',
             ];
         }
+
+//        if (Auth::user()?->isAdmin()) {
+        $items[] = [
+            'icon' => 'briefcase',
+            'label' => 'Общая статистика',
+            'href' => route('client.rating.statistics.general'),
+            'separate' => true,
+            'isCurrent' => $route->getName() === 'client.rating.statistics.general',
+        ];
+
+        $items[] = [
+            'icon' => 'activity',
+            'label' => 'Оценка по компетенциям',
+            'href' => route('client.rating.statistics.competence'),
+            'isCurrent' => $route->getName() === 'client.rating.statistics.competence',
+        ];
+
+        $items[] = [
+            'icon' => 'graph',
+            'label' => 'Данные по компании',
+            'href' => route('client.rating.statistics.company'),
+            'isCurrent' => $route->getName() === 'client.rating.statistics.company',
+        ];
+
+        $items[] = [
+            'icon' => 'grid',
+            'label' => 'Ценности',
+            'href' => route('client.rating.statistics.value'),
+            'isCurrent' => $route->getName() === 'client.rating.statistics.value',
+        ];
+//        }
 
         return $items;
     }

@@ -15,10 +15,10 @@
                 <tr>
                     <td>{{$result['competence']}}</td>
                     <td>{{$marker['text']}}</td>
-                    <td>{{$marker['ratings']['outer']}}</td>
-                    <td>{{$marker['ratings']['inner']}}</td>
-                    <td>{{$marker['ratings']['manager']}}</td>
-                    <td>{{$marker['ratings']['self']}}</td>
+                    <td>{{$marker['ratings']['outer'] ?? '?'}}</td>
+                    <td>{{$marker['ratings']['inner'] ?? '?'}}</td>
+                    <td>{{$marker['ratings']['manager'] ?? '?'}}</td>
+                    <td>{{$marker['ratings']['self'] ?? '?'}}</td>
                 </tr>
             @endforeach
         @endforeach

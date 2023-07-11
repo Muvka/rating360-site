@@ -16,7 +16,7 @@ const RatingLink = ({
 			className={clsx(
 				'rating-link',
 				{
-					'rating-link--disabled': isCompleted
+					'rating-link--completed': isCompleted
 				},
 				className
 			)}

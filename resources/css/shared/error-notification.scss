@@ -1,0 +1,37 @@
+.error-notification {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.error-notification__title {
+    margin: 0;
+}
+
+.error-notification__description {
+    max-width: 548px;
+    width: 100%;
+    margin: 0;
+}
+
+.error-notification__button {
+    width: 270px;
+}
+
+@media (max-width: 599px) {
+    .error-notification {
+        gap: 16px;
+    }
+}
+
+@media (min-width: 600px) and (max-width: 1199px) {
+    .error-notification {
+        gap: 20px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .error-notification {
+        gap: 24px;
+    }
+}

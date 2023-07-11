@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Rating\RatingController;
 use App\Http\Controllers\Rating\ResultController;
+use App\Http\Controllers\Rating\StaticticController;
 use App\Http\Controllers\User\AuthController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,15 +30,27 @@ Route::middleware('auth')
                 Route::get('/', 'index')
                     ->name('index');
                 Route::get('create/{rating}/{employee}', 'create')
-                    ->name('create')
-                    ->can('create', [\App\Models\Rating\Result::class, 'rating', 'employee']);
+                    ->name('create');
                 Route::get('{employee}', 'show')
                     ->name('show');
                 Route::post('/{rating}/{employee}', 'store')
-                    ->name('store')
-                    ->can('create', [\App\Models\Rating\Result::class, 'rating', 'employee']);
+                    ->name('store');
                 Route::get('export/{employee}', 'export')
                     ->name('export');
+            });
+
+        Route::prefix('statistics')
+            ->controller(StaticticController::class)
+            ->name('rating.statistics.')
+            ->group(function () {
+                Route::get('general', 'general')
+                    ->name('general');
+                Route::get('competence', 'competence')
+                    ->name('competence');
+                Route::get('company', 'company')
+                    ->name('company');
+                Route::get('value', 'value')
+                    ->name('value');
             });
     });
 

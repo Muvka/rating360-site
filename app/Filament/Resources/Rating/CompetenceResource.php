@@ -5,8 +5,11 @@ namespace App\Filament\Resources\Rating;
 use App\Filament\Resources\Rating\CompetenceResource\Pages;
 use App\Filament\Resources\Rating\CompetenceResource\RelationManagers;
 use App\Models\Rating\Competence;
+use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Filament\Forms;
 use Filament\Forms\Components\Card;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -43,6 +46,42 @@ class CompetenceResource extends Resource
                             ->placeholder('Навыки постановки целей')
                             ->maxLength(255)
                             ->required(),
+                        TableRepeater::make('markers')
+                            ->relationship()
+                            ->label('Маркеры')
+                            ->headers(['Текст', 'Ценность', 'Ответ'])
+                            ->createItemButtonLabel('Добавить маркер')
+                            ->emptyLabel('Нет маркеров')
+                            ->columnWidths([
+                                'rating_value_id' => '20%',
+                                'answer_type' => '20%',
+                            ])
+                            ->required()
+                            ->orderable()
+                            ->schema([
+                                Textarea::make('text')
+                                    ->label('Текст')
+                                    ->disableLabel()
+                                    ->placeholder('ведет за собой, показывает личный положительный пример')
+                                    ->rows(3)
+                                    ->maxLength(65535)
+                                    ->required(),
+                                Select::make('rating_value_id')
+                                    ->relationship('value', 'name')
+                                    ->label('Ценность')
+                                    ->disableLabel()
+                                    ->placeholder('Выберите'),
+                                Select::make('answer_type')
+                                    ->label('Ответы')
+                                    ->disableLabel()
+                                    ->disablePlaceholderSelection()
+                                    ->default('default')
+                                    ->options([
+                                        'default' => 'Из списка',
+                                        'text' => 'Текст',
+                                    ])
+                                    ->required(),
+                            ])
                     ])
             ]);
     }

@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('rating_template_markers', function (Blueprint $table) {
+        Schema::create('rating_competence_markers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('rating_template_id')
-                ->constrained()
-                ->cascadeOnUpdate()
-                ->cascadeOnDelete();
             $table->foreignId('rating_competence_id')
                 ->constrained()
                 ->cascadeOnUpdate()
@@ -40,6 +36,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('rating_template_markers');
+        Schema::dropIfExists('rating_competence_markers');
     }
 };

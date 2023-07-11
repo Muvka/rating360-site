@@ -3,6 +3,7 @@ import clsx from 'clsx';
 
 const FormField = ({
 	children = null,
+	idProp = 'id',
 	label = '',
 	hiddenLabel = false,
 	fieldset = false,
@@ -19,7 +20,7 @@ const FormField = ({
 	const LabelComponent = fieldset ? 'legend' : 'label';
 
 	const childrenWithProps = React.cloneElement(children, {
-		id: Boolean(label) && !fieldset ? inputId : undefined,
+		[idProp]: Boolean(label) && !fieldset ? inputId : undefined,
 		className: clsx(children.props?.className, 'form-field__input')
 	});
 

@@ -21,6 +21,8 @@
 @import "shared/button";
 @import "shared/form-field";
 @import "shared/text-input";
+@import "shared/select";
+@import "shared/checkbox";
 @import "shared/radio-group";
 @import "shared/radio-button";
 @import "shared/divider";
@@ -29,6 +31,7 @@
 @import "shared/logotype";
 @import "shared/main-navigation";
 @import "shared/youtube-player";
+@import "shared/error-notification";
 
 // User
 @import "user/user-widget";
@@ -47,6 +50,7 @@
 @import "rating/rating-value";
 @import "rating/rating-form";
 @import "rating/rating-form-block";
+@import "rating/statistic-filter";
 
 // Company
 @import "company/company-summary";

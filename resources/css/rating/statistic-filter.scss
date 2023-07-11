@@ -1,0 +1,27 @@
+.statistic-filter__form {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    align-items: start;
+}
+
+.statistic-filter__field--align-center {
+    align-self: center;
+}
+
+@media (max-width: 599px) {
+    .statistic-filter__form {
+        gap: 12px;
+    }
+}
+
+@media (min-width: 600px) and (max-width: 1199px) {
+    .statistic-filter__form {
+        gap: 14px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .statistic-filter__form {
+        gap: 16px;
+    }
+}

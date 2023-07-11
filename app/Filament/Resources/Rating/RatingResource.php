@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Rating;
 
 use App\Filament\Resources\Rating\RatingResource\Pages;
-use App\Models\Rating\MatrixTemplate;
 use App\Models\Rating\Rating;
 use App\Models\Rating\Result;
 use Filament\Forms\Components\Card;
@@ -16,7 +15,6 @@ use Filament\Tables;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
-use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use RyanChandler\FilamentProgressColumn\ProgressColumn;
 use stdClass;
@@ -47,16 +45,6 @@ class RatingResource extends Resource
                             ->placeholder('Оценка отдела IT')
                             ->maxLength(128)
                             ->required(),
-//                        Select::make('status')
-//                            ->label('Cтатус')
-//                            ->options([
-//                                'draft' => 'Черновик',
-//                                'in progress' => 'Идёт',
-//                                'paused' => 'На паузе',
-//                                'closed' => 'Закрыта',
-//                            ])
-//                            ->disablePlaceholderSelection()
-//                            ->default('draft'),
                         Select::make('rating_template_id')
                             ->relationship('template', 'name')
                             ->label('Шаблон')
@@ -113,31 +101,6 @@ class RatingResource extends Resource
                             $totalClients += $matrixClients->count();
                             $finishedClients += $intersect->count();
                         }
-
-//                        $clients = $record->matrix
-//                            ->templates()
-//                            ->select('id', 'company_employee_id')
-//                            ->with('clients:id,rating_matrix_template_id,company_employee_id')
-//                            ->get()
-//                            ->reduce(function (array $carry, MatrixTemplate $matrixTemplate) use ($record) {
-//                                $result = Result::select('id', 'rating_id', 'company_employee_id')
-//                                    ->withCount([
-//                                        'clients' => function (Builder $query) use ($matrixTemplate) {
-//                                            $query->whereIn('company_employee_id', $matrixTemplate->clients->pluck('company_employee_id'));
-//                                        }
-//                                    ])
-//                                    ->where('rating_id', $record->id)
-//                                    ->where('company_employee_id', $matrixTemplate->company_employee_id)
-//                                    ->first();
-//
-//                                $carry['total'] += $matrixTemplate->clients->count();
-//                                $carry['finished'] += $result ? $result->clients_count : 0;
-//
-//                                return $carry;
-//                            }, [
-//                                'total' => 0,
-//                                'finished' => 0,
-//                            ]);
 
                         return (int) $totalClients === 0 ? $totalClients : round(($finishedClients / $totalClients) * 100);
                     })
@@ -213,6 +176,7 @@ class RatingResource extends Resource
                         ->visible(fn(Rating $record): bool => in_array($record->status, ['in progress', 'paused']))
                         ->color('danger')
                         ->requiresConfirmation(),
+                    Tables\Actions\ViewAction::make(),
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make(),
                 ]),
@@ -244,6 +208,7 @@ class RatingResource extends Resource
         return [
             'index' => Pages\ListRatings::route('/'),
             'create' => Pages\CreateRating::route('/create'),
+            'view' => Pages\ViewRating::route('/{record}'),
             'edit' => Pages\EditRating::route('/{record}/edit'),
         ];
     }

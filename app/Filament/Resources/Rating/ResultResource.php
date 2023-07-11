@@ -26,6 +26,8 @@ class ResultResource extends Resource
 
     protected static ?string $pluralLabel = 'Статистика';
 
+    protected static bool $shouldIgnorePolicies = true;
+
     public static function form(Form $form): Form
     {
         return $form
