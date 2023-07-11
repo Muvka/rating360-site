@@ -12,10 +12,25 @@ return new class extends Migration {
     {
         Schema::create('company_employees', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')
-                ->constrained()
-                ->cascadeOnUpdate()
-                ->cascadeOnDelete();
+            $table->string('first_name', 64)
+                ->index();
+            $table->string('last_name', 64)
+                ->nullable()
+                ->index();
+            $table->string('middle_name', 64)
+                ->nullable()
+                ->index();
+            $table->string('full_name',200)
+                ->virtualAs("TRIM(CONCAT_WS(' ',last_name,first_name,middle_name))")
+                ->index();
+            $table->string('email')
+                ->unique();
+            $table->timestamp('email_verified_at')
+                ->nullable();
+            $table->string('password')
+                ->nullable();
+            $table->boolean('is_admin')
+                ->default(false);
             $table->foreignId('direct_manager_id')
                 ->nullable()
                 ->references('id')
@@ -34,6 +49,7 @@ return new class extends Migration {
                 ->cascadeOnUpdate()
                 ->restrictOnDelete();
             $table->foreignId('company_id')
+                ->nullable()
                 ->constrained()
                 ->cascadeOnUpdate()
                 ->restrictOnDelete();
@@ -43,6 +59,7 @@ return new class extends Migration {
                 ->cascadeOnUpdate()
                 ->restrictOnDelete();
             $table->foreignId('company_subdivision_id')
+                ->nullable()
                 ->constrained()
                 ->cascadeOnUpdate()
                 ->restrictOnDelete();
@@ -56,6 +73,7 @@ return new class extends Migration {
                 ->constrained()
                 ->cascadeOnUpdate()
                 ->restrictOnDelete();
+            $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
         });

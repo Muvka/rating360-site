@@ -104,11 +104,17 @@ class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows
             }
         }
 
+        $matrixTemplate = $this->martix->templates()->create(['company_employee_id' => $employee->id]);
+
         if ( ! $employee->directManager && $row['rukovoditel_1_neposredstvennyi']) {
             $directManager = $this->getEmployeeByFullName($row['rukovoditel_1_neposredstvennyi']);
 
             if ($directManager) {
                 $employee->direct_manager_id = $directManager->id;
+                $matrixTemplate->clients()->create([
+                    'company_employee_id' => $directManager->id,
+                    'type' => 'manager',
+                ]);
             }
         }
 
@@ -117,10 +123,12 @@ class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows
 
             if ($functionalManager) {
                 $employee->functional_manager_id = $functionalManager->id;
+                $matrixTemplate->clients()->create([
+                    'company_employee_id' => $functionalManager->id,
+                    'type' => 'manager',
+                ]);
             }
         }
-
-        $matrixTemplate = $this->martix->templates()->create(['company_employee_id' => $employee->id]);
 
         if (!empty($innerClients)) {
             foreach ($innerClients as $innerClient) {
@@ -155,19 +163,17 @@ class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows
         $employee->save();
     }
 
-    private function getEmployeeByFullName($fullName): Employee|null
+    private function getEmployeeByFullName(string $fullName): Employee|null
     {
         $nameParts = explode(' ', $fullName);
 
-        $foundEmployees = Employee::with('user')
-            ->whereHas('user', function ($query) use ($nameParts) {
-                $query->whereRaw('LOWER(first_name) = ?', [Str::lower($nameParts[1])])
-                    ->whereRaw('LOWER(last_name) = ?', [Str::lower($nameParts[0])]);
-            })->get();
+        $foundEmployees = Employee::whereRaw('LOWER(first_name) = ?', [Str::lower($nameParts[1])])
+            ->whereRaw('LOWER(last_name) = ?', [Str::lower($nameParts[0])])
+            ->get();
 
         if ($foundEmployees->count() > 1 && count($nameParts) === 3) {
-            $filteredEmployees = $foundEmployees->filter(function ($employee) use ($nameParts) {
-                return $employee->user->middle_name && (Str::lower($employee->user->middle_name) === Str::lower($nameParts[2]));
+            $filteredEmployees = $foundEmployees->filter(function (Employee $employee) use ($nameParts) {
+                return $employee->middle_name && (Str::lower($employee->middle_name) === Str::lower($nameParts[2]));
             });
 
             if ($filteredEmployees->isNotEmpty()) {

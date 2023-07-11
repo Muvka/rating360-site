@@ -3,24 +3,64 @@
 namespace App\Models\Company;
 
 use App\Models\Shared\City;
-use App\Models\Shared\User;
-use Illuminate\Database\Eloquent\Model;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasName;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
-class Employee extends Model
+class Employee extends Authenticatable implements FilamentUser, HasName
 {
-    use SoftDeletes;
-
-    protected $guarded = [];
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     protected $table = 'company_employees';
 
-    public function user(): BelongsTo
+    protected $fillable = [
+        'first_name',
+        'last_name',
+        'middle_name',
+        'full_name',
+        'email',
+        'password',
+        'direct_manager_id',
+        'functional_manager_id',
+        'city_id',
+        'company_id',
+        'company_division_id',
+        'company_subdivision_id',
+        'company_employee_position_id',
+        'company_employee_level_id',
+    ];
+
+    protected $guarded = ['is_admin'];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
+
+    public function canAccessFilament(): bool
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->isAdmin();
+    }
+
+    public function getFilamentName(): string
+    {
+        return $this->full_name;
+    }
+
+    public function isAdmin() {
+        return $this->is_admin;
     }
 
     public function city(): BelongsTo

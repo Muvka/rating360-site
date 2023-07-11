@@ -8,7 +8,7 @@ use App\Models\Rating\Result;
 use Inertia\Response;
 use Inertia\Inertia;
 
-class StaticticController extends Controller
+class StatisticController extends Controller
 {
     public function general(): Response
     {
@@ -20,24 +20,24 @@ class StaticticController extends Controller
 
     public function competence(): Response
     {
-        return Inertia::render('Shared/ErrorPage', [
-            'status' => 200,
+        return Inertia::render('Rating/CompetenceStatisticPage', [
+            'title' => 'Статистика по компетенциям',
             'formData' => $this->getFormData(),
         ]);
     }
 
     public function company(): Response
     {
-        return Inertia::render('Shared/ErrorPage', [
-            'status' => 200,
+        return Inertia::render('Rating/CompanyStatisticPage', [
+            'title' => 'Статистика по компании',
             'formData' => $this->getFormData(),
         ]);
     }
 
     public function value(): Response
     {
-        return Inertia::render('Shared/ErrorPage', [
-            'status' => 200,
+        return Inertia::render('Rating/ValueStatisticPage', [
+            'title' => 'Статистика по ценностям',
             'formData' => $this->getFormData(),
         ]);
     }

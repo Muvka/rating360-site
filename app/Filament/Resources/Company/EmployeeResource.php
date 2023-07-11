@@ -6,7 +6,6 @@ use App\Filament\Resources\Company\EmployeeResource\Pages;
 use App\Filament\Resources\Company\EmployeeResource\RelationManagers\DirectSubordinatesRelationManager;
 use App\Filament\Resources\Company\EmployeeResource\RelationManagers\FunctionalSubordinatesRelationManager;
 use App\Filament\Resources\Company\EmployeeResource\RelationManagers\ManagerAccessRelationManager;
-use App\Filament\Resources\Shared\UserResource;
 use App\Models\Company\Employee;
 
 /**/
@@ -15,6 +14,7 @@ use Closure;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\Resource;
@@ -24,6 +24,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Hash;
 use stdClass;
 
 class EmployeeResource extends Resource
@@ -45,9 +46,31 @@ class EmployeeResource extends Resource
         return $form
             ->schema([
                 Section::make('Пользователь')
-                    ->relationship('user')
                     ->columns(3)
-                    ->schema(UserResource::getGeneralFormSchema(false)),
+                    ->schema([
+                        TextInput::make('first_name')
+                            ->label('Имя')
+                            ->minLength(2)
+                            ->maxLength(64)
+                            ->required(),
+                        TextInput::make('middle_name')
+                            ->label('Отчество')
+                            ->maxLength(64),
+                        TextInput::make('last_name')
+                            ->label('Фамилия')
+                            ->maxLength(64),
+                        TextInput::make('password')
+                            ->label('Пароль')
+                            ->password()
+                            ->dehydrateStateUsing(fn($state) => Hash::make($state))
+                            ->dehydrated(fn($state) => filled($state)),
+                        TextInput::make('email')
+                            ->label('Адрес электронной почты')
+                            ->email()
+                            ->required()
+                            ->unique(ignoreRecord: true)
+                            ->maxLength(255),
+                    ]),
                 Section::make('Информация')
                     ->columns(3)
                     ->schema([
@@ -94,15 +117,11 @@ class EmployeeResource extends Resource
                         Select::make('direct_manager_id')
                             ->label('Непосредственный')
                             ->getSearchResultsUsing(
-                                fn(string $search) => Employee::with('user')
-                                    ->whereHas('user', function (Builder $query) use ($search) {
-                                        $query->where('last_name', 'like', "%{$search}%");
-                                    })
+                                fn(string $search) => Employee::where('last_name', 'like', "%{$search}%")
                                     ->limit(20)
                                     ->get()
-                                    ->pluck('user.full_name', 'id'))
+                                    ->pluck('full_name', 'id'))
                             ->getOptionLabelUsing(fn($value): ?string => Employee::find($value)
-                                ?->user
                                 ->full_name)
                             ->searchable()
                             ->required(
@@ -111,15 +130,11 @@ class EmployeeResource extends Resource
                         Select::make('functional_manager_id')
                             ->label('Функциональный')
                             ->getSearchResultsUsing(
-                                fn(string $search) => Employee::with('user')
-                                    ->whereHas('user', function (Builder $query) use ($search) {
-                                        $query->where('last_name', 'like', "%{$search}%");
-                                    })
+                                fn(string $search) => Employee::where('last_name', 'like', "%{$search}%")
                                     ->limit(20)
                                     ->get()
-                                    ->pluck('user.full_name', 'id'))
+                                    ->pluck('full_name', 'id'))
                             ->getOptionLabelUsing(fn($value): ?string => Employee::find($value)
-                                ?->user
                                 ->full_name)
                             ->searchable(),
                     ]),
@@ -141,7 +156,7 @@ class EmployeeResource extends Resource
                             );
                         }
                     ),
-                TextColumn::make('user.full_name')
+                TextColumn::make('full_name')
                     ->label('Имя')
                     ->wrap()
                     ->sortable(['last_name'])
@@ -211,7 +226,7 @@ class EmployeeResource extends Resource
     public static function getRelationTableSchema($withCompany = true): array
     {
         $tableSchema = [
-            TextColumn::make('user.fullName')
+            TextColumn::make('full_name')
                 ->label('Имя')
                 ->sortable(['last_name'])
                 ->searchable(['first_name', 'last_name']),

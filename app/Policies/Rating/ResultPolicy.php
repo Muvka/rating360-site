@@ -4,24 +4,23 @@ namespace App\Policies\Rating;
 
 use App\Models\Company\Employee;
 use App\Models\Rating\Rating;
-use App\Models\Shared\User;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
 class ResultPolicy
 {
-    public function viewAny(User $user): bool
+    public function viewAny(Employee $user): bool
     {
-        return (bool) $user->employee?->isManager();
+        return (bool) $user->isManager();
     }
 
-    public function view(User $user, Employee $employee): bool
+    public function view(Employee $user, Employee $employee): bool
     {
-        if ($user->employee?->id === $employee->id) {
+        if ($user->id === $employee->id) {
             return true;
         }
 
-        $managerId = Auth::user()?->employee?->id;
+        $managerId = Auth::user()?->id;
 
         // TODO: Переделать
         return (bool) Employee::whereHas('directManager', function (Builder $query) use ($managerId) {
@@ -33,7 +32,7 @@ class ResultPolicy
             ->find($employee->id);
     }
 
-    public function create(User $user, Rating $rating, Employee $employee): bool
+    public function create(Employee $user, Rating $rating, Employee $employee): bool
     {
         if ($rating->status !== 'in progress') {
             return false;
@@ -42,13 +41,13 @@ class ResultPolicy
         $isActive = Rating::whereHas('matrixTemplates', function (Builder $query) use ($user, $employee) {
             $query->where('company_employee_id', $employee->id)
                 ->whereHas('clients', function (Builder $query) use ($user) {
-                    $query->where('company_employee_id', $user->employee?->id);
+                    $query->where('company_employee_id', $user->id);
                 });
         })
 //            ->whereDoesntHave('results', function (Builder $query) use ($user, $employee) {
 //                $query->where('company_employee_id', $employee->id)
 //                    ->whereHas('clients', function (Builder $query) use ($user) {
-//                        $query->where('company_employee_id', $user->employee?->id);
+//                        $query->where('company_employee_id', $user->id);
 //                    });
 //            })
             ->find($rating->id);

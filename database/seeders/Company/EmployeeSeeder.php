@@ -1,14 +1,14 @@
 <?php
 
-namespace Database\Seeders\Shared;
+namespace Database\Seeders\Company;
 
 use App\Models\Company\Company;
+use App\Models\Company\Employee;
 use App\Models\Company\Subdivision;
-use App\Models\Shared\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
-class UserSeeder extends Seeder
+class EmployeeSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -18,7 +18,7 @@ class UserSeeder extends Seeder
         $json = file_get_contents(database_path('seeders/data/users.json'));
         $userData = json_decode($json);
 
-        $admin = User::create([
+        $admin = Employee::create([
             'first_name' => 'Admin',
             'email' => 'admin@localhost.ru',
             'password' => Hash::make('11111111'),
@@ -58,14 +58,10 @@ class UserSeeder extends Seeder
 
             list($first_name, $last_name) = explode(' ', $user->name);
 
-            $createdUser = User::create([
+            Employee::create([
                 'first_name' => $first_name,
                 'last_name' => $last_name,
                 'email' => $user->email,
-            ]);
-
-
-            $createdUser->employee()->create([
                 'company_id' => $company->id,
                 'company_subdivision_id' => $subdivision->id,
             ]);

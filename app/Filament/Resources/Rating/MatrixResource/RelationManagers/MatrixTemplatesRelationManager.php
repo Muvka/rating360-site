@@ -28,16 +28,16 @@ class MatrixTemplatesRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                TextColumn::make('employee.user.full_name')
+                TextColumn::make('employee.full_name')
                     ->label('Сотрудник')
                     ->weight('bold'),
                 TextColumn::make('employee.city.name')
                     ->label('Город'),
                 TextColumn::make('employee.company.name')
                     ->label('Компания'),
-                TextColumn::make('employee.directManager.user.full_name')
+                TextColumn::make('employee.directManager.full_name')
                     ->label('Непосредственный руководитель'),
-                TextColumn::make('employee.functionalManager.user.full_name')
+                TextColumn::make('employee.functionalManager.full_name')
                     ->label('Функциональный руководитель')
                     ->placeholder('-'),
                 TextColumn::make('inner_clients_count')

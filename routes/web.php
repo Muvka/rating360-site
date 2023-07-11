@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Rating\RatingController;
 use App\Http\Controllers\Rating\ResultController;
-use App\Http\Controllers\Rating\StaticticController;
+use App\Http\Controllers\Rating\StatisticController;
 use App\Http\Controllers\User\AuthController;
 use Illuminate\Support\Facades\Route;
 
@@ -40,8 +40,9 @@ Route::middleware('auth')
             });
 
         Route::prefix('statistics')
-            ->controller(StaticticController::class)
+            ->controller(StatisticController::class)
             ->name('rating.statistics.')
+            ->middleware('admin')
             ->group(function () {
                 Route::get('general', 'general')
                     ->name('general');

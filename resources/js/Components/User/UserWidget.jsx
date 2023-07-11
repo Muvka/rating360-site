@@ -11,7 +11,7 @@ const UserWidget = ({ className = '' }) => {
 
 	return (
 		<div className={clsx('user-widget', className)}>
-			<p className='user-widget__name'>{user.fullName}</p>
+			<p className='user-widget__name'>{user.full_name}</p>
 		</div>
 	);
 };

@@ -18,9 +18,9 @@ class RatingController extends Controller
                 $query->whereHas('clients')
                     ->with([
                         'clients' => function (Builder $query) {
-                            $employeeId = Auth::user()?->employee?->id ?? 0;
+                            $employeeId = Auth::user()?->id ?? 0;
 
-                            $query->with('user')
+                            $query->with('employee')
                                 ->where('company_employee_id', $employeeId);
                         }
                     ]);
@@ -34,7 +34,7 @@ class RatingController extends Controller
                         if ($client->type === 'self') {
                             $title = 'Cамооценка';
                         } else {
-                            $title = 'Оценка 360 сотрудника: '.$matrixTemplate->employee->user->fullName;
+                            $title = 'Оценка 360 сотрудника: '.$matrixTemplate->employee->full_name;
                         }
 
                         $isCompleted = ResultClient::with('result')

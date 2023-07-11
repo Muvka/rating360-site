@@ -5,7 +5,7 @@ const MarkerResultsTable = ({ markers = [], className = '' }) => {
 	if (!markers.length) return false;
 
 	return (
-		<div className={clsx('table', className)}>
+		<div className={clsx('table', 'scrollbar', className)}>
 			<table className='table__table'>
 				<thead>
 					<tr>

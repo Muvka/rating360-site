@@ -29,8 +29,7 @@ class ResultController extends Controller
     {
         $this->authorize('viewAny', Result::class);
 
-        $subordinates = Employee::with('user')
-            ->where('direct_manager_id', Auth::user()?->employee?->id)
+        $subordinates = Employee::where('direct_manager_id', Auth::user()?->id)
             ->get();
 
         return Inertia::render('Company/SubordinatesOverviewPage', [
@@ -38,7 +37,7 @@ class ResultController extends Controller
             'subordinates' => $subordinates->map(function ($subordinate) {
                 return [
                     'id' => $subordinate->id,
-                    'name' => $subordinate->user->fullName,
+                    'name' => $subordinate->full_name,
                     'href' => route('client.rating.results.show', $subordinate->id),
                 ];
             }),
@@ -50,7 +49,6 @@ class ResultController extends Controller
         $this->authorize('create', [Result::class, $rating, $employee]);
 
         $rating->load('template');
-        $employee->load('user');
 
         $competences = Competence::select('id', 'name', 'sort')
             ->with('markers', function (Builder $query) {
@@ -71,11 +69,11 @@ class ResultController extends Controller
             ->get();
 
         return Inertia::render('Rating/RatingPage', [
-            'title' => 'Оценка сотрудника - '.$employee->user->fullName,
+            'title' => 'Оценка сотрудника - '.$employee->full_name,
             'ratingId' => $rating->id,
             'employee' => [
                 'id' => $employee->id,
-                'fullName' => $employee->user->fullName,
+                'fullName' => $employee->full_name,
             ],
             'competences' => $competences,
         ]);
@@ -85,7 +83,7 @@ class ResultController extends Controller
     {
         $this->authorize('view', [Result::class, $employee]);
 
-        $employee->load('user', 'company');
+        $employee->load('company');
 
         $results = ResultClientMarker::select(
             'rating_result_client_id',
@@ -152,7 +150,7 @@ class ResultController extends Controller
             DB::raw('cast(avg(rating) as decimal(3, 2)) as averageRating')
         )
             ->whereHas('client.result', function (Builder $query) use ($employee) {
-                $query->where('company', $employee->company->name);
+                $query->where('company', $employee->company?->name);
             })
             ->whereHas('client.result.rating', function (Builder $query) {
                 $query->where('status', 'closed')
@@ -164,7 +162,7 @@ class ResultController extends Controller
             ->get();
 
         return Inertia::render('Rating/ReportPage', [
-            'title' => 'Отчёт по оценке 360 - '.$employee->user->fullName,
+            'title' => 'Отчёт по оценке 360 - '.$employee->full_name,
             'exportRoute' => route('client.rating.results.export', $employee->id),
             'companySummary' => $companySummary,
             'employeeFeedback' => $employeeFeedback,
@@ -193,7 +191,7 @@ class ResultController extends Controller
         );
 
         $client = MatrixTemplateClient::select('rating_matrix_template_id', 'company_employee_id', 'type')
-            ->where('company_employee_id', Auth::user()?->employee?->id)
+            ->where('company_employee_id', Auth::user()?->id)
             ->whereHas('template', function (Builder $query) use ($employee) {
                 $query->where('company_employee_id', $employee->id);
             })
@@ -272,9 +270,9 @@ class ResultController extends Controller
 
     public function export(Employee $employee)
     {
-        $employee->load('user', 'company');
+        $employee->load('company');
 
-        $fileName = sprintf('%s-%s.xlsx', $employee->user->fullName, $employee->company->name);
+        $fileName = sprintf('%s-%s.xlsx', $employee->full_name, $employee->company->name);
 
         $results = ResultClientMarker::select(
             'rating_result_client_id',

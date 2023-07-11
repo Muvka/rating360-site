@@ -42,7 +42,7 @@ class HandleInertiaRequests extends Middleware
         return array_merge(parent::share($request), [
             'shared.app.name' => config('app.name'),
             'shared.auth.user' => fn() => $request->user()
-                ? $request->user()->only('fullName')
+                ? $request->user()->only('full_name')
                 : null,
             'shared.navigation.main' => $this->getMainNavigation()
         ]);
@@ -63,8 +63,8 @@ class HandleInertiaRequests extends Middleware
             [
                 'icon' => 'document',
                 'label' => 'Мой отчёт',
-                'href' => route('client.rating.results.show', Auth::user()?->employee?->id ?? 0),
-                'isCurrent' => $route->getName() === 'client.rating.results.show' && $route->parameter('employee')?->id === Auth::user()?->employee?->id,
+                'href' => route('client.rating.results.show', Auth::user()?->id ?? 0),
+                'isCurrent' => $route->getName() === 'client.rating.results.show' && $route->parameter('employee')?->id === Auth::user()?->id,
             ],
         ];
 
@@ -77,36 +77,36 @@ class HandleInertiaRequests extends Middleware
             ];
         }
 
-//        if (Auth::user()?->isAdmin()) {
-        $items[] = [
-            'icon' => 'briefcase',
-            'label' => 'Общая статистика',
-            'href' => route('client.rating.statistics.general'),
-            'separate' => true,
-            'isCurrent' => $route->getName() === 'client.rating.statistics.general',
-        ];
+        if (Auth::check() && Auth::user()->isAdmin() && Result::exists()) {
+            $items[] = [
+                'icon' => 'briefcase',
+                'label' => 'Общая статистика',
+                'href' => route('client.rating.statistics.general'),
+                'separate' => true,
+                'isCurrent' => $route->getName() === 'client.rating.statistics.general',
+            ];
 
-        $items[] = [
-            'icon' => 'activity',
-            'label' => 'Оценка по компетенциям',
-            'href' => route('client.rating.statistics.competence'),
-            'isCurrent' => $route->getName() === 'client.rating.statistics.competence',
-        ];
+            $items[] = [
+                'icon' => 'activity',
+                'label' => 'Оценка по компетенциям',
+                'href' => route('client.rating.statistics.competence'),
+                'isCurrent' => $route->getName() === 'client.rating.statistics.competence',
+            ];
 
-        $items[] = [
-            'icon' => 'graph',
-            'label' => 'Данные по компании',
-            'href' => route('client.rating.statistics.company'),
-            'isCurrent' => $route->getName() === 'client.rating.statistics.company',
-        ];
+            $items[] = [
+                'icon' => 'graph',
+                'label' => 'Данные по компании',
+                'href' => route('client.rating.statistics.company'),
+                'isCurrent' => $route->getName() === 'client.rating.statistics.company',
+            ];
 
-        $items[] = [
-            'icon' => 'grid',
-            'label' => 'Ценности',
-            'href' => route('client.rating.statistics.value'),
-            'isCurrent' => $route->getName() === 'client.rating.statistics.value',
-        ];
-//        }
+            $items[] = [
+                'icon' => 'grid',
+                'label' => 'Ценности',
+                'href' => route('client.rating.statistics.value'),
+                'isCurrent' => $route->getName() === 'client.rating.statistics.value',
+            ];
+        }
 
         return $items;
     }

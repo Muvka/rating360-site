@@ -29,7 +29,7 @@ class ViewRating extends ViewRecord
                         ->items(
                             function (Model|null $record, Closure $get) {
                                 $matrixTemplates = $record?->matrixTemplates()
-                                    ->with('clients.employee.user', 'employee.user')
+                                    ->with('clients.employee', 'employee')
                                     ->get()
                                     ->flatMap(function (MatrixTemplate $template) use ($record) {
                                         $resultClients = ResultClient::whereHas('result', function (Builder $query) use ($record, $template) {
@@ -40,8 +40,8 @@ class ViewRating extends ViewRecord
 
                                         return $template->clients->map(function (MatrixTemplateClient $client) use ($template, $resultClients) {
                                             return [
-                                                $template->employee->user->fullName,
-                                                $client->employee->user->fullName,
+                                                $template->employee->full_name,
+                                                $client->employee->full_name,
                                                 $resultClients->contains(function (ResultClient $resultClient) use ($client) {
                                                     return $resultClient->company_employee_id === $client->employee->id;
                                                 })

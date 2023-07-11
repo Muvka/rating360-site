@@ -111,15 +111,11 @@ class MatrixResource extends Resource
         return [
             Select::make('company_employee_id')
                 ->getSearchResultsUsing(
-                    fn(string $search) => Employee::with('user')
-                        ->whereHas('user', function (Builder $query) use ($search) {
-                            $query->where('last_name', 'like', "%{$search}%");
-                        })
+                    fn(string $search) => Employee::where('last_name', 'like', "%{$search}%")
                         ->limit(20)
                         ->get()
-                        ->pluck('user.full_name', 'id'))
+                        ->pluck('full_name', 'id'))
                 ->getOptionLabelUsing(fn($value): ?string => Employee::find($value)
-                    ?->user
                     ->full_name)
                 ->label('Сотрудник')
                 ->searchable()
@@ -169,14 +165,12 @@ class MatrixResource extends Resource
                         ->label('Непосредственный руководитель')
                         ->content(fn(Closure $get): ?string => Employee::find($get('company_employee_id'))
                             ?->directManager
-                            ?->user
-                            ->full_name),
+                            ?->full_name),
                     Placeholder::make('functional_manager')
                         ->label('Функциональный руководитель')
                         ->content(fn(Closure $get): ?string => Employee::find($get('company_employee_id'))
                             ?->functionalManager
-                            ?->user
-                            ->full_name),
+                            ?->full_name),
                 ]),
             TableRepeater::make('clients')
                 ->relationship('editableClients')
@@ -188,15 +182,11 @@ class MatrixResource extends Resource
                 ->schema([
                     Select::make('company_employee_id')
                         ->getSearchResultsUsing(
-                            fn(string $search) => Employee::with('user')
-                                ->whereHas('user', function (Builder $query) use ($search) {
-                                    $query->where('last_name', 'like', "%{$search}%");
-                                })
+                            fn(string $search) => Employee::where('last_name', 'like', "%{$search}%")
                                 ->limit(20)
                                 ->get()
-                                ->pluck('user.full_name', 'id'))
+                                ->pluck('full_name', 'id'))
                         ->getOptionLabelUsing(fn($value): ?string => Employee::find($value)
-                            ?->user
                             ->full_name)
                         ->label('Сотрудник')
                         ->disableLabel()

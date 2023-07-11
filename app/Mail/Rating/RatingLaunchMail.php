@@ -30,7 +30,7 @@ class RatingLaunchMail extends Mailable //implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: $this->selfRating ? 'Cамооценка' : 'Оценка сотрудника - '.$this->employee->user->fullName,
+            subject: $this->selfRating ? 'Cамооценка' : 'Оценка сотрудника - '.$this->employee->full_name,
         );
     }
 

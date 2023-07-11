@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Models\Shared\User;
+use App\Models\Company\Employee;
 use App\Settings\AppGeneralSettings;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
@@ -38,13 +38,13 @@ class AuthController extends Controller
             return redirect()->away('https://edu.zhcom.ru/my');
         }
 
-        $user = User::where('email', $data['result']['email'])->first();
+        $user = Employee::where('email', $data['result']['email'])->first();
 
         if ( ! $user) {
             $nameParts = explode(' ', $data['result']["concat(firstname, ' ', lastname)"]);
 
             // TODO: Сохранять компанию и подразделение
-            $user = User::create([
+            $user = Employee::create([
                 'first_name' => $nameParts[0],
                 'last_name' => $nameParts[1],
                 'email' => $data['result']['email'],
