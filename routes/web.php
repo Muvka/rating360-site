@@ -35,8 +35,6 @@ Route::middleware('auth')
                     ->name('show');
                 Route::post('/{rating}/{employee}', 'store')
                     ->name('store');
-                Route::get('export/{employee}', 'export')
-                    ->name('export');
             });
 
         Route::prefix('statistics')

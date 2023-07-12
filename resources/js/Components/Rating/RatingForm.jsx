@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import clsx from 'clsx';
 import toast from 'react-hot-toast';
@@ -13,6 +13,9 @@ const RatingForm = ({
 	employee = {},
 	className = ''
 }) => {
+	const localStorageRatingName = useMemo(() => {
+		return `rating-${ratingId}-${employee.id}`;
+	}, [ratingId, employee]);
 	const flatMarkers = useMemo(() => {
 		return blocks
 			.map(block => {
@@ -20,13 +23,7 @@ const RatingForm = ({
 			})
 			.flat();
 	}, [blocks]);
-	const initialFormData = useMemo(() => {
-		return flatMarkers.reduce((acc, marker) => {
-			acc[`marker${marker.id}`] = '';
-			return acc;
-		}, {});
-	}, [flatMarkers]);
-	const { data, setData, post, processing, errors } = useForm(initialFormData);
+	const { data, setData, post, processing, errors } = useForm();
 	const [step, setStep] = useState(0);
 	const markers = Object.keys(errors).length
 		? Object.keys(errors).reduce((acc, key) => {
@@ -48,6 +45,7 @@ const RatingForm = ({
 
 		post(route('client.rating.results.store', [ratingId, employee.id]), {
 			onSuccess: () => {
+				localStorage.removeItem(localStorageRatingName);
 				toast.success('Результаты оценки успешно сохранены.');
 			},
 			onError: data => {
@@ -55,6 +53,27 @@ const RatingForm = ({
 			}
 		});
 	};
+
+	useEffect(() => {
+		const { step: savedStep, data: savedData } = localStorage.getItem(
+			localStorageRatingName
+		)
+			? JSON.parse(localStorage.getItem(localStorageRatingName))
+			: { step: 0, data: {} };
+
+		setData(savedData);
+		setStep(blocks.length <= savedStep ? blocks.length - 1 : savedStep);
+	}, []);
+
+	useEffect(() => {
+		localStorage.setItem(
+			localStorageRatingName,
+			JSON.stringify({
+				step: step,
+				data: data
+			})
+		);
+	}, [data, step]);
 
 	if (!blocks.length) {
 		return false;

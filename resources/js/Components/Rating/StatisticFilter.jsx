@@ -1,22 +1,14 @@
 import React, { useId } from 'react';
-import { useForm } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import clsx from 'clsx';
 
 import FormField from '../Shared/FormField.jsx';
 import Select from '../Shared/Select.jsx';
 import Checkbox from '../Shared/Checkbox.jsx';
 
-const StatisticFilter = ({ formData = {}, className = '' }) => {
-	const { data, setData, get, transform, processing } = useForm({
-		city: '',
-		company: '',
-		division: '',
-		subdivision: '',
-		direction: '',
-		level: '',
-		position: '',
-		self: false
-	});
+const StatisticFilter = ({ className = '' }) => {
+	const { formData = {}, filters = {} } = usePage().props;
+	const { data, setData, get, transform, processing } = useForm(filters);
 	const titleId = useId();
 
 	transform(data => {
@@ -56,7 +48,9 @@ const StatisticFilter = ({ formData = {}, className = '' }) => {
 							value={formData.cities.find(city => city.value === data.city)}
 							options={formData.cities}
 							isClearable
-							onChange={data => setData('city', data ? data.value : '')}
+							onChange={data => {
+								setData('city', data ? data.value : '');
+							}}
 						/>
 					</FormField>
 				)}
@@ -68,7 +62,9 @@ const StatisticFilter = ({ formData = {}, className = '' }) => {
 							)}
 							options={formData.companies}
 							isClearable
-							onChange={data => setData('company', data ? data.value : '')}
+							onChange={data => {
+								setData('company', data ? data.value : '');
+							}}
 						/>
 					</FormField>
 				)}
@@ -80,7 +76,9 @@ const StatisticFilter = ({ formData = {}, className = '' }) => {
 							)}
 							options={formData.divisions}
 							isClearable
-							onChange={data => setData('division', data ? data.value : '')}
+							onChange={data => {
+								setData('division', data ? data.value : '');
+							}}
 						/>
 					</FormField>
 				)}
@@ -92,7 +90,9 @@ const StatisticFilter = ({ formData = {}, className = '' }) => {
 							)}
 							options={formData.subdivisions}
 							isClearable
-							onChange={data => setData('subdivision', data ? data.value : '')}
+							onChange={data => {
+								setData('subdivision', data ? data.value : '');
+							}}
 						/>
 					</FormField>
 				)}
@@ -104,7 +104,9 @@ const StatisticFilter = ({ formData = {}, className = '' }) => {
 							)}
 							options={formData.directions}
 							isClearable
-							onChange={data => setData('direction', data ? data.value : '')}
+							onChange={data => {
+								setData('direction', data ? data.value : '');
+							}}
 						/>
 					</FormField>
 				)}
@@ -114,7 +116,9 @@ const StatisticFilter = ({ formData = {}, className = '' }) => {
 							value={formData.levels.find(level => level.value === data.level)}
 							options={formData.levels}
 							isClearable
-							onChange={data => setData('level', data ? data.value : '')}
+							onChange={data => {
+								setData('level', data ? data.value : '');
+							}}
 						/>
 					</FormField>
 				)}
@@ -126,15 +130,20 @@ const StatisticFilter = ({ formData = {}, className = '' }) => {
 							)}
 							options={formData.positions}
 							isClearable
-							onChange={data => setData('position', data ? data.value : '')}
+							onChange={data => {
+								setData('position', data ? data.value : '');
+							}}
 						/>
 					</FormField>
 				)}
+				// TODO: Исправить 'true'
 				<Checkbox
 					label='Показать с учётом самооценки'
 					checked={data.self}
 					className='statistic-filter__field statistic-filter__field--align-center'
-					onChange={event => setData('self', event.target.checked)}
+					onChange={event => {
+						setData('self', event.target.checked);
+					}}
 				/>
 				<button
 					type='submit'

@@ -6,6 +6,10 @@
     text-align: left;
 }
 
+.text--accent {
+    color: var(--color-brand-primary);
+}
+
 .text--bold {
     font-family: var(--font-title-primary);
     font-weight: 500;

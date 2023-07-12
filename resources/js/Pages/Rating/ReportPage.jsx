@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Head } from '@inertiajs/react';
+import html2pdf from 'html2pdf.js';
 
 import SeparateWrapper from '../../Components/Shared/SeparateWrapper.jsx';
 import CompanySummary from '../../Components/Company/CompanySummary.jsx';
@@ -17,10 +18,26 @@ const ReportPage = ({
 	shortResults = [],
 	detailedResults = []
 }) => {
+	const [disabled, setDisabled] = useState(false);
 	const hasResults = Boolean(shortResults.length);
 	const hasSummary = Boolean(companySummary.length);
 	const hasFeedback = Boolean(Object.keys(employeeFeedback).length);
 	const hasDetailed = Boolean(detailedResults.length);
+
+	const exportToPdf = async () => {
+		window.print();
+		// setDisabled(true);
+		// const contentElement = document.querySelector('.page-content');
+		//
+		// if (contentElement) {
+		// 	const options = {
+		// 		margin: [6, 0],
+		// 		html2canvas: { scale: 4 }
+		// 	};
+		// 	await html2pdf().set(options).from(contentElement).save(`${title}.pdf`);
+		// 	setDisabled(false);
+		// }
+	};
 
 	return (
 		<>
@@ -30,7 +47,12 @@ const ReportPage = ({
 			<div className='page-content__header'>
 				<h1 className='title title--light page-content__title'>{title}</h1>
 				{hasResults && Boolean(exportRoute) && (
-					<a href={exportRoute} className='button button--small'>
+					<button
+						type='button'
+						disabled={disabled}
+						className='button button--small'
+						onClick={exportToPdf}
+					>
 						<svg
 							width='24'
 							height='24'
@@ -40,7 +62,7 @@ const ReportPage = ({
 							<use xlinkHref={`#${downloadIconId}`} />
 						</svg>
 						Скачать
-					</a>
+					</button>
 				)}
 			</div>
 			<SeparateWrapper>

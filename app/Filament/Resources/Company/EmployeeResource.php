@@ -167,6 +167,9 @@ class EmployeeResource extends Resource
                 TextColumn::make('level.name')
                     ->label('Уровень сотрудника')
                     ->sortable(),
+                Tables\Columns\ToggleColumn::make('is_admin')
+                    ->label('Администратор')
+                    ->sortable()
             ])
             ->filters([
                 SelectFilter::make('city')

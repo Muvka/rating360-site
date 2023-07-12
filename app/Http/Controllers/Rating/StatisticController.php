@@ -5,16 +5,33 @@ namespace App\Http\Controllers\Rating;
 use App\Http\Controllers\Controller;
 use App\Models\Rating\Direction;
 use App\Models\Rating\Result;
+use Illuminate\Support\Facades\Request;
 use Inertia\Response;
 use Inertia\Inertia;
 
 class StatisticController extends Controller
 {
+    public function __construct()
+    {
+        Inertia::share([
+            'formData' => $this->getFormData(),
+            'filters' => Request::only([
+                'city',
+                'company',
+                'division',
+                'subdivision',
+                'direction',
+                'level',
+                'position',
+                'self'
+            ])
+        ]);
+    }
+
     public function general(): Response
     {
         return Inertia::render('Rating/GeneralStatisticPage', [
             'title' => 'Общая статистика',
-            'formData' => $this->getFormData(),
         ]);
     }
 
@@ -22,7 +39,6 @@ class StatisticController extends Controller
     {
         return Inertia::render('Rating/CompetenceStatisticPage', [
             'title' => 'Статистика по компетенциям',
-            'formData' => $this->getFormData(),
         ]);
     }
 
@@ -30,7 +46,6 @@ class StatisticController extends Controller
     {
         return Inertia::render('Rating/CompanyStatisticPage', [
             'title' => 'Статистика по компании',
-            'formData' => $this->getFormData(),
         ]);
     }
 
@@ -38,7 +53,6 @@ class StatisticController extends Controller
     {
         return Inertia::render('Rating/ValueStatisticPage', [
             'title' => 'Статистика по ценностям',
-            'formData' => $this->getFormData(),
         ]);
     }
 

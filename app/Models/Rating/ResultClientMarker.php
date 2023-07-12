@@ -2,6 +2,7 @@
 
 namespace App\Models\Rating;
 
+use App\Casts\Rating\ResultRating;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -13,7 +14,12 @@ class ResultClientMarker extends Model
 
     public $timestamps = false;
 
-    public function client(): BelongsTo {
+    protected $casts = [
+        'rating' => ResultRating::class
+    ];
+
+    public function client(): BelongsTo
+    {
         return $this->belongsTo(ResultClient::class, 'rating_result_client_id');
     }
 }

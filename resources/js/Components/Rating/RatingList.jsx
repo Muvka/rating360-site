@@ -1,19 +1,31 @@
-import React, { useId } from 'react';
+import React, { useId, useMemo } from 'react';
 import clsx from 'clsx';
 
 import RatingLink from './RatingLink.jsx';
 
 const RatingList = ({ ratings = [], className = '' }) => {
 	const titleId = useId();
+	const progress = useMemo(() => {
+		const completed = ratings.reduce((acc, rating) => {
+			return rating.isCompleted ? ++acc : acc;
+		}, 0);
+
+		return ratings.length ? `Оценено ${completed} из ${ratings.length}` : '';
+	}, [ratings]);
 
 	return (
 		<section
 			className={clsx('rating-list', className)}
 			aria-labelledby={titleId}
 		>
-			<h2 id={titleId} className='title title--small rating-list__title'>
-				Доступные оценки
-			</h2>
+			<header className='rating-list__header'>
+				<h2 id={titleId} className='title title--small rating-list__title'>
+					Доступные оценки
+				</h2>
+				{Boolean(progress) && (
+					<p className='text text--accent rating-list__progress'>{progress}</p>
+				)}
+			</header>
 			{ratings.length ? (
 				<ul className='rating-list__list'>
 					{ratings.map(rating => (
