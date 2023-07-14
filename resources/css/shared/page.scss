@@ -80,7 +80,7 @@
 
 @media (min-width: 1000px) {
     .page__grid {
-        grid-template-columns: minmax(180px, 1fr) 3.1756fr;
+        grid-template-columns: minmax(180px, 1fr) minmax(500px, 3.1756fr);
     }
 
     .page__sidebar {

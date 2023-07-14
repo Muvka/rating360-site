@@ -15,7 +15,6 @@ const StatisticFilter = ({ className = '' }) => {
 		const result = {};
 
 		for (let key in data) {
-			console.log(data[key]);
 			if (data[key]) {
 				result[key] = data[key];
 			}
