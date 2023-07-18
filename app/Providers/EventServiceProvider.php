@@ -5,15 +5,16 @@ namespace App\Providers;
 use App\Models\Company\Employee;
 use App\Models\Rating\MatrixTemplate;
 use App\Models\Rating\Rating;
-use App\Models\Rating\ResultClient;
+use App\Models\Statistic\Client;
+use App\Models\Statistic\Marker;
 use App\Observers\Company\EmployeeObserver;
 use App\Observers\Rating\MatrixTemplateObserver;
 use App\Observers\Rating\RatingObserver;
-use App\Observers\Rating\ResultClientObserver;
+use App\Observers\Statistic\ClientObserver;
+use App\Observers\Statistic\MarkerObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Event;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -36,7 +37,8 @@ class EventServiceProvider extends ServiceProvider
         Employee::observe(EmployeeObserver::class);
         Rating::observe(RatingObserver::class);
         MatrixTemplate::observe(MatrixTemplateObserver::class);
-        ResultClient::observe(ResultClientObserver::class);
+        Client::observe(ClientObserver::class);
+        Marker::observe(MarkerObserver::class);
     }
 
     /**

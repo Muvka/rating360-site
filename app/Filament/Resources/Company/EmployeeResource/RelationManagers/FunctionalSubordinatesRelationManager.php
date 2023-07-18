@@ -48,6 +48,6 @@ class FunctionalSubordinatesRelationManager extends RelationManager
 
     public static function canViewForRecord(Model $ownerRecord): bool
     {
-        return $ownerRecord->company_employee_level_id && $ownerRecord->company_employee_level_id !== 5;
+        return $ownerRecord->company_level_id && $ownerRecord->company_level_id !== 5;
     }
 }

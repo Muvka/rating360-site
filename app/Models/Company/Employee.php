@@ -33,8 +33,8 @@ class Employee extends Authenticatable implements FilamentUser, HasName
         'company_id',
         'company_division_id',
         'company_subdivision_id',
-        'company_employee_position_id',
-        'company_employee_level_id',
+        'company_position_id',
+        'company_level_id',
     ];
 
     protected $guarded = ['is_admin'];
@@ -91,12 +91,12 @@ class Employee extends Authenticatable implements FilamentUser, HasName
 
     public function position(): BelongsTo
     {
-        return $this->belongsTo(EmployeePosition::class, 'company_employee_position_id');
+        return $this->belongsTo(Position::class, 'company_position_id');
     }
 
     public function level(): BelongsTo
     {
-        return $this->belongsTo(EmployeeLevel::class, 'company_employee_level_id');
+        return $this->belongsTo(Level::class, 'company_level_id');
     }
 
     public function directManager(): BelongsTo

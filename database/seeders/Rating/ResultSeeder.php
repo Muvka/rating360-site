@@ -4,7 +4,7 @@ namespace Database\Seeders\Rating;
 
 use App\Models\Company\Employee;
 use App\Models\Rating\Rating;
-use App\Models\Rating\Result;
+use App\Models\Statistic\Result;
 use App\Models\Rating\ResultClient;
 use Illuminate\Database\Seeder;
 

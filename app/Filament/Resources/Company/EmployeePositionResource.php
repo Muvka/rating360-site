@@ -4,7 +4,7 @@ namespace App\Filament\Resources\Company;
 
 use App\Filament\Resources\Company\EmployeePositionResource\Pages;
 use App\Filament\Resources\Company\EmployeePositionResource\RelationManagers\EmployeesRelationManager;
-use App\Models\Company\EmployeePosition;
+use App\Models\Company\Position;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -19,7 +19,7 @@ use stdClass;
 
 class EmployeePositionResource extends Resource
 {
-    protected static ?string $model = EmployeePosition::class;
+    protected static ?string $model = Position::class;
 
     protected static ?string $navigationGroup = 'Компании';
 
@@ -72,12 +72,12 @@ class EmployeePositionResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
-                    ->action(fn(EmployeePosition $record) => static::deleteAction($record)),
+                    ->action(fn(Position $record) => static::deleteAction($record)),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make()
                     ->action(fn(Collection $records) => $records->each(
-                        fn(EmployeePosition $record) => static::deleteAction($record))
+                        fn(Position $record) => static::deleteAction($record))
                     ),
             ]);
     }
@@ -98,7 +98,7 @@ class EmployeePositionResource extends Resource
         ];
     }
 
-    public static function deleteAction(EmployeePosition $record): bool
+    public static function deleteAction(Position $record): bool
     {
         if ($record->employees->count()) {
             Notification::make()

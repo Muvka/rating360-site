@@ -23,6 +23,10 @@
     font-weight: 400;
     line-height: 1.5em;
     color: var(--color-text-primary);
+    text-align: center;
+}
+
+.table__cell:first-child {
     text-align: left;
 }
 
@@ -33,10 +37,6 @@
 .table__cell--head {
     border-bottom: none;
     background-color: var(--color-background-tertiary);
-}
-
-.table__cell--center {
-    text-align: center;
 }
 
 .table__cell--head:first-child {

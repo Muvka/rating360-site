@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useForm } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import clsx from 'clsx';
 import toast from 'react-hot-toast';
 
@@ -13,9 +13,7 @@ const RatingForm = ({
 	employee = {},
 	className = ''
 }) => {
-	const localStorageRatingName = useMemo(() => {
-		return `rating-${ratingId}-${employee.id}`;
-	}, [ratingId, employee]);
+	const { storageKey = 'rating' } = usePage().props;
 	const flatMarkers = useMemo(() => {
 		return blocks
 			.map(block => {
@@ -43,9 +41,9 @@ const RatingForm = ({
 	const submitHandler = event => {
 		event.preventDefault();
 
-		post(route('client.rating.results.store', [ratingId, employee.id]), {
+		post(route('client.statistic.results.store', [ratingId, employee.id]), {
 			onSuccess: () => {
-				localStorage.removeItem(localStorageRatingName);
+				localStorage.removeItem(storageKey);
 				toast.success('Результаты оценки успешно сохранены.');
 			},
 			onError: data => {
@@ -56,9 +54,9 @@ const RatingForm = ({
 
 	useEffect(() => {
 		const { step: savedStep, data: savedData } = localStorage.getItem(
-			localStorageRatingName
+			storageKey
 		)
-			? JSON.parse(localStorage.getItem(localStorageRatingName))
+			? JSON.parse(localStorage.getItem(storageKey))
 			: { step: 0, data: {} };
 
 		setData(savedData);
@@ -67,7 +65,7 @@ const RatingForm = ({
 
 	useEffect(() => {
 		localStorage.setItem(
-			localStorageRatingName,
+			storageKey,
 			JSON.stringify({
 				step: step,
 				data: data

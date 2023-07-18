@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Models\Rating\Result;
-use App\Policies\Rating\ResultPolicy;
+use App\Models\Statistic\Result;
+use App\Policies\Statistic\ResultPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider

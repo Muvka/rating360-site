@@ -28,7 +28,7 @@ const CompanySummary = ({ data = [], className = '' }) => {
 									{item.competence}
 								</td>
 								<td className='text text--right company-summary__cell'>
-									{item.averageRating}
+									{item.rating}
 								</td>
 							</tr>
 						))}

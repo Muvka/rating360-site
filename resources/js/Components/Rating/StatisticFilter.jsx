@@ -27,6 +27,7 @@ const StatisticFilter = ({ className = '' }) => {
 		event.preventDefault();
 
 		get(route(route().current()), {
+			only: ['statistic', 'exportUrl'],
 			preserveState: true,
 			preserveScroll: true
 		});
@@ -135,19 +136,21 @@ const StatisticFilter = ({ className = '' }) => {
 						/>
 					</FormField>
 				)}
-				// TODO: Исправить 'true'
-				<Checkbox
-					label='Показать с учётом самооценки'
-					checked={data.self}
-					className='statistic-filter__field statistic-filter__field--align-center'
-					onChange={event => {
-						setData('self', event.target.checked);
-					}}
-				/>
+				{/* TODO: Исправить 'true' */}
+				{Boolean(formData.self) && (
+					<Checkbox
+						label='Показать с учётом самооценки'
+						checked={data.self}
+						className='statistic-filter__field'
+						onChange={event => {
+							setData('self', event.target.checked);
+						}}
+					/>
+				)}
 				<button
 					type='submit'
 					disabled={processing}
-					className='button button--accent statistic-filter__field statistic-filter__field--align-center'
+					className='button button--accent button--small statistic-filter__field'
 				>
 					Применить
 				</button>

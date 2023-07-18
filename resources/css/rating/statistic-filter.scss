@@ -1,11 +1,7 @@
 .statistic-filter__form {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-    align-items: start;
-}
-
-.statistic-filter__field--align-center {
-    align-self: center;
+    align-items: end;
 }
 
 @media (max-width: 599px) {

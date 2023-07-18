@@ -1,9 +1,5 @@
 <?php
 
-use App\Http\Controllers\Rating\RatingController;
-use App\Http\Controllers\Rating\ResultController;
-use App\Http\Controllers\Rating\StatisticController;
-use App\Http\Controllers\User\AuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,12 +16,12 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth')
     ->name('client.')
     ->group(function () {
-        Route::get('/', [RatingController::class, 'index'])
+        Route::get('/', [\App\Http\Controllers\Rating\RatingController::class, 'index'])
             ->name('rating.ratings.index');
 
         Route::prefix('results')
-            ->controller(ResultController::class)
-            ->name('rating.results.')
+            ->controller(\App\Http\Controllers\Statistic\ResultController::class)
+            ->name('statistic.results.')
             ->group(function () {
                 Route::get('/', 'index')
                     ->name('index');
@@ -37,21 +33,48 @@ Route::middleware('auth')
                     ->name('store');
             });
 
-        Route::prefix('statistics')
-            ->controller(StatisticController::class)
-            ->name('rating.statistics.')
+        Route::prefix('statistic')
+            ->name('statistic.')
             ->middleware('admin')
             ->group(function () {
-                Route::get('general', 'general')
-                    ->name('general');
-                Route::get('competence', 'competence')
-                    ->name('competence');
-                Route::get('company', 'company')
-                    ->name('company');
-                Route::get('value', 'value')
-                    ->name('value');
+                Route::prefix('general')
+                    ->controller(\App\Http\Controllers\Statistic\GeneralController::class)
+                    ->name('general.')
+                    ->group(function () {
+                        Route::get('/', 'index')
+                            ->name('index');
+                        Route::get('export', 'export')
+                            ->name('export');
+                    });
+                Route::prefix('company')
+                    ->controller(\App\Http\Controllers\Statistic\CompanyController::class)
+                    ->name('company.')
+                    ->group(function () {
+                        Route::get('/', 'index')
+                            ->name('index');
+                        Route::get('export', 'export')
+                            ->name('export');
+                    });
+                Route::prefix('competence')
+                    ->controller(\App\Http\Controllers\Statistic\CompetenceController::class)
+                    ->name('competence.')
+                    ->group(function () {
+                        Route::get('/', 'index')
+                            ->name('index');
+                        Route::get('export', 'export')
+                            ->name('export');
+                    });
+                Route::prefix('value')
+                    ->controller(\App\Http\Controllers\Statistic\ValueController::class)
+                    ->name('value.')
+                    ->group(function () {
+                        Route::get('/', 'index')
+                            ->name('index');
+                        Route::get('export', 'export')
+                            ->name('export');
+                    });
             });
     });
 
-Route::get('login', [AuthController::class, 'login'])
+Route::get('login', [\App\Http\Controllers\User\AuthController::class, 'login'])
     ->name('client.user.auth.login');

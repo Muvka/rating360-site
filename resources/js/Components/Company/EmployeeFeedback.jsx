@@ -21,7 +21,7 @@ const EmployeeFeedback = ({ data = {}, className = '' }) => {
 						<ul className='employee-feedback__list'>
 							{value.map(item => (
 								<li key={item.id} className='text'>
-									{item.answer}
+									{item.text}
 								</li>
 							))}
 						</ul>

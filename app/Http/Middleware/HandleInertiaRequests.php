@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Rating\Result;
+use App\Models\Statistic\Result;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -63,8 +63,8 @@ class HandleInertiaRequests extends Middleware
             [
                 'icon' => 'document',
                 'label' => 'Мой отчёт',
-                'href' => route('client.rating.results.show', Auth::user()?->id ?? 0),
-                'isCurrent' => $route->getName() === 'client.rating.results.show' && $route->parameter('employee')?->id === Auth::user()?->id,
+                'href' => route('client.statistic.results.show', Auth::user()?->id ?? 0),
+                'isCurrent' => $route->getName() === 'client.statistic.results.show' && $route->parameter('employee')?->id === Auth::user()?->id,
             ],
         ];
 
@@ -72,8 +72,8 @@ class HandleInertiaRequests extends Middleware
             $items[] = [
                 'icon' => 'users',
                 'label' => 'Результаты сотрудников',
-                'href' => route('client.rating.results.index'),
-                'isCurrent' => $route->getName() === 'client.rating.results.index',
+                'href' => route('client.statistic.results.index'),
+                'isCurrent' => $route->getName() === 'client.statistic.results.index',
             ];
         }
 
@@ -81,30 +81,30 @@ class HandleInertiaRequests extends Middleware
             $items[] = [
                 'icon' => 'briefcase',
                 'label' => 'Общая статистика',
-                'href' => route('client.rating.statistics.general'),
+                'href' => route('client.statistic.general.index'),
                 'separate' => true,
-                'isCurrent' => $route->getName() === 'client.rating.statistics.general',
+                'isCurrent' => $route->getName() === 'client.statistic.general.index',
             ];
 
             $items[] = [
                 'icon' => 'activity',
                 'label' => 'Оценка по компетенциям',
-                'href' => route('client.rating.statistics.competence'),
-                'isCurrent' => $route->getName() === 'client.rating.statistics.competence',
+                'href' => route('client.statistic.competence.index'),
+                'isCurrent' => $route->getName() === 'client.statistic.competence.index',
             ];
 
             $items[] = [
                 'icon' => 'graph',
                 'label' => 'Данные по компании',
-                'href' => route('client.rating.statistics.company'),
-                'isCurrent' => $route->getName() === 'client.rating.statistics.company',
+                'href' => route('client.statistic.company.index'),
+                'isCurrent' => $route->getName() === 'client.statistic.company.index',
             ];
 
             $items[] = [
                 'icon' => 'grid',
                 'label' => 'Ценности',
-                'href' => route('client.rating.statistics.value'),
-                'isCurrent' => $route->getName() === 'client.rating.statistics.value',
+                'href' => route('client.statistic.value.index'),
+                'isCurrent' => $route->getName() === 'client.statistic.value.index',
             ];
         }
 

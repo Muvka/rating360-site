@@ -6,8 +6,8 @@ use App\Models\Company\Company;
 use App\Models\Company\Employee;
 use App\Models\Company\Direction;
 use App\Models\Company\Division;
-use App\Models\Company\EmployeeLevel;
-use App\Models\Company\EmployeePosition;
+use App\Models\Company\Level;
+use App\Models\Company\Position;
 use App\Models\Company\Subdivision;
 use App\Models\Rating\Matrix;
 use App\Models\Rating\MatrixTemplate;
@@ -67,15 +67,15 @@ class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows
         }
 
         if ( ! $employee->position && $row['dolznost']) {
-            $position = $this->getRecord(EmployeePosition::class, 'name', $row['dolznost']);
+            $position = $this->getRecord(Position::class, 'name', $row['dolznost']);
 
-            $employee->company_employee_position_id = $position->id;
+            $employee->company_position_id = $position->id;
         }
 
         if ( ! $employee->level && $row['uroven_sotrudnika']) {
-            $level = $this->getRecord(EmployeeLevel::class, 'name', $row['uroven_sotrudnika']);
+            $level = $this->getRecord(Level::class, 'name', $row['uroven_sotrudnika']);
 
-            $employee->company_employee_level_id = $level->id;
+            $employee->company_level_id = $level->id;
         }
 
         $directions = [];

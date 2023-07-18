@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Rating;
 
 use App\Http\Controllers\Controller;
 use App\Models\Rating\Rating;
-use App\Models\Rating\ResultClient;
+use App\Models\Statistic\Client;
 use App\Settings\AppGeneralSettings;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
@@ -37,7 +37,7 @@ class RatingController extends Controller
                             $title = 'Оценка 360 сотрудника: '.$matrixTemplate->employee->full_name;
                         }
 
-                        $isCompleted = ResultClient::with('result')
+                        $isCompleted = Client::with('result')
                             ->whereHas('result', function (Builder $query) use ($rating) {
                                 $query->where('rating_id', $rating->id);
                             })
@@ -48,7 +48,7 @@ class RatingController extends Controller
                             'id' => $rating->id . $client->id,
                             'title' => $title,
                             'isCompleted' => $isCompleted,
-                            'href' => route('client.rating.results.create', [
+                            'href' => route('client.statistic.results.create', [
                                 $rating->id,
                                 $matrixTemplate->company_employee_id,
                             ])

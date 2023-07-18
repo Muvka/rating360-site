@@ -96,12 +96,12 @@ class EmployeeResource extends Resource
                             ->relationship('directions', 'name')
                             ->label('Направления')
                             ->multiple(),
-                        Select::make('company_employee_position_id')
+                        Select::make('company_position_id')
                             ->label('Должность')
                             ->relationship('position', 'name')
                             ->searchable()
                             ->required(),
-                        Select::make('company_employee_level_id')
+                        Select::make('company_level_id')
                             ->label('Уровень сотрудника')
                             ->relationship('level', 'name')
                             ->reactive()
@@ -125,7 +125,7 @@ class EmployeeResource extends Resource
                                 ->full_name)
                             ->searchable()
                             ->required(
-                                fn(Closure $get) => ! in_array($get('company_employee_level_id'), ['1', '2'])
+                                fn(Closure $get) => ! in_array($get('company_level_id'), ['1', '2'])
                             ),
                         Select::make('functional_manager_id')
                             ->label('Функциональный')

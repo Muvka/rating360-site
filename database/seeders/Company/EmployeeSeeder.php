@@ -3,9 +3,14 @@
 namespace Database\Seeders\Company;
 
 use App\Models\Company\Company;
+use App\Models\Company\Direction;
+use App\Models\Company\Division;
 use App\Models\Company\Employee;
+use App\Models\Company\Position;
 use App\Models\Company\Subdivision;
+use App\Models\Shared\City;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Hash;
 
 class EmployeeSeeder extends Seeder
@@ -47,7 +52,8 @@ class EmployeeSeeder extends Seeder
             }
 
             $subdivisionSearch = str_replace(['"', "'", '«', '»'], '', $user->department);
-            $subdivision = Subdivision::whereRaw('REPLACE(REPLACE(REPLACE(REPLACE(LOWER(name), \'"\', \'\'), \'«\', \'\'), \'»\', \'\'), "\'", \'\') = ?', [strtolower($subdivisionSearch)])
+            $subdivision = Subdivision::whereRaw('REPLACE(REPLACE(REPLACE(REPLACE(LOWER(name), \'"\', \'\'), \'«\', \'\'), \'»\', \'\'), "\'", \'\') = ?',
+                [strtolower($subdivisionSearch)])
                 ->first();
 
             if (empty($subdivision)) {
@@ -58,13 +64,30 @@ class EmployeeSeeder extends Seeder
 
             list($first_name, $last_name) = explode(' ', $user->name);
 
-            Employee::create([
+            $employeeData = [
                 'first_name' => $first_name,
                 'last_name' => $last_name,
                 'email' => $user->email,
                 'company_id' => $company->id,
                 'company_subdivision_id' => $subdivision->id,
-            ]);
+            ];
+
+            if (App::Environment() !== 'production') {
+                $employeeData['city_id'] = City::inRandomOrder()->first()->id;
+                $employeeData['company_division_id'] = Division::inRandomOrder()->first()->id;
+                $employeeData['company_subdivision_id'] = Subdivision::inRandomOrder()->first()->id;
+                $employeeData['company_position_id'] = Position::inRandomOrder()->first()->id;
+                $employeeData['company_level_id'] = 5;
+            }
+
+            $employee = Employee::create($employeeData);
+
+            $employee->directions()
+                ->attach(
+                    Direction::inRandomOrder()
+                        ->limit(random_int(1, 3))
+                        ->get()
+                );
         }
     }
 }

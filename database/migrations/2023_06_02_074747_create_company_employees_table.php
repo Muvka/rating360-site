@@ -63,12 +63,12 @@ return new class extends Migration {
                 ->constrained()
                 ->cascadeOnUpdate()
                 ->restrictOnDelete();
-            $table->foreignId('company_employee_position_id')
+            $table->foreignId('company_position_id')
                 ->nullable()
                 ->constrained()
                 ->cascadeOnUpdate()
                 ->restrictOnDelete();
-            $table->foreignId('company_employee_level_id')
+            $table->foreignId('company_level_id')
                 ->nullable()
                 ->constrained()
                 ->cascadeOnUpdate()

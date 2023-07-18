@@ -4,7 +4,7 @@ namespace App\Filament\Resources\Rating;
 
 use App\Filament\Resources\Rating\RatingResource\Pages;
 use App\Models\Rating\Rating;
-use App\Models\Rating\Result;
+use App\Models\Statistic\Result;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;

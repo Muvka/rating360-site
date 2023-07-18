@@ -12,8 +12,10 @@ class CitySeeder extends Seeder
      */
     public function run(): void
     {
-        City::create([
-            'name' => 'Киров',
-        ]);
+        foreach (range(0, 9) as $index) {
+            City::create([
+                'name' => fake()->unique()->city(),
+            ]);
+        }
     }
 }
