@@ -27,19 +27,33 @@ class ResultController extends Controller
     public function index(): Response
     {
         $this->authorize('viewAny', Result::class);
-
         $subordinates = Employee::where('direct_manager_id', Auth::user()?->id)
-            ->get();
-
-        return Inertia::render('Statistic/ResultsOverviewPage', [
-            'title' => 'Результаты сотрудников',
-            'subordinates' => $subordinates->map(function ($subordinate) {
+            ->get()
+            ->map(function (Employee $subordinate) {
                 return [
                     'id' => $subordinate->id,
                     'name' => $subordinate->full_name,
                     'href' => route('client.statistic.results.show', $subordinate->id),
                 ];
-            }),
+            });
+        $merged = $subordinates->merge(Employee::with('managerAccess')
+            ->whereHas('managerAccess', function (Builder $query) {
+                $query->where('manager_id', Auth::user()?->id);
+            })
+            ->get()
+            ->flatMap(function (Employee $subordinate) {
+                return $subordinate->managerAccess->map(function (Employee $subordinate) {
+                    return [
+                        'id' => $subordinate->id,
+                        'name' => $subordinate->full_name,
+                        'href' => route('client.statistic.results.show', $subordinate->id),
+                    ];
+                });
+            }));
+
+        return Inertia::render('Statistic/ResultsOverviewPage', [
+            'title' => 'Результаты сотрудников',
+            'subordinates' => $merged->sortBy('name')->values(),
         ]);
     }
 

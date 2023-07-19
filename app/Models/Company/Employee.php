@@ -125,6 +125,12 @@ class Employee extends Authenticatable implements FilamentUser, HasName
             ->withTimestamps();
     }
 
+    public function managerAccessRevert(): BelongsToMany
+    {
+        return $this->belongsToMany(Employee::class, 'company_manager_access', 'employee_id', 'manager_id')
+            ->withTimestamps();
+    }
+
     public function isManager(): bool
     {
         return $this->level && (int)$this->level->id !== 5;

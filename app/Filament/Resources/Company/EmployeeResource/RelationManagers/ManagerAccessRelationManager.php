@@ -39,15 +39,11 @@ class ManagerAccessRelationManager extends RelationManager
                 Tables\Actions\AttachAction::make()->recordSelect(function (Select $select) {
                     return $select->searchable()
                         ->getSearchResultsUsing(
-                            fn(string $search) => Employee::with('user')
-                                ->whereHas('user', function (Builder $query) use ($search) {
-                                    $query->where('last_name', 'like', "%{$search}%");
-                                })
+                            fn(string $search) => Employee::where('last_name', 'like', "%{$search}%")
                                 ->limit(20)
                                 ->get()
-                                ->pluck('user.full_name', 'id'))
+                                ->pluck('full_name', 'id'))
                         ->getOptionLabelUsing(fn($value): ?string => Employee::find($value)
-                            ?->user
                             ->full_name);
                 }),
             ])

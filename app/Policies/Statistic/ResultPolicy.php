@@ -20,16 +20,10 @@ class ResultPolicy
             return true;
         }
 
-        $managerId = Auth::user()?->id;
-
-        // TODO: Переделать
-        return (bool) Employee::whereHas('directManager', function (Builder $query) use ($managerId) {
-            $query->where('id', $managerId);
-        })
-//            ->orWhereHas('managerAccess', function (Builder $query) use ($managerId) {
-//                $query->where('laravel_reserved_1.id', $managerId);
-//            })
-            ->find($employee->id);
+        return Employee::where('direct_manager_id', $user->id)
+                ->find($employee->id) || Employee::whereHas('managerAccessRevert', function (Builder $query) use ($user) {
+                $query->where('manager_id', $user->id);
+            })->find($employee->id);
     }
 
     public function create(Employee $user, Rating $rating, Employee $employee): bool
