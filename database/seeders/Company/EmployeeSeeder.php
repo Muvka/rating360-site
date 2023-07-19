@@ -20,7 +20,7 @@ class EmployeeSeeder extends Seeder
      */
     public function run(): void
     {
-        $json = file_get_contents(database_path('seeders/data/users.json'));
+        $json = file_get_contents(database_path('seeders/Data/users.json'));
         $userData = json_decode($json);
 
         $admin = Employee::create([
@@ -82,12 +82,14 @@ class EmployeeSeeder extends Seeder
 
             $employee = Employee::create($employeeData);
 
-            $employee->directions()
-                ->attach(
-                    Direction::inRandomOrder()
-                        ->limit(random_int(1, 3))
-                        ->get()
-                );
+            if (App::Environment() !== 'production') {
+                $employee->directions()
+                    ->attach(
+                        Direction::inRandomOrder()
+                            ->limit(random_int(1, 3))
+                            ->get()
+                    );
+            }
         }
     }
 }
