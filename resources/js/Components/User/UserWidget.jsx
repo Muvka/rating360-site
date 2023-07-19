@@ -1,9 +1,9 @@
 import React from 'react';
-import clsx from 'clsx';
 import { usePage } from '@inertiajs/react';
+import clsx from 'clsx';
 
 const UserWidget = ({ className = '' }) => {
-	const user = usePage().props?.shared?.auth?.user;
+	const { user, portalUrl } = usePage().props?.shared?.auth;
 
 	if (!user) {
 		return false;
@@ -13,7 +13,7 @@ const UserWidget = ({ className = '' }) => {
 		<div className={clsx('user-widget', className)}>
 			<p className='user-widget__name'>{user.full_name}</p>
 			<a
-				href='https://edu.zhcom.ru/my'
+				href={portalUrl}
 				className='user-widget__link'
 				rel='nofollow noopener noreferrer'
 			>

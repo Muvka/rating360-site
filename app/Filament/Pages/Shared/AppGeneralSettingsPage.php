@@ -55,6 +55,10 @@ class AppGeneralSettingsPage extends SettingsPage
                 ]),
             Section::make('Разное')
                 ->schema([
+                    TextInput::make('moodle_url')
+                        ->label('Перенаправление неавторизованного пользователя')
+                        ->url()
+                        ->required(),
                     TextInput::make('moodle_token')
                         ->label('Токен Moodle')
                 ])

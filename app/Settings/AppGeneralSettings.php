@@ -12,6 +12,8 @@ class AppGeneralSettings extends Settings
 
     public ?array $admin_emails;
 
+    public ?string $moodle_url;
+
     public ?string $moodle_token;
 
     public static function group(): string

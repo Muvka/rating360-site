@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\Statistic\Result;
+use App\Settings\AppGeneralSettings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -44,6 +45,7 @@ class HandleInertiaRequests extends Middleware
             'shared.auth.user' => fn() => $request->user()
                 ? $request->user()->only('full_name')
                 : null,
+            'shared.auth.portalUrl' => app(AppGeneralSettings::class)->moodle_url.'/my',
             'shared.navigation.main' => $this->getMainNavigation()
         ]);
     }
