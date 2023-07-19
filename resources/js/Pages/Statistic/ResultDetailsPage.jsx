@@ -3,8 +3,8 @@ import { Head } from '@inertiajs/react';
 import html2pdf from 'html2pdf.js';
 
 import SeparateWrapper from '../../Components/Shared/SeparateWrapper.jsx';
-import CompanySummary from '../../Components/Company/CompanySummary.jsx';
-import EmployeeFeedback from '../../Components/Company/EmployeeFeedback.jsx';
+import CompanySummary from '../../Components/Statistic/CompanySummary.jsx';
+import EmployeeFeedback from '../../Components/Statistic/EmployeeFeedback.jsx';
 import DetailedResults from '../../Components/Statistic/DetailedResults.jsx';
 import CompetencyResultList from '../../Components/Statistic/CompetencyResultList.jsx';
 import CompetencyResultGrid from '../../Components/Statistic/CompetencyResultGrid.jsx';

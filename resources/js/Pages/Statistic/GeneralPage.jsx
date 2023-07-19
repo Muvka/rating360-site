@@ -2,7 +2,7 @@ import React from 'react';
 import { Head } from '@inertiajs/react';
 
 import SeparateWrapper from '../../Components/Shared/SeparateWrapper.jsx';
-import StatisticFilter from '../../Components/Rating/StatisticFilter.jsx';
+import StatisticFilter from '../../Components/Statistic/StatisticFilter.jsx';
 import Table from '../../Components/Shared/Table.jsx';
 
 const GeneralPage = ({ title = '', statistic = {}, exportUrl = '' }) => {
