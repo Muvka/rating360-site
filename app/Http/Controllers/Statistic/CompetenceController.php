@@ -10,7 +10,7 @@ use App\Models\Company\Division;
 use App\Models\Company\Level;
 use App\Models\Company\Position;
 use App\Models\Company\Subdivision;
-use App\Models\Rating\Competence;
+use App\Models\Statistic\Competence;
 use App\Models\Shared\City;
 use App\Models\Statistic\Result;
 use Carbon\Carbon;
@@ -26,13 +26,13 @@ class CompetenceController extends Controller
 {
     public function index(): Response
     {
-        $filters = Request::only(['city', 'company', 'division', 'subdivision', 'direction', 'level', 'position', 'self']);
+        $filters = Request::only(['city', 'company', 'division', 'subdivision', 'direction', 'level', 'position', 'competences', 'self']);
 
-        return Inertia::render('Statistic/CompetencePage', [
+        return Inertia::render('Statistic/StatisticPage', [
             'title' => 'Статистика по компетенциям',
-            'formData' => $this->getForm(),
+            'fields' => $this->getFormFields(),
             'filters' => $filters,
-            'statistic' => $this->getStatistic(),
+            'statistic' => $filters ? $this->getStatistic() : [],
             'exportUrl' => route('client.statistic.competence.export', $filters)
         ]);
     }
@@ -119,6 +119,9 @@ class CompetenceController extends Controller
             })
             ->when(Request::input('position'), function (Builder $query, string $position) {
                 return $query->where('company_position_id', $position);
+            })
+            ->when(Request::input('competences'), function (Builder $query, array $competences) {
+                return $query->whereIn('statistic_competences.id', $competences);
             })
             ->groupBy(
                 'statistic_results.company_employee_id',
@@ -209,7 +212,7 @@ class CompetenceController extends Controller
         ];
     }
 
-    private function getForm(): array
+    private function getFormFields(): array
     {
         $cities = City::select('id', 'name')
             ->distinct()
@@ -266,15 +269,68 @@ class CompetenceController extends Controller
                 'label' => $position->name,
             ]);
 
+        $competences = Competence::select('id', 'name')
+            ->distinct()
+            ->get()
+            ->map(fn(Competence $competences) => [
+                'value' => (string) $competences->id,
+                'label' => $competences->name,
+            ]);
+
         return [
-            'cities' => $cities,
-            'companies' => $companies,
-            'divisions' => $divisions,
-            'subdivisions' => $subdivisions,
-            'directions' => $directions,
-            'levels' => $levels,
-            'positions' => $positions,
-            'self' => true,
+            [
+                'label' => 'Город',
+                'name' => 'city',
+                'type' => 'select',
+                'data' => $cities
+            ],
+            [
+                'label' => 'Компания',
+                'name' => 'company',
+                'type' => 'select',
+                'data' => $companies
+            ],
+            [
+                'label' => 'Отдел',
+                'name' => 'division',
+                'type' => 'select',
+                'data' => $divisions
+            ],
+            [
+                'label' => 'Подразделение',
+                'name' => 'subdivision',
+                'type' => 'select',
+                'data' => $subdivisions
+            ],
+            [
+                'label' => 'Направление',
+                'name' => 'direction',
+                'type' => 'select',
+                'data' => $directions
+            ],
+            [
+                'label' => 'Уровень сотрудника',
+                'name' => 'level',
+                'type' => 'select',
+                'data' => $levels
+            ],
+            [
+                'label' => 'Должность',
+                'name' => 'position',
+                'type' => 'select',
+                'data' => $positions
+            ],
+            [
+                'label' => 'Компетенции',
+                'name' => 'competences',
+                'type' => 'multiselect',
+                'data' => $competences
+            ],
+            [
+                'label' => 'С учетом самооценки',
+                'name' => 'self',
+                'type' => 'checkbox'
+            ]
         ];
     }
 }

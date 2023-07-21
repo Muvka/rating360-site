@@ -27,11 +27,11 @@ class GeneralController extends Controller
     {
         $filters = Request::only(['city', 'company', 'division', 'subdivision', 'direction', 'level', 'position']);
 
-        return Inertia::render('Statistic/GeneralPage', [
+        return Inertia::render('Statistic/StatisticPage', [
             'title' => 'Общая статистика',
-            'formData' => $this->getForm(),
+            'fields' => $this->getFormFields(),
             'filters' => $filters,
-            'statistic' => $this->getStatistic(),
+            'statistic' => $filters ? $this->getStatistic() : [],
             'exportUrl' => route('client.statistic.general.export', $filters)
         ]);
     }
@@ -204,7 +204,7 @@ class GeneralController extends Controller
         ];
     }
 
-    private function getForm(): array
+    private function getFormFields(): array
     {
         $cities = City::select('id', 'name')
             ->distinct()
@@ -262,13 +262,48 @@ class GeneralController extends Controller
             ]);
 
         return [
-            'cities' => $cities,
-            'companies' => $companies,
-            'divisions' => $divisions,
-            'subdivisions' => $subdivisions,
-            'directions' => $directions,
-            'levels' => $levels,
-            'positions' => $positions,
+            [
+                'label' => 'Город',
+                'name' => 'city',
+                'type' => 'select',
+                'data' => $cities
+            ],
+            [
+                'label' => 'Компания',
+                'name' => 'company',
+                'type' => 'select',
+                'data' => $companies
+            ],
+            [
+                'label' => 'Отдел',
+                'name' => 'division',
+                'type' => 'select',
+                'data' => $divisions
+            ],
+            [
+                'label' => 'Подразделение',
+                'name' => 'subdivision',
+                'type' => 'select',
+                'data' => $subdivisions
+            ],
+            [
+                'label' => 'Направление',
+                'name' => 'direction',
+                'type' => 'select',
+                'data' => $directions
+            ],
+            [
+                'label' => 'Уровень сотрудника',
+                'name' => 'level',
+                'type' => 'select',
+                'data' => $levels
+            ],
+            [
+                'label' => 'Должность',
+                'name' => 'position',
+                'type' => 'select',
+                'data' => $positions
+            ]
         ];
     }
 }

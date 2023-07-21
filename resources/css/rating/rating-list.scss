@@ -14,14 +14,6 @@
     margin: 0;
 }
 
-.rating-list__progress {
-    padding: 2px 12px;
-    margin: 0;
-
-    border-radius: var(--border-radius-primary);
-    background-color: var(--color-background-quaternary);
-}
-
 .rating-list__list {
     display: grid;
     grid-template-columns: 100%;

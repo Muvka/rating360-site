@@ -12,7 +12,11 @@ class AppGeneralSettings extends Settings
 
     public ?array $admin_emails;
 
-    public ?string $moodle_url;
+    public ?string $notification_rating_start;
+
+    public ?string $moodle_account_url;
+
+    public ?string $moodle_user_api_url;
 
     public ?string $moodle_token;
 

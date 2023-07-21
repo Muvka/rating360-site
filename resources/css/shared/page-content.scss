@@ -7,16 +7,6 @@
     padding: var(--padding-vertical) var(--padding-horizontal);
 }
 
-.page-content__header {
-    display: flex;
-    padding: var(--padding-vertical) var(--padding-horizontal);
-    margin: calc(var(--padding-vertical) * -1) calc(var(--padding-horizontal) * -1) 0;
-
-    border-top-left-radius: var(--border-radius-primary);
-    border-top-right-radius: var(--border-radius-primary);
-    background-color: var(--color-brand-primary);
-}
-
 .page-content__title {
     margin: 0;
 }
@@ -31,19 +21,6 @@
         --padding-vertical: 24px;
         --padding-horizontal: 12px;
     }
-
-    .page-content__header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-    }
-}
-
-@media (min-width: 600px) {
-    .page-content__header {
-        justify-content: space-between;
-        align-items: center;
-    }
 }
 
 @media (min-width: 600px) and (max-width: 1199px) {
@@ -55,10 +32,6 @@
     .page-content--with-padding {
         --padding-vertical: 28px;
         --padding-horizontal: 22px;
-    }
-
-    .page-content__header {
-        gap: 18px;
     }
 }
 
@@ -79,9 +52,5 @@
     .page-content--with-padding {
         --padding-vertical: 32px;
         --padding-horizontal: 32px;
-    }
-
-    .page-content__header {
-        gap: 24px;
     }
 }

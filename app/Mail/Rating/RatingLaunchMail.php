@@ -3,6 +3,7 @@
 namespace App\Mail\Rating;
 
 use App\Models\Company\Employee;
+use App\Settings\AppGeneralSettings;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -29,15 +30,18 @@ class RatingLaunchMail extends Mailable //implements ShouldQueue
 
     public function envelope(): Envelope
     {
-        return new Envelope(
-            subject: $this->selfRating ? 'Cамооценка' : 'Оценка сотрудника - '.$this->employee->full_name,
-        );
+        $subject = $this->selfRating ? 'Cамооценка' : 'Оценка сотрудника - '.$this->employee->full_name;
+
+        return new Envelope(subject: $subject);
     }
 
     public function content(): Content
     {
         return new Content(
             view: 'emails.rating.rating-launch',
+            with: [
+                'text' => app(AppGeneralSettings::class)->notification_rating_start
+            ]
         );
     }
 }

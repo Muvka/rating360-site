@@ -19,13 +19,13 @@ class CompanyController extends Controller
 {
     public function index(): Response
     {
-        $filters = Request::only('company');
+        $filters = Request::only('companies');
 
-        return Inertia::render('Statistic/CompanyPage', [
+        return Inertia::render('Statistic/StatisticPage', [
             'title' => 'Статистика по компании',
-            'formData' => $this->getForm(),
+            'fields' => $this->getFormFields(),
             'filters' => $filters,
-            'statistic' => $this->getStatistic(),
+            'statistic' => $filters ? $this->getStatistic() : [],
             'exportUrl' => route('client.statistic.company.export', $filters)
         ]);
     }
@@ -54,7 +54,7 @@ class CompanyController extends Controller
 
         $data = [];
 
-        if (Request::has('company')) {
+        if (Request::has('companies')) {
             $data = ClientCompetence::select(
                 'statistic_competence_id',
                 DB::raw('cast(avg(average_rating) as decimal(3, 2)) as averageRating'),
@@ -66,7 +66,7 @@ class CompanyController extends Controller
                     $query->whereHas('rating', function (Builder $query) {
                         $query->where('status', 'closed');
                     })
-                        ->where('company_id', Request::input('company'));
+                        ->whereIn('company_id', Request::input('companies'));
                 })
                 ->with('competence')
                 ->groupBy('statistic_competence_id')
@@ -87,7 +87,7 @@ class CompanyController extends Controller
         ];
     }
 
-    private function getForm(): array
+    private function getFormFields(): array
     {
         $companies = Company::select('id', 'name')
             ->distinct()
@@ -98,7 +98,12 @@ class CompanyController extends Controller
             ]);
 
         return [
-            'companies' => $companies,
+            [
+                'label' => 'Компания',
+                'name' => 'companies',
+                'type' => 'multiselect',
+                'data' => $companies
+            ]
         ];
     }
 }

@@ -2,6 +2,7 @@ import React, { useId, useMemo } from 'react';
 import clsx from 'clsx';
 
 import RatingLink from './RatingLink.jsx';
+import BadgeText from '../Shared/BadgeText.jsx';
 
 const RatingList = ({ ratings = [], className = '' }) => {
 	const titleId = useId();
@@ -22,9 +23,7 @@ const RatingList = ({ ratings = [], className = '' }) => {
 				<h2 id={titleId} className='title title--small rating-list__title'>
 					Доступные оценки
 				</h2>
-				{Boolean(progress) && (
-					<p className='text text--accent rating-list__progress'>{progress}</p>
-				)}
+				<BadgeText text={progress} variant='accent' />
 			</header>
 			{ratings.length ? (
 				<ul className='rating-list__list'>

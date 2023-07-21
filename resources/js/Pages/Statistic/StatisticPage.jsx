@@ -4,14 +4,9 @@ import { Head } from '@inertiajs/react';
 import SeparateWrapper from '../../Components/Shared/SeparateWrapper.jsx';
 import StatisticFilter from '../../Components/Statistic/StatisticFilter.jsx';
 import Table from '../../Components/Shared/Table.jsx';
+import StatisticResults from '../../Components/Statistic/StatisticResults.jsx';
 
-const GeneralStatisticPage = ({
-	title = '',
-	statistic = {},
-	exportUrl = ''
-}) => {
-	const hasStatistic = Boolean(Object.keys(statistic).length);
-
+const StatisticPage = ({ title = '' }) => {
 	return (
 		<>
 			<Head>
@@ -20,23 +15,10 @@ const GeneralStatisticPage = ({
 			<h1 className='title page-content__title'>{title}</h1>
 			<SeparateWrapper>
 				<StatisticFilter />
-				{hasStatistic && (
-					<>
-						<Table columns={statistic.columns} data={statistic.data} />
-						<a
-							href={exportUrl}
-							className='button button--accent'
-							style={{
-								marginTop: '16px'
-							}}
-						>
-							Экспорт
-						</a>
-					</>
-				)}
+				<StatisticResults />
 			</SeparateWrapper>
 		</>
 	);
 };
 
-export default GeneralStatisticPage;
+export default StatisticPage;

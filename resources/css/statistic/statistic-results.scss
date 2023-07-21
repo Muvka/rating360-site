@@ -1,0 +1,34 @@
+.statistic-results {
+    display: grid;
+    grid-template-columns: 100%;
+    justify-items: start;
+}
+
+.statistic-results__table {
+    max-width: 100%;
+}
+
+.statistic-results__export {
+    width: 260px;
+}
+
+@media (max-width: 599px) {
+    .statistic-results {
+        grid-row-gap: 12px;
+        row-gap: 12px;
+    }
+}
+
+@media (min-width: 600px) and (max-width: 1199px) {
+    .statistic-results {
+        grid-row-gap: 18px;
+        row-gap: 18px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .statistic-results {
+        grid-row-gap: 24px;
+        row-gap: 24px;
+    }
+}

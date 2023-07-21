@@ -19,12 +19,12 @@ class AuthController extends Controller
         request()->session()->regenerateToken();
 
         if ( ! $request->userToken || ! $settings->moodle_token) {
-            return redirect()->away($settings->moodle_url.'/my');
+            return redirect()->away($settings->moodle_account_url);
         }
 
         $client = new Client();
 
-        $response = $client->request('GET', $settings->moodle_url.'/api/users/byToken/'.$request->userToken, [
+        $response = $client->request('GET', $settings->moodle_user_api_url.'/'.$request->userToken, [
             'headers' => [
                 'Authorization' => 'Bearer '.$settings->moodle_token,
                 'Accept' => 'application/json',
@@ -35,7 +35,7 @@ class AuthController extends Controller
         $data = json_decode($body, true);
 
         if ( ! $data || empty($data['result'])) {
-            return redirect()->away($settings->moodle_url.'/my');
+            return redirect()->away($settings->moodle_account_url);
         }
 
         $user = Employee::where('email', $data['result']['email'])->first();

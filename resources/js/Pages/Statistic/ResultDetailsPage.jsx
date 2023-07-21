@@ -9,14 +9,16 @@ import DetailedResults from '../../Components/Statistic/DetailedResults.jsx';
 import CompetencyResultList from '../../Components/Statistic/CompetencyResultList.jsx';
 import CompetencyResultGrid from '../../Components/Statistic/CompetencyResultGrid.jsx';
 import downloadIconId from '../../../images/shared/icons/icon-download.svg';
+import PageContentHeader from '../../Components/Shared/PageContentHeader.jsx';
+import BadgeText from '../../Components/Shared/BadgeText.jsx';
 
 const ResultDetailsPage = ({
 	title = '',
-	exportRoute = '',
 	companySummary = [],
 	employeeFeedback = {},
 	competenceRatingResults = [],
-	markerRatingResults = []
+	markerRatingResults = [],
+	progressText = ''
 }) => {
 	const [disabled, setDisabled] = useState(false);
 	const hasCompetenceRatingResults = Boolean(competenceRatingResults.length);
@@ -25,6 +27,29 @@ const ResultDetailsPage = ({
 	const hasMarkerRatingResults = Boolean(
 		Object.keys(markerRatingResults).length
 	);
+
+	const pageHeaderTrailingComponent = () => {
+		return (
+			hasCompetenceRatingResults && (
+				<button
+					type='button'
+					disabled={disabled}
+					className='button button--small'
+					onClick={exportToPdf}
+				>
+					<svg
+						width='24'
+						height='24'
+						className='button__icon'
+						aria-hidden='true'
+					>
+						<use xlinkHref={`#${downloadIconId}`} />
+					</svg>
+					Скачать
+				</button>
+			)
+		);
+	};
 
 	const exportToPdf = async () => {
 		window.print();
@@ -46,27 +71,12 @@ const ResultDetailsPage = ({
 			<Head>
 				<title>{title}</title>
 			</Head>
-			<div className='page-content__header'>
-				<h1 className='title title--light page-content__title'>{title}</h1>
-				{hasCompetenceRatingResults && Boolean(exportRoute) && (
-					<button
-						type='button'
-						disabled={disabled}
-						className='button button--small'
-						onClick={exportToPdf}
-					>
-						<svg
-							width='24'
-							height='24'
-							className='button__icon'
-							aria-hidden='true'
-						>
-							<use xlinkHref={`#${downloadIconId}`} />
-						</svg>
-						Скачать
-					</button>
-				)}
-			</div>
+			<PageContentHeader
+				title={title}
+				content={<BadgeText text={progressText} />}
+				trailing={pageHeaderTrailingComponent()}
+				className='page-content__header'
+			/>
 			<SeparateWrapper>
 				{hasCompetenceRatingResults && (
 					<CompetencyResultList results={competenceRatingResults} />

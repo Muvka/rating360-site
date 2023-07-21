@@ -25,6 +25,11 @@ class MatrixTemplate extends Model
         return $this->hasMany(MatrixTemplateClient::class, 'rating_matrix_template_id');
     }
 
+    public function clientsWithoutSelf(): HasMany {
+        return $this->hasMany(MatrixTemplateClient::class, 'rating_matrix_template_id')
+            ->whereNot('type', 'self');
+    }
+
     public function editableClients(): HasMany {
         return $this->hasMany(MatrixTemplateClient::class, 'rating_matrix_template_id')
             ->whereIn('type', ['inner', 'outer']);

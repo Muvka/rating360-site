@@ -3,7 +3,7 @@ import { usePage } from '@inertiajs/react';
 import clsx from 'clsx';
 
 const UserWidget = ({ className = '' }) => {
-	const { user, portalUrl } = usePage().props?.shared?.auth;
+	const { user, accountUrl } = usePage().props?.shared?.auth;
 
 	if (!user) {
 		return false;
@@ -13,7 +13,7 @@ const UserWidget = ({ className = '' }) => {
 		<div className={clsx('user-widget', className)}>
 			<p className='user-widget__name'>{user.full_name}</p>
 			<a
-				href={portalUrl}
+				href={accountUrl}
 				className='user-widget__link'
 				rel='nofollow noopener noreferrer'
 			>

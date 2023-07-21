@@ -53,14 +53,24 @@ class AppGeneralSettingsPage extends SettingsPage
                                 ->required(),
                         ]),
                 ]),
-            Section::make('Разное')
+            Section::make('Moodle')
                 ->schema([
-                    TextInput::make('moodle_url')
-                        ->label('Перенаправление неавторизованного пользователя')
+                    TextInput::make('moodle_account_url')
+                        ->label('Личный кабинет')
+                        ->url()
+                        ->required(),
+                    TextInput::make('moodle_user_api_url')
+                        ->label('Адрес пользовательского API')
                         ->url()
                         ->required(),
                     TextInput::make('moodle_token')
-                        ->label('Токен Moodle')
+                        ->label('Токен')
+                ]),
+            Section::make('Уведомления')
+                ->schema([
+                    TextInput::make('notification_rating_start')
+                        ->label('Начало оценки')
+                        ->required(),
                 ])
         ];
     }

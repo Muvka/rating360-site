@@ -13,12 +13,14 @@
 @import "shared/page-header";
 @import "shared/page-sidebar";
 @import "shared/page-content";
+@import "shared/page-content-header";
 @import "shared/title";
 @import "shared/background-box";
 @import "shared/empty-message";
 @import "shared/table";
 @import "shared/text";
 @import "shared/text-content";
+@import "shared/badge-text";
 @import "shared/button";
 @import "shared/form-field";
 @import "shared/text-input";
@@ -51,7 +53,10 @@
 @import "rating/rating-value";
 @import "rating/rating-form";
 @import "rating/rating-form-block";
-@import "rating/statistic-filter";
+
+//Statistic
+@import "statistic/statistic-filter";
+@import "statistic/statistic-results";
 
 // Company
 @import "company/company-summary";

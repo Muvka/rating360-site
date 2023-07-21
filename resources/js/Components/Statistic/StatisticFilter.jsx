@@ -7,7 +7,7 @@ import Select from '../Shared/Select.jsx';
 import Checkbox from '../Shared/Checkbox.jsx';
 
 const StatisticFilter = ({ className = '' }) => {
-	const { formData = {}, filters = {} } = usePage().props;
+	const { fields = [], filters = {} } = usePage().props;
 	const { data, setData, get, transform, processing } = useForm(filters);
 	const titleId = useId();
 
@@ -33,6 +33,8 @@ const StatisticFilter = ({ className = '' }) => {
 		});
 	};
 
+	if (!fields) return false;
+
 	return (
 		<section
 			className={clsx('statistic-filter', className)}
@@ -42,115 +44,65 @@ const StatisticFilter = ({ className = '' }) => {
 				Форма фильтрации
 			</h2>
 			<form className='statistic-filter__form' onSubmit={submitHandler}>
-				{Boolean(formData.cities?.length) && (
-					<FormField label='Город' idProp='inputId'>
-						<Select
-							value={formData.cities.find(city => city.value === data.city)}
-							options={formData.cities}
-							isClearable
-							onChange={data => {
-								setData('city', data ? data.value : '');
-							}}
-						/>
-					</FormField>
-				)}
-				{Boolean(formData.companies?.length) && (
-					<FormField label='Компания' idProp='inputId'>
-						<Select
-							value={formData.companies.find(
-								company => company.value === data.company
-							)}
-							options={formData.companies}
-							isClearable
-							onChange={data => {
-								setData('company', data ? data.value : '');
-							}}
-						/>
-					</FormField>
-				)}
-				{Boolean(formData.divisions?.length) && (
-					<FormField label='Отдел' idProp='inputId'>
-						<Select
-							value={formData.divisions.find(
-								division => division.value === data.division
-							)}
-							options={formData.divisions}
-							isClearable
-							onChange={data => {
-								setData('division', data ? data.value : '');
-							}}
-						/>
-					</FormField>
-				)}
-				{Boolean(formData.subdivisions?.length) && (
-					<FormField label='Подразделение' idProp='inputId'>
-						<Select
-							value={formData.subdivisions.find(
-								subdivision => subdivision.value === data.subdivision
-							)}
-							options={formData.subdivisions}
-							isClearable
-							onChange={data => {
-								setData('subdivision', data ? data.value : '');
-							}}
-						/>
-					</FormField>
-				)}
-				{Boolean(formData.directions?.length) && (
-					<FormField label='Направления' idProp='inputId'>
-						<Select
-							value={formData.directions.find(
-								direction => direction.value === data.direction
-							)}
-							options={formData.directions}
-							isClearable
-							onChange={data => {
-								setData('direction', data ? data.value : '');
-							}}
-						/>
-					</FormField>
-				)}
-				{Boolean(formData.levels?.length) && (
-					<FormField label='Уровень сотрудника' idProp='inputId'>
-						<Select
-							value={formData.levels.find(level => level.value === data.level)}
-							options={formData.levels}
-							isClearable
-							onChange={data => {
-								setData('level', data ? data.value : '');
-							}}
-						/>
-					</FormField>
-				)}
-				{Boolean(formData.positions?.length) && (
-					<FormField label='Должность' idProp='inputId'>
-						<Select
-							value={formData.positions.find(
-								position => position.value === data.position
-							)}
-							options={formData.positions}
-							isClearable
-							onChange={data => {
-								setData('position', data ? data.value : '');
-							}}
-						/>
-					</FormField>
-				)}
-				{/* TODO: Исправить 'true' */}
-				{Boolean(formData.self) && (
-					<Checkbox
-						label='Показать с учётом самооценки'
-						checked={data.self}
-						className='statistic-filter__field'
-						onChange={event => {
-							setData('self', event.target.checked);
-						}}
-					/>
-				)}
+				{fields.map(field => {
+					if (field.type === 'multiselect') {
+						return (
+							<FormField key={field.name} label={field.label} idProp='inputId'>
+								<Select
+									value={
+										data[field.name] &&
+										field.data.filter(item =>
+											data[field.name].includes(item.value)
+										)
+									}
+									options={field.data}
+									isClearable
+									isMulti
+									onChange={newValues => {
+										setData(
+											field.name,
+											newValues.length
+												? newValues.map(newValue => newValue.value)
+												: []
+										);
+									}}
+								/>
+							</FormField>
+						);
+					} else if (field.type === 'select') {
+						return (
+							<FormField key={field.name} label={field.label} idProp='inputId'>
+								<Select
+									value={field.data.find(
+										item => item.value === data[field.name]
+									)}
+									options={field.data}
+									isClearable
+									onChange={newValue => {
+										setData(field.name, newValue ? newValue.value : '');
+									}}
+								/>
+							</FormField>
+						);
+					} else if (field.type === 'checkbox') {
+						return (
+							/* TODO: Исправить 'true' */
+							<Checkbox
+								key={field.name}
+								label='Показать с учётом самооценки'
+								checked={data[field.name]}
+								className='statistic-filter__field statistic-filter__field--center'
+								onChange={event => {
+									setData(field.name, event.target.checked);
+								}}
+							/>
+						);
+					}
+				})}
 				<button
 					type='submit'
 					disabled={processing}
-					className='button button--accent button--small statistic-filter__field'
+					className='button button--accent button--small statistic-filter__submit'
 				>
 					Применить
 				</button>

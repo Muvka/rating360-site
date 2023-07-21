@@ -23,10 +23,9 @@ class EmployeeSeeder extends Seeder
         $json = file_get_contents(database_path('seeders/Data/users.json'));
         $userData = json_decode($json);
 
-        $admin = Employee::create([
+        $admin = Employee::firstOrCreate(['email' => 'admin@localhost.ru'], [
             'first_name' => 'Admin',
-            'email' => 'admin@localhost.ru',
-            'password' => Hash::make('11111111'),
+            'password' => Hash::make('11111111')
         ]);
 
         $admin->is_admin = true;
@@ -37,8 +36,13 @@ class EmployeeSeeder extends Seeder
                 continue;
             }
 
+            $city = null;
             $company = null;
             $subdivision = null;
+
+            if (isset($user->city)) {
+                $city = City::firstOrCreate(['name' => $user->city]);
+            }
 
             $companySearch = str_replace(['"', "'", '«', '»'], '', $user->institution);
             $company = Company::whereRaw('REPLACE(REPLACE(REPLACE(REPLACE(LOWER(name), \'"\', \'\'), \'«\', \'\'), \'»\', \'\'), "\'", \'\') = ?',
@@ -67,24 +71,23 @@ class EmployeeSeeder extends Seeder
             $employeeData = [
                 'first_name' => $first_name,
                 'last_name' => $last_name,
-                'email' => $user->email,
+                'city_id' => $city?->id,
                 'company_id' => $company->id,
                 'company_subdivision_id' => $subdivision->id,
             ];
 
             if (App::Environment() !== 'production') {
-                $employeeData['city_id'] = City::inRandomOrder()->first()->id;
+                $employeeData['city_id'] = $employeeData['city_id'] ?? City::inRandomOrder()->first()->id;
                 $employeeData['company_division_id'] = Division::inRandomOrder()->first()->id;
-                $employeeData['company_subdivision_id'] = Subdivision::inRandomOrder()->first()->id;
                 $employeeData['company_position_id'] = Position::inRandomOrder()->first()->id;
                 $employeeData['company_level_id'] = 5;
             }
 
-            $employee = Employee::create($employeeData);
+            $employee = Employee::updateOrCreate(['email' => $user->email], $employeeData);
 
             if (App::Environment() !== 'production') {
                 $employee->directions()
-                    ->attach(
+                    ->sync(
                         Direction::inRandomOrder()
                             ->limit(random_int(1, 3))
                             ->get()

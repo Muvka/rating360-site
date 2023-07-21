@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Statistic;
 use App\Http\Controllers\Controller;
 use App\Models\Company\Employee;
 use App\Models\Rating\Competence as RatingCompetence;
+use App\Models\Statistic\Client;
 use App\Models\Statistic\Competence as StatisticCompetence;
 use App\Models\Rating\CompetenceMarker;
 use App\Models\Rating\MatrixTemplateClient;
@@ -108,6 +109,14 @@ class ResultController extends Controller
 
         $employee->load('company');
 
+        $latestRating = Rating::select('id', 'status', 'launched_at')
+            ->where('status', 'closed')
+            ->whereHas('results', function (Builder $query) use ($employee) {
+                $query->where('company_employee_id', $employee->id);
+            })
+            ->latest('launched_at')
+            ->first();
+
         $competenceRatingResults = ClientCompetence::select(
             'type',
             'statistic_competence_id',
@@ -115,11 +124,9 @@ class ResultController extends Controller
         )
             ->join('statistic_clients', 'statistic_client_competences.statistic_client_id', '=',
                 'statistic_clients.id')
-            ->whereHas('client.result', function (Builder $query) use ($employee) {
-                $query->whereHas('rating', function (Builder $query) {
-                    $query->where('status', 'closed')
-                        ->latest('launched_at')
-                        ->limit(1);
+            ->whereHas('client.result', function (Builder $query) use ($employee, $latestRating) {
+                $query->whereHas('rating', function (Builder $query) use ($latestRating) {
+                    $query->where('id', $latestRating->id);
                 })
                     ->where('company_employee_id', $employee->id);
             })
@@ -150,11 +157,9 @@ class ResultController extends Controller
             ->join('statistic_clients', 'statistic_client_competences.statistic_client_id', '=', 'statistic_clients.id')
             ->join('statistic_markers', 'statistic_client_competences.id', '=', 'statistic_markers.statistic_client_competence_id')
             ->with('competence')
-            ->whereHas('client.result', function (Builder $query) use ($employee) {
-                $query->whereHas('rating', function (Builder $query) {
-                    $query->where('status', 'closed')
-                        ->latest('launched_at')
-                        ->limit(1);
+            ->whereHas('client.result', function (Builder $query) use ($employee, $latestRating) {
+                $query->whereHas('rating', function (Builder $query) use ($latestRating) {
+                    $query->where('id', $latestRating->id);
                 })
                     ->where('company_employee_id', $employee->id);
             })
@@ -184,11 +189,9 @@ class ResultController extends Controller
             ->values();
 
         $employeeFeedback = Review::select('id', 'title', 'text')
-            ->whereHas('client.result', function (Builder $query) use ($employee) {
-                $query->whereHas('rating', function (Builder $query) {
-                    $query->where('status', 'closed')
-                        ->latest('launched_at')
-                        ->limit(1);
+            ->whereHas('client.result', function (Builder $query) use ($employee, $latestRating) {
+                $query->whereHas('rating', function (Builder $query) use ($latestRating) {
+                    $query->where('id', $latestRating->id);
                 })
                     ->where('company_employee_id', $employee->id);
             })
@@ -203,10 +206,8 @@ class ResultController extends Controller
             ->whereHas('client.result', function (Builder $query) use ($employee) {
                 $query->where('company_id', $employee->company?->id);
             })
-            ->whereHas('client.result.rating', function (Builder $query) {
-                $query->where('status', 'closed')
-                    ->latest('launched_at')
-                    ->limit(1);
+            ->whereHas('client.result.rating', function (Builder $query) use ($latestRating) {
+                $query->where('id', $latestRating->id);
             })
             ->groupBy('statistic_competence_id')
             ->get()
@@ -223,6 +224,7 @@ class ResultController extends Controller
             'markerRatingResults' => $markerRatingResults,
             'employeeFeedback' => $employeeFeedback,
             'companySummary' => $companySummary,
+            'progressText' => $this->getProgressText($employee),
         ]);
     }
 
@@ -333,5 +335,40 @@ class ResultController extends Controller
         }
 
         return redirect(route('client.rating.ratings.index'));
+    }
+
+    private function getProgressText(Employee $employee): string
+    {
+        $rating = Rating::with([
+            'matrixTemplates' => function (Builder $query) use ($employee) {
+                $query->with('clients:rating_matrix_template_id,company_employee_id')
+                    ->where('company_employee_id', $employee->id);
+            }
+        ])
+            ->where('status', 'in progress')
+            ->whereHas('matrixTemplates', function (Builder $query) use ($employee) {
+                $query->where('company_employee_id', $employee->id);
+            })
+            ->latest('launched_at')
+            ->first();
+
+        if ( ! $rating) {
+            return '';
+        }
+
+        $resultClients = Client::whereHas('result', function (Builder $query) use ($rating) {
+            $query->where('rating_id', $rating->id);
+        })
+            ->get()
+            ->pluck('company_employee_id');
+
+        $matrixTemplate = $rating->matrixTemplates->first();
+        $totalClients = $matrixTemplate->clients->count();
+        $finishedClients = $matrixTemplate->clients
+            ->pluck('company_employee_id')
+            ->intersect($resultClients)
+            ->count();
+
+        return sprintf('Оценили %s из %s', $finishedClients, $totalClients);
     }
 }

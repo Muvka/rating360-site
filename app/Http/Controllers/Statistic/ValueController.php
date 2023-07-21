@@ -10,6 +10,7 @@ use App\Models\Company\Division;
 use App\Models\Company\Level;
 use App\Models\Company\Position;
 use App\Models\Company\Subdivision;
+use App\Models\Rating\Value;
 use App\Models\Shared\City;
 use App\Models\Statistic\Result;
 use Carbon\Carbon;
@@ -25,13 +26,13 @@ class ValueController extends Controller
 {
     public function index(): Response
     {
-        $filters = Request::only(['city', 'company', 'division', 'subdivision', 'direction', 'level', 'position']);
+        $filters = Request::only(['city', 'company', 'division', 'subdivision', 'direction', 'level', 'position', 'value']);
 
-        return Inertia::render('Statistic/ValuePage', [
+        return Inertia::render('Statistic/StatisticPage', [
             'title' => 'Статистика по ценностям',
-            'formData' => $this->getForm(),
+            'fields' => $this->getFormFields(),
             'filters' => $filters,
-            'statistic' => $this->getStatistic(),
+            'statistic' => $filters ? $this->getStatistic() : [],
             'exportUrl' => route('client.statistic.value.export', $filters)
         ]);
     }
@@ -108,6 +109,9 @@ class ValueController extends Controller
             })
             ->when(Request::input('position'), function (Builder $query, string $position) {
                 return $query->where('company_position_id', $position);
+            })
+            ->when(Request::input('value'), function (Builder $query, string $value) {
+                return $query->where('rating_value_id', $value);
             })
             ->groupBy(
                 'statistic_results.company_employee_id',
@@ -195,7 +199,7 @@ class ValueController extends Controller
         ];
     }
 
-    private function getForm(): array
+    private function getFormFields(): array
     {
         $cities = City::select('id', 'name')
             ->distinct()
@@ -252,14 +256,63 @@ class ValueController extends Controller
                 'label' => $position->name,
             ]);
 
+        $values = Value::select('id', 'name')
+            ->distinct()
+            ->get()
+            ->map(fn(Value $values) => [
+                'value' => (string) $values->id,
+                'label' => $values->name,
+            ]);
+
         return [
-            'cities' => $cities,
-            'companies' => $companies,
-            'divisions' => $divisions,
-            'subdivisions' => $subdivisions,
-            'directions' => $directions,
-            'levels' => $levels,
-            'positions' => $positions,
+            [
+                'label' => 'Город',
+                'name' => 'city',
+                'type' => 'select',
+                'data' => $cities
+            ],
+            [
+                'label' => 'Компания',
+                'name' => 'company',
+                'type' => 'select',
+                'data' => $companies
+            ],
+            [
+                'label' => 'Отдел',
+                'name' => 'division',
+                'type' => 'select',
+                'data' => $divisions
+            ],
+            [
+                'label' => 'Подразделение',
+                'name' => 'subdivision',
+                'type' => 'select',
+                'data' => $subdivisions
+            ],
+            [
+                'label' => 'Направление',
+                'name' => 'direction',
+                'type' => 'select',
+                'data' => $directions
+            ],
+            [
+                'label' => 'Уровень сотрудника',
+                'name' => 'level',
+                'type' => 'select',
+                'data' => $levels
+            ],
+            [
+                'label' => 'Должность',
+                'name' => 'position',
+                'type' => 'select',
+                'data' => $positions
+            ],
+            [
+                'label' => 'Ценность',
+                'name' => 'value',
+                'type' => 'select',
+                'data' => $values
+            ]
         ];
     }
 }

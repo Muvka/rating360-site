@@ -45,7 +45,7 @@ class HandleInertiaRequests extends Middleware
             'shared.auth.user' => fn() => $request->user()
                 ? $request->user()->only('full_name')
                 : null,
-            'shared.auth.portalUrl' => app(AppGeneralSettings::class)->moodle_url.'/my',
+            'shared.auth.accountUrl' => app(AppGeneralSettings::class)->moodle_account_url,
             'shared.navigation.main' => $this->getMainNavigation()
         ]);
     }
