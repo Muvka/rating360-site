@@ -11,6 +11,7 @@ import CompetencyResultGrid from '../../Components/Statistic/CompetencyResultGri
 import downloadIconId from '../../../images/shared/icons/icon-download.svg';
 import PageContentHeader from '../../Components/Shared/PageContentHeader.jsx';
 import BadgeText from '../../Components/Shared/BadgeText.jsx';
+import RatingComparison from '../../Components/Statistic/RatingComparison.jsx';
 
 const ResultDetailsPage = ({
 	title = '',
@@ -18,6 +19,7 @@ const ResultDetailsPage = ({
 	employeeFeedback = {},
 	competenceRatingResults = [],
 	markerRatingResults = [],
+	ratingComparison = [],
 	progressText = ''
 }) => {
 	const [disabled, setDisabled] = useState(false);
@@ -89,6 +91,7 @@ const ResultDetailsPage = ({
 					<DetailedResults results={markerRatingResults} />
 				)}
 				{hasSummary && <CompanySummary data={companySummary} />}
+				<RatingComparison />
 			</SeparateWrapper>
 		</>
 	);

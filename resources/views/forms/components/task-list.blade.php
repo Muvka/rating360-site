@@ -5,51 +5,59 @@
     :label-sr-only="$isLabelHidden()"
     :state-path="$getStatePath()"
 >
-    <div
-        class="border border-gray-300 shadow-sm bg-white rounded-xl filament-tables-container dark:bg-gray-800 dark:border-gray-700">
-        <div class="filament-tables-table-container overflow-x-auto relative dark:border-gray-700 rounded-t-xl">
-            <table class="filament-tables-table w-full text-start divide-y table-auto dark:divide-gray-700">
-                <thead>
-                <tr class="bg-gray-500/5">
-                    @foreach($getHeaders() as $header)
-                        <th class="filament-tables-header-cell p-0 filament-table-header-cell-№">
-                            <button type="button"
-                                    class="flex items-center gap-x-1 w-full px-4 py-2 whitespace-nowrap font-medium text-sm text-gray-600 dark:text-gray-300 cursor-default ">
-                        <span>
-                            {{$header}}
-                        </span>
-                            </button>
+    <div @class(['space-y-6 relative'])>
+        <div @class([
+            'rounded-xl bg-gray-50 relative dark:bg-gray-500/10 border border-gray-300 dark:border-gray-700',
+        ])>
+            <table class="w-full">
+                <thead @class([
+                    'rounded-t-xl overflow-hidden border-b border-gray-300 dark:border-gray-700'
+                ])>
+                <tr class="md:divide-x md:rtl:divide-x-reverse md:divide-gray-300 dark:md:divide-gray-700 text-sm">
+                    @foreach ($getHeaders() as $header)
+                        <th
+                            @class([
+                                'px-3 py-2 font-medium text-left text-gray-600 dark:text-gray-300 bg-gray-200/50 dark:bg-gray-900/60 text-center',
+                                'ltr:rounded-tl-xl rtl:rounded-tr-xl' => $loop->first,
+                                'ltr:rounded-tr-xl rtl:rounded-tl-xl' => $loop->last,
+                            ])
+                        >
+                            {{ $header }}
                         </th>
                     @endforeach
                 </tr>
                 </thead>
-
-                <tbody class="divide-y whitespace-nowrap dark:divide-gray-700">
-                @foreach($getItems() as $item)
-                    <tr class="filament-tables-row">
-                        @foreach($item as $index => $subItem)
-                            <td class="filament-tables-cell dark:text-white filament-table-cell-№">
-                                <div class="filament-tables-column-wrapper">
-                                    <div class="flex w-full justify-start text-start">
-                                        <div class="filament-tables-text-column px-4 py-3">
-                                            <div class="inline-flex items-center space-x-1 rtl:space-x-reverse">
-                                            <span class="">
-                                                @if ($index +1 === count($item))
-                                                    @if ($subItem)
-                                                        <x-heroicon-o-check-circle
-                                                            class="w-6 h-6 text-success-700"></x-heroicon-o-check-circle>
-                                                    @else
-                                                        <x-heroicon-o-x-circle
-                                                            class="w-6 h-6 text-danger-700"></x-heroicon-o-x-circle>
-                                                    @endif
-                                                @else
-                                                    {{$subItem}}
-                                                @endif
-                                            </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                <tbody
+                    class="divide-y divide-gray-300 dark:divide-gray-700"
+                >
+                @foreach($getItems() as $row)
+                    <tr
+                        @class([
+                            'md:divide-x md:rtl:divide-x-reverse md:divide-gray-300',
+                            'dark:md:divide-gray-700' => config('forms.dark_mode'),
+                            'bg-danger-500/10' => $row[2] >= 10
+                        ])
+                    >
+                        @foreach($row as $cell)
+                            <td
+                                @class([
+                                    'filament-table-repeater-column p-2',
+                                    'flex justify-center' => $loop->last,
+                                    'text-center' => $loop->index === 2,
+                                ])
+                            >
+                                @if($loop->last)
+                                    <x-dynamic-component
+                                        :component="$cell ? 'heroicon-o-check-circle' : 'heroicon-o-x-circle'"
+                                        @class([
+                                            'h-6 w-6',
+                                            'text-danger-500' => !$cell,
+                                            'text-success-500' => $cell
+                                        ])
+                                    />
+                                @else
+                                    {{ $cell }}
+                                @endif
                             </td>
                         @endforeach
                     </tr>

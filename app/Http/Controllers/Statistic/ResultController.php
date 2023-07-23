@@ -218,12 +218,81 @@ class ResultController extends Controller
                 ];
             });
 
+        $years = ['prev' => now()->year - 1, 'current' => now()->year];
+
+        $currentResults = ClientCompetence::select(
+            'statistic_competence_id',
+            DB::raw('cast(avg(average_rating) as decimal(3, 2)) as averageRating')
+        )
+            ->with('competence')
+            ->whereHas('client.result', function (Builder $query) use ($employee) {
+                $query->where('company_employee_id', $employee->id);
+            })
+            ->whereHas('client.result.rating', function (Builder $query) use ($years) {
+                $query->whereYear('launched_at', $years['current'])
+                    ->whereNot('status', 'draft');
+            })
+            ->groupBy('statistic_competence_id')
+            ->get()
+            ->map(function (ClientCompetence $clientCompetence) use ($years) {
+                return [
+                    'competence' => $clientCompetence->competence->name,
+                    'rating' => $clientCompetence->averageRating,
+                    'year' => $years['current']
+                ];
+            });
+
+        $lastYearResults = ClientCompetence::select(
+            'statistic_competence_id',
+            DB::raw('cast(avg(average_rating) as decimal(3, 2)) as averageRating')
+        )
+            ->with('competence')
+            ->whereHas('client.result', function (Builder $query) use ($employee) {
+                $query->where('company_employee_id', $employee->id);
+            })
+            ->whereHas('client.result.rating', function (Builder $query) use ($years) {
+                $query->whereYear('launched_at', $years['prev'])
+                    ->whereNot('status', 'draft');
+            })
+            ->groupBy('statistic_competence_id')
+            ->get()
+            ->map(function (ClientCompetence $clientCompetence) use ($years) {
+                return [
+                    'competence' => $clientCompetence->competence->name,
+                    'rating' => $clientCompetence->averageRating,
+                    'year' => $years['prev']
+                ];
+            });
+
+        if ($currentResults->isNotEmpty() && $lastYearResults->isNotEmpty()) {
+            $ratingComparison = [
+                'columns' => [
+                    ['key' => 'competence', 'label' => 'Компетенция'],
+                    ['key' => 'rating-'.$years['prev'], 'label' => $years['prev'].' год'],
+                    ['key' => 'rating-'.$years['current'], 'label' => $years['current'].' год'],
+                ],
+                'data' => $currentResults->merge($lastYearResults)
+                    ->groupBy('competence')
+                    ->map(function (Collection $items, string $competence) use ($years) {
+                        return [
+                            'competence' => $competence,
+                            'rating-'.$years['prev'] => $items->where('year', $years['prev'])->first()['rating'] ?? null,
+                            'rating-'.$years['current'] => $items->where('year', $years['current'])->first()['rating'] ?? null
+                        ];
+                    })
+                    ->values()
+            ];
+        } else {
+            $ratingComparison = null;
+        }
+
         return Inertia::render('Statistic/ResultDetailsPage', [
             'title' => 'Отчёт по оценке 360 - '.$employee->full_name,
             'competenceRatingResults' => $competenceRatingResults,
             'markerRatingResults' => $markerRatingResults,
             'employeeFeedback' => $employeeFeedback,
             'companySummary' => $companySummary,
+            'ratingComparison' => $ratingComparison,
             'progressText' => $this->getProgressText($employee),
         ]);
     }

@@ -1,0 +1,17 @@
+@media (max-width: 599px) {
+    .rating-comparison__title {
+        margin: 0 0 16px;
+    }
+}
+
+@media (min-width: 600px) and (max-width: 1199px) {
+    .rating-comparison__title {
+        margin: 0 0 20px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .rating-comparison__title {
+        margin: 0 0 24px;
+    }
+}
