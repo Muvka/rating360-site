@@ -12,18 +12,22 @@ use App\Models\Company\Subdivision;
 use App\Models\Rating\Matrix;
 use App\Models\Rating\MatrixTemplate;
 use App\Models\Shared\City;
+use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\WithBatchInserts;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows
+class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows, WithChunkReading, WithBatchInserts
 {
-    private Matrix $martix;
+    private Matrix $matrix;
 
     public function __construct($martix)
     {
-        $this->martix = $martix;
+        $this->matrix = $martix;
     }
 
     public function model(array $row): void
@@ -31,10 +35,13 @@ class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows
         $employee = $this->getEmployeeByFullName($row['sotrudnik']);
 
         if ( ! $employee) {
+            Log::channel('excel_import')->info('Не удалось найти сотрудника "'.$row['sotrudnik'].'" при импорте в матрицу "'.$this->matrix->name.'"');
             return;
         }
 
-        $foundTemplate = $this->martix->templates->filter(function (MatrixTemplate $template) use ($employee) {
+        if (!$employee)
+
+        $foundTemplate = $this->matrix->templates->filter(function (MatrixTemplate $template) use ($employee) {
             return $template->company_employee_id === $employee->id;
         });
 
@@ -42,37 +49,37 @@ class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows
             return;
         }
 
-        if ( ! $employee->city && $row['gorod']) {
+        if ( ! $employee->city && isset($row['gorod']) && $row['gorod']) {
             $city = $this->getRecord(City::class, 'name', $row['gorod']);
 
             $employee->city_id = $city->id;
         }
 
-        if ( ! $employee->company && $row['kompaniia']) {
+        if ( ! $employee->company && isset($row['kompaniia']) && $row['kompaniia']) {
             $company = $this->getRecord(Company::class, 'name', $row['kompaniia']);
 
             $employee->company_id = $company->id;
         }
 
-        if ( ! $employee->division && $row['otdel']) {
+        if ( ! $employee->division && isset($row['otdel']) && $row['otdel']) {
             $division = $this->getRecord(Division::class, 'name', $row['otdel']);
 
             $employee->company_division_id = $division->id;
         }
 
-        if ( ! $employee->subdivision && $row['podrazdelenie']) {
+        if ( ! $employee->subdivision && isset($row['podrazdelenie']) && $row['podrazdelenie']) {
             $subdivision = $this->getRecord(Subdivision::class, 'name', $row['podrazdelenie']);
 
             $employee->company_subdivision_id = $subdivision->id;
         }
 
-        if ( ! $employee->position && $row['dolznost']) {
+        if ( ! $employee->position && isset($row['dolznost']) && $row['dolznost']) {
             $position = $this->getRecord(Position::class, 'name', $row['dolznost']);
 
             $employee->company_position_id = $position->id;
         }
 
-        if ( ! $employee->level && $row['uroven_sotrudnika']) {
+        if ( ! $employee->level && isset($row['uroven_sotrudnika']) && $row['uroven_sotrudnika']) {
             $level = $this->getRecord(Level::class, 'name', $row['uroven_sotrudnika']);
 
             $employee->company_level_id = $level->id;
@@ -104,9 +111,9 @@ class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows
             }
         }
 
-        $matrixTemplate = $this->martix->templates()->create(['company_employee_id' => $employee->id]);
+        $matrixTemplate = $this->matrix->templates()->create(['company_employee_id' => $employee->id]);
 
-        if ( ! $employee->directManager && $row['rukovoditel_1_neposredstvennyi']) {
+        if ( ! $employee->directManager && isset($row['rukovoditel_1_neposredstvennyi']) && $row['rukovoditel_1_neposredstvennyi']) {
             $directManager = $this->getEmployeeByFullName($row['rukovoditel_1_neposredstvennyi']);
 
             if ($directManager) {
@@ -118,7 +125,7 @@ class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows
             }
         }
 
-        if ( ! $employee->directManager && $row['rukovoditel_2_funkcionalnyi']) {
+        if ( ! $employee->directManager && isset($row['rukovoditel_2_funkcionalnyi']) && $row['rukovoditel_2_funkcionalnyi']) {
             $functionalManager = $this->getEmployeeByFullName($row['rukovoditel_2_funkcionalnyi']);
 
             if ($functionalManager) {
@@ -130,11 +137,11 @@ class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows
             }
         }
 
-        if (!empty($innerClients)) {
+        if ( ! empty($innerClients)) {
             foreach ($innerClients as $innerClient) {
                 $client = $this->getEmployeeByFullName($innerClient);
 
-                if (!$client) {
+                if ( ! $client) {
                     continue;
                 }
 
@@ -145,11 +152,11 @@ class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows
             }
         }
 
-        if (!empty($outerClients)) {
+        if ( ! empty($outerClients)) {
             foreach ($outerClients as $outerClient) {
                 $client = $this->getEmployeeByFullName($outerClient);
 
-                if (!$client) {
+                if ( ! $client) {
                     continue;
                 }
 
@@ -188,7 +195,7 @@ class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows
     {
         $valueSearch = str_replace(['"', "'", '«', '»'], '', $value);
 
-        $record = $model::whereRaw('REPLACE(REPLACE(REPLACE(REPLACE(LOWER(' . $attribute . '), \'"\', \'\'), \'«\', \'\'), \'»\', \'\'), "\'", \'\') = ?',
+        $record = $model::whereRaw('REPLACE(REPLACE(REPLACE(REPLACE(LOWER('.$attribute.'), \'"\', \'\'), \'«\', \'\'), \'»\', \'\'), "\'", \'\') = ?',
             [Str::lower(trim($valueSearch))])
             ->first();
 
@@ -197,5 +204,15 @@ class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows
         }
 
         return $record;
+    }
+
+    public function chunkSize(): int
+    {
+        return 50;
+    }
+
+    public function batchSize(): int
+    {
+        return 50;
     }
 }

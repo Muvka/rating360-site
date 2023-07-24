@@ -9,9 +9,4 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateEmployee extends CreateRecord
 {
     protected static string $resource = EmployeeResource::class;
-
-    protected function form(Form $form): Form
-    {
-        return $form->schema([]);
-    }
 }

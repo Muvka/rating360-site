@@ -126,6 +126,11 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
+
+        'excel_import' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/excel_import.log'),
+        ],
     ],
 
 ];
