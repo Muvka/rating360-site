@@ -83,8 +83,7 @@ class EmployeeResource extends Resource
                         Select::make('company_division_id')
                             ->label('Отдел')
                             ->relationship('division', 'name')
-                            ->searchable()
-                            ->required(),
+                            ->searchable(),
                         Select::make('company_subdivision_id')
                             ->label('Подразделение')
                             ->relationship('subdivision', 'name')
