@@ -39,8 +39,6 @@ class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows, W
             return;
         }
 
-        if (!$employee)
-
         $foundTemplate = $this->matrix->templates->filter(function (MatrixTemplate $template) use ($employee) {
             return $template->company_employee_id === $employee->id;
         });
