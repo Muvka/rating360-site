@@ -39,10 +39,15 @@ class AuthController extends Controller
         }
 
         $userEmail = isset($data['result']['email']) ? trim($data['result']['email']) : '';
+
+        if (!$userEmail) {
+            return redirect()->away($settings->moodle_account_url);
+        }
+
         $user = Employee::where('email', $userEmail)->first();
 
-        if ( ! $user && $userEmail) {
-            $nameParts = explode(' ', $data['result']["concat(firstname, ' ', lastname)"]);
+        if ( ! $user) {
+            $nameParts = explode(' ', $data['result']["name"]);
 
             // TODO: Сохранять компанию и подразделение
             $user = Employee::create([
