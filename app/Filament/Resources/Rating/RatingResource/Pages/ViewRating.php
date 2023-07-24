@@ -34,7 +34,7 @@ class ViewRating extends ViewRecord
                                     ->get()
                                     ->flatMap(function (MatrixTemplate $template) use ($record) {
                                         $resultClients = Client::whereHas('result', function (Builder $query) use ($record, $template) {
-                                            $query->where('id', $record->id)
+                                            $query->where('rating_id', $record->id)
                                                 ->where('company_employee_id', $template->company_employee_id);
                                         })
                                             ->get();
