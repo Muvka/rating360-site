@@ -60,8 +60,8 @@ class ViewRating extends ViewRecord
                                                 $template->employee->full_name,
                                                 $client->employee->full_name,
                                                 $clientCount,
-                                                (bool)$resultClients->contains(function (Client $resultClient) use ($client) {
-                                                    return $resultClient->company_employee_id === $client->employee->id;
+                                                $resultClients->contains(function (Client $resultClient) use ($client) {
+                                                    return (int)$resultClient->company_employee_id === (int)$client->employee->id;
                                                 })
                                             ];
                                         });
