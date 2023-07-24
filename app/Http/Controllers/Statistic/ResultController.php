@@ -117,106 +117,113 @@ class ResultController extends Controller
             ->latest('launched_at')
             ->first();
 
-        $competenceRatingResults = ClientCompetence::select(
-            'type',
-            'statistic_competence_id',
-            DB::raw('cast(avg(average_rating) as decimal(3, 2)) as averageRating')
-        )
-            ->join('statistic_clients', 'statistic_client_competences.statistic_client_id', '=',
-                'statistic_clients.id')
-            ->whereHas('client.result', function (Builder $query) use ($employee, $latestRating) {
-                $query->whereHas('rating', function (Builder $query) use ($latestRating) {
-                    $query->where('id', $latestRating->id);
-                })
-                    ->where('company_employee_id', $employee->id);
-            })
-            ->with('competence')
-            ->groupBy('statistic_competence_id', 'type')
-            ->get()
-            ->groupBy('competence.name')
-            ->map(function (Collection $item, string $competence) {
-                $clients = $item->mapWithKeys(function (ClientCompetence $client) {
-                    return [$client['type'] => $client['averageRating']];
-                });
+        $competenceRatingResults = [];
+        $markerRatingResults = [];
+        $employeeFeedback = [];
+        $companySummary = [];
 
-                return [
-                    'competence' => $competence,
-                    'averageRating' => $clients->avg(),
-                    'averageRatingWithoutSelf' => $clients->except('self')->avg(),
-                    'clients' => $clients,
-                ];
-            })
-            ->values();
-
-        $markerRatingResults = ClientCompetence::select(
-            'type',
-            'statistic_competence_id',
-            'text',
-            DB::raw('cast(avg(rating) as decimal(3, 2)) as averageRating')
-        )
-            ->join('statistic_clients', 'statistic_client_competences.statistic_client_id', '=', 'statistic_clients.id')
-            ->join('statistic_markers', 'statistic_client_competences.id', '=', 'statistic_markers.statistic_client_competence_id')
-            ->with('competence')
-            ->whereHas('client.result', function (Builder $query) use ($employee, $latestRating) {
-                $query->whereHas('rating', function (Builder $query) use ($latestRating) {
-                    $query->where('id', $latestRating->id);
+        if ($latestRating) {
+            $competenceRatingResults = ClientCompetence::select(
+                'type',
+                'statistic_competence_id',
+                DB::raw('cast(avg(average_rating) as decimal(3, 2)) as averageRating')
+            )
+                ->join('statistic_clients', 'statistic_client_competences.statistic_client_id', '=',
+                    'statistic_clients.id')
+                ->whereHas('client.result', function (Builder $query) use ($employee, $latestRating) {
+                    $query->whereHas('rating', function (Builder $query) use ($latestRating) {
+                        $query->where('id', $latestRating->id);
+                    })
+                        ->where('company_employee_id', $employee->id);
                 })
-                    ->where('company_employee_id', $employee->id);
-            })
-            ->groupBy('type', 'statistic_competence_id', 'text')
-            ->get()
-            ->groupBy('competence.name')
-            ->map(function (Collection $item, string $competence) {
-                return [
-                    'competence' => $competence,
-                    'markers' => [
-                        'columns' => [
-                            ['key' => 'marker', 'label' => 'Маркер'],
-                            ['key' => 'outer', 'label' => 'Внешние клиенты'],
-                            ['key' => 'inner', 'label' => 'Внутренние клиенты'],
-                            ['key' => 'manager', 'label' => 'Руководитель'],
-                            ['key' => 'self', 'label' => 'Самооценка']
+                ->with('competence')
+                ->groupBy('statistic_competence_id', 'type')
+                ->get()
+                ->groupBy('competence.name')
+                ->map(function (Collection $item, string $competence) {
+                    $clients = $item->mapWithKeys(function (ClientCompetence $client) {
+                        return [$client['type'] => $client['averageRating']];
+                    });
+
+                    return [
+                        'competence' => $competence,
+                        'averageRating' => $clients->avg(),
+                        'averageRatingWithoutSelf' => $clients->except('self')->avg(),
+                        'clients' => $clients,
+                    ];
+                })
+                ->values();
+
+            $markerRatingResults = ClientCompetence::select(
+                'type',
+                'statistic_competence_id',
+                'text',
+                DB::raw('cast(avg(rating) as decimal(3, 2)) as averageRating')
+            )
+                ->join('statistic_clients', 'statistic_client_competences.statistic_client_id', '=', 'statistic_clients.id')
+                ->join('statistic_markers', 'statistic_client_competences.id', '=', 'statistic_markers.statistic_client_competence_id')
+                ->with('competence')
+                ->whereHas('client.result', function (Builder $query) use ($employee, $latestRating) {
+                    $query->whereHas('rating', function (Builder $query) use ($latestRating) {
+                        $query->where('id', $latestRating->id);
+                    })
+                        ->where('company_employee_id', $employee->id);
+                })
+                ->groupBy('type', 'statistic_competence_id', 'text')
+                ->get()
+                ->groupBy('competence.name')
+                ->map(function (Collection $item, string $competence) {
+                    return [
+                        'competence' => $competence,
+                        'markers' => [
+                            'columns' => [
+                                ['key' => 'marker', 'label' => 'Маркер'],
+                                ['key' => 'outer', 'label' => 'Внешние клиенты'],
+                                ['key' => 'inner', 'label' => 'Внутренние клиенты'],
+                                ['key' => 'manager', 'label' => 'Руководитель'],
+                                ['key' => 'self', 'label' => 'Самооценка']
+                            ],
+                            'data' => $item->groupBy('text')->map(function (Collection $item, string $marker) {
+                                return [
+                                    'marker' => $marker,
+                                    ...$item->pluck('averageRating', 'type')
+                                ];
+                            })->values()
                         ],
-                        'data' => $item->groupBy('text')->map(function (Collection $item, string $marker) {
-                            return [
-                                'marker' => $marker,
-                                ...$item->pluck('averageRating', 'type')
-                            ];
-                        })->values()
-                    ],
-                ];
-            })
-            ->values();
+                    ];
+                })
+                ->values();
 
-        $employeeFeedback = Review::select('id', 'title', 'text')
-            ->whereHas('client.result', function (Builder $query) use ($employee, $latestRating) {
-                $query->whereHas('rating', function (Builder $query) use ($latestRating) {
+            $employeeFeedback = Review::select('id', 'title', 'text')
+                ->whereHas('client.result', function (Builder $query) use ($employee, $latestRating) {
+                    $query->whereHas('rating', function (Builder $query) use ($latestRating) {
+                        $query->where('id', $latestRating->id);
+                    })
+                        ->where('company_employee_id', $employee->id);
+                })
+                ->get()
+                ->groupBy('title');
+
+            $companySummary = ClientCompetence::select(
+                'statistic_competence_id',
+                DB::raw('cast(avg(average_rating) as decimal(3, 2)) as averageRating')
+            )
+                ->with('competence')
+                ->whereHas('client.result', function (Builder $query) use ($employee) {
+                    $query->where('company_id', $employee->company?->id);
+                })
+                ->whereHas('client.result.rating', function (Builder $query) use ($latestRating) {
                     $query->where('id', $latestRating->id);
                 })
-                    ->where('company_employee_id', $employee->id);
-            })
-            ->get()
-            ->groupBy('title');
-
-        $companySummary = ClientCompetence::select(
-            'statistic_competence_id',
-            DB::raw('cast(avg(average_rating) as decimal(3, 2)) as averageRating')
-        )
-            ->with('competence')
-            ->whereHas('client.result', function (Builder $query) use ($employee) {
-                $query->where('company_id', $employee->company?->id);
-            })
-            ->whereHas('client.result.rating', function (Builder $query) use ($latestRating) {
-                $query->where('id', $latestRating->id);
-            })
-            ->groupBy('statistic_competence_id')
-            ->get()
-            ->map(function (ClientCompetence $clientCompetence) {
-                return [
-                    'competence' => $clientCompetence->competence->name,
-                    'rating' => $clientCompetence->averageRating
-                ];
-            });
+                ->groupBy('statistic_competence_id')
+                ->get()
+                ->map(function (ClientCompetence $clientCompetence) {
+                    return [
+                        'competence' => $clientCompetence->competence->name,
+                        'rating' => $clientCompetence->averageRating
+                    ];
+                });
+        }
 
         $years = ['prev' => now()->year - 1, 'current' => now()->year];
 
