@@ -64,7 +64,7 @@ class ResultController extends Controller
 
         $rating->load('template');
 
-        $competences = RatingCompetence::select('id', 'name', 'sort')
+        $competences = RatingCompetence::select('id', 'name', 'manager_only', 'sort')
             ->with('markers', function (Builder $query) {
                 $query->select(
                     'id',
@@ -78,6 +78,9 @@ class ResultController extends Controller
             ->whereHas('templates', function (Builder $query) use ($rating) {
                 $query->where('rating_templates.id', $rating->template->id);
             })
+            ->when(!Auth::user()->isManager(), function (Builder $query) {
+                $query->where('manager_only', false);
+            })
             ->orderBy('sort')
             ->groupBy('id')
             ->get();
@@ -86,13 +89,6 @@ class ResultController extends Controller
 
         return Inertia::render('Rating/RatingPage', [
             'title' => 'Оценка сотрудника - '.$employee->full_name,
-//            'form' => [
-//                'employee' => [
-//                    'id' => $employee->id,
-//                    'name' => $employee->full_name,
-//                ],
-//                'competences' => $competences,
-//            ],
             'ratingId' => $rating->id,
             'employee' => [
                 'id' => $employee->id,
@@ -309,6 +305,11 @@ class ResultController extends Controller
         $this->authorize('create', [Result::class, $rating, $employee]);
 
         $markers = CompetenceMarker::with('competence:id,name')
+            ->whereHas('competence', function(Builder $query) {
+                $query->when(!Auth::user()->isManager(), function (Builder $query) {
+                    $query->where('manager_only', false);
+                });
+            })
             ->whereHas('competence.templates.ratings', function (Builder $query) use ($rating) {
                 $query->where('id', $rating->id);
             })

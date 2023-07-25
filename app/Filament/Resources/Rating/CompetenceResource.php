@@ -11,11 +11,13 @@ use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -46,6 +48,8 @@ class CompetenceResource extends Resource
                             ->placeholder('Навыки постановки целей')
                             ->maxLength(255)
                             ->required(),
+                        Toggle::make('manager_only')
+                            ->label('Для руководителей'),
                         TableRepeater::make('markers')
                             ->relationship()
                             ->label('Маркеры')
@@ -103,6 +107,9 @@ class CompetenceResource extends Resource
                     ),
                 TextColumn::make('name')
                     ->label('Название')
+                    ->sortable(),
+                ToggleColumn::make('manager_only')
+                    ->label('Для руководителей')
                     ->sortable(),
             ])
             ->reorderable()
