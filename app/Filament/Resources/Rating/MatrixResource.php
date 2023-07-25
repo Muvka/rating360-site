@@ -4,14 +4,8 @@ namespace App\Filament\Resources\Rating;
 
 use App\Filament\Resources\Rating\MatrixResource\Pages;
 use App\Filament\Resources\Rating\MatrixResource\RelationManagers\MatrixTemplatesRelationManager;
-use App\Models\Company\Employee;
 use App\Models\Rating\Matrix;
-use App\Models\Rating\MatrixTemplateClient;
-use Awcodes\FilamentTableRepeater\Components\TableRepeater;
-use Closure;
 use Filament\Forms\Components\Card;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -19,7 +13,6 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
-use Illuminate\Contracts\Database\Eloquent\Builder;
 use stdClass;
 
 class MatrixResource extends Resource
@@ -41,7 +34,13 @@ class MatrixResource extends Resource
         return $form
             ->schema([
                 Card::make()
-                    ->schema(static::getGeneralFormSchema())
+                    ->schema([
+                        TextInput::make('name')
+                            ->label('Название')
+                            ->placeholder('Общая матрица')
+                            ->maxLength(128)
+                            ->required(),
+                    ])
             ]);
     }
 
@@ -92,116 +91,6 @@ class MatrixResource extends Resource
             'index' => Pages\ListMatrices::route('/'),
             'create' => Pages\CreateMatrix::route('/create'),
             'edit' => Pages\EditMatrix::route('/{record}/edit'),
-        ];
-    }
-
-    public static function getGeneralFormSchema(): array
-    {
-        return [
-            TextInput::make('name')
-                ->label('Название')
-                ->placeholder('Общая матрица')
-                ->maxLength(128)
-                ->required(),
-        ];
-    }
-
-    public static function getTemplateFormSchema(): array
-    {
-        return [
-            Select::make('company_employee_id')
-                ->getSearchResultsUsing(
-                    fn(string $search) => Employee::where('last_name', 'like', "%{$search}%")
-                        ->limit(20)
-                        ->get()
-                        ->pluck('full_name', 'id'))
-                ->getOptionLabelUsing(fn($value): ?string => Employee::find($value)
-                    ->full_name)
-                ->label('Сотрудник')
-                ->searchable()
-                ->reactive()
-                ->required(),
-            Card::make()
-                ->visible(fn(Closure $get): bool => (bool) $get('company_employee_id'))
-                ->columns(3)
-                ->schema([
-                    Placeholder::make('city')
-                        ->label('Город')
-                        ->content(fn(Closure $get): ?string => Employee::find($get('company_employee_id'))
-                            ?->city
-                            ?->name),
-                    Placeholder::make('company')
-                        ->label('Компания')
-                        ->content(fn(Closure $get): ?string => Employee::find($get('company_employee_id'))
-                            ?->company
-                            ?->name),
-                    Placeholder::make('division')
-                        ->label('Отдел')
-                        ->content(fn(Closure $get): ?string => Employee::find($get('company_employee_id'))
-                            ?->division
-                            ?->name),
-                    Placeholder::make('subdivision')
-                        ->label('Подразделение')
-                        ->content(fn(Closure $get): ?string => Employee::find($get('company_employee_id'))
-                            ?->subdivision
-                            ?->name),
-                    Placeholder::make('directions')
-                        ->label('Направления')
-                        ->content(fn(Closure $get): ?string => Employee::find($get('company_employee_id'))
-                            ?->directions
-                            ->pluck('name')
-                            ->join(', ')),
-                    Placeholder::make('position')
-                        ->label('Должность')
-                        ->content(fn(Closure $get): ?string => Employee::find($get('company_employee_id'))
-                            ?->position
-                            ?->name),
-                    Placeholder::make('level')
-                        ->label('Уровень сотрудника')
-                        ->content(fn(Closure $get): ?string => Employee::find($get('company_employee_id'))
-                            ?->level
-                            ?->name),
-                    Placeholder::make('direct_manager')
-                        ->label('Непосредственный руководитель')
-                        ->content(fn(Closure $get): ?string => Employee::find($get('company_employee_id'))
-                            ?->directManager
-                            ?->full_name),
-                    Placeholder::make('functional_manager')
-                        ->label('Функциональный руководитель')
-                        ->content(fn(Closure $get): ?string => Employee::find($get('company_employee_id'))
-                            ?->functionalManager
-                            ?->full_name),
-                ]),
-            TableRepeater::make('clients')
-                ->relationship('editableClients')
-                ->label('Клиенты')
-                ->headers(['Сотрудник', 'Клиент'])
-                ->createItemButtonLabel('Добавить клиента')
-                ->emptyLabel('Нет клиентов')
-                ->columnWidths(['type' => '20%'])
-                ->schema([
-                    Select::make('company_employee_id')
-                        ->getSearchResultsUsing(
-                            fn(string $search) => Employee::where('last_name', 'like', "%{$search}%")
-                                ->limit(20)
-                                ->get()
-                                ->pluck('full_name', 'id'))
-                        ->getOptionLabelUsing(fn($value): ?string => Employee::find($value)
-                            ->full_name)
-                        ->label('Сотрудник')
-                        ->disableLabel()
-                        ->searchable()
-                        ->required(),
-                    Select::make('type')
-                        ->label('Клиент')
-                        ->options([
-                            'inner' => 'Внутренний',
-                            'outer' => 'Внешний',
-                        ])
-                        ->disablePlaceholderSelection()
-                        ->default('inner')
-                        ->disableLabel(),
-                ])
         ];
     }
 }
