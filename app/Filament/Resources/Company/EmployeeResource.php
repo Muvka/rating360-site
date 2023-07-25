@@ -104,8 +104,10 @@ class EmployeeResource extends Resource
                             ->reactive()
                             ->required()
                             ->afterStateUpdated(function (?Employee $record, Select $component, $state) {
-                                $record->{$component->getName()} = $state;
-                                $record->saveQuietly();
+                                if ($record) {
+                                    $record->{$component->getName()} = $state;
+                                    $record->saveQuietly();
+                                }
                             }),
                     ]),
                 Section::make('Руководители')
