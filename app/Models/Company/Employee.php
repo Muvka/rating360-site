@@ -133,6 +133,6 @@ class Employee extends Authenticatable implements FilamentUser, HasName
 
     public function isManager(): bool
     {
-        return $this->level && (int)$this->level->id !== 5;
+        return (bool)$this->level?->is_manager;
     }
 }

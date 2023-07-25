@@ -12,18 +12,46 @@ class LevelSeeder extends Seeder
      */
     public function run(): void
     {
+        $now = now();
+
         $levels = [
-            'L0',
-            'L1',
-            'L2',
-            'L3',
-            'Специалист',
+            [
+                'name' => 'L0',
+                'is_manager' => true,
+                'requires_manager' => false,
+                'created_at' => $now,
+                'updated_at' => $now
+            ],
+            [
+                'name' => 'L1',
+                'is_manager' => true,
+                'requires_manager' => false,
+                'created_at' => $now,
+                'updated_at' => $now
+            ],
+            [
+                'name' => 'L2',
+                'is_manager' => true,
+                'requires_manager' => true,
+                'created_at' => $now,
+                'updated_at' => $now
+            ],
+            [
+                'name' => 'L3',
+                'is_manager' => true,
+                'requires_manager' => true,
+                'created_at' => $now,
+                'updated_at' => $now
+            ],
+            [
+                'name' => 'Специалист',
+                'is_manager' => false,
+                'requires_manager' => true,
+                'created_at' => $now,
+                'updated_at' => $now
+            ]
         ];
 
-        foreach ($levels as $level) {
-            Level::create([
-                'name' => $level,
-            ]);
-        }
+        Level::insert($levels);
     }
 }

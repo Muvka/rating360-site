@@ -10,6 +10,7 @@ use App\Models\Company\Employee;
 
 /**/
 
+use App\Models\Company\Level;
 use Closure;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -31,7 +32,7 @@ class EmployeeResource extends Resource
 
     protected static ?string $navigationGroup = 'Компании';
 
-    protected static ?int $navigationSort = 70;
+    protected static ?int $navigationSort = 80;
 
     protected static ?string $navigationIcon = 'heroicon-o-user-circle';
 
@@ -124,7 +125,7 @@ class EmployeeResource extends Resource
                                 ->full_name)
                             ->searchable()
                             ->required(
-                                fn(Closure $get) => ! in_array($get('company_level_id'), ['1', '2'])
+                                fn(Closure $get) => $get('company_level_id') ? Level::find($get('company_level_id'))?->requires_manager : true
                             ),
                         Select::make('functional_manager_id')
                             ->label('Функциональный')
