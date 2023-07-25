@@ -123,6 +123,7 @@ class MatrixTemplatesRelationManager extends RelationManager
                         Select::make('type')
                             ->label('Клиент')
                             ->options([
+                                'manager' => 'Руководитель',
                                 'inner' => 'Внутренний',
                                 'outer' => 'Внешний',
                             ])
