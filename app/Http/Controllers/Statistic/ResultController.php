@@ -78,7 +78,7 @@ class ResultController extends Controller
             ->whereHas('templates', function (Builder $query) use ($rating) {
                 $query->where('rating_templates.id', $rating->template->id);
             })
-            ->when(!Auth::user()->isManager(), function (Builder $query) {
+            ->when(! $employee->isManager(), function (Builder $query) {
                 $query->where('manager_only', false);
             })
             ->orderBy('sort')
@@ -305,8 +305,8 @@ class ResultController extends Controller
         $this->authorize('create', [Result::class, $rating, $employee]);
 
         $markers = CompetenceMarker::with('competence:id,name')
-            ->whereHas('competence', function(Builder $query) {
-                $query->when(!Auth::user()->isManager(), function (Builder $query) {
+            ->whereHas('competence', function (Builder $query) use ($employee) {
+                $query->when(! $employee->isManager(), function (Builder $query) {
                     $query->where('manager_only', false);
                 });
             })
