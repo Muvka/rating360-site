@@ -32,29 +32,18 @@ class RatingObserver
         }
 
         foreach ($rating->matrix->templates as $template) {
-            $recipients = [$template->employee];
             $failedSending = [];
 
-            if ($template->employee->directManager) {
-                $recipients[] = $template->employee->directManager;
-            }
-
-            if ($template->employee->functionalManager) {
-                $recipients[] = $template->employee->functionalManager;
-            }
-
             if ($template->clients->isNotEmpty()) {
-                foreach ($template->clients as $client) {
-                    $recipients[] = $client->employee;
-                }
-            }
+                $template->clients->load('employee');
 
-            foreach ($recipients as $recipient) {
-                try {
-                    Mail::to($recipient->email)
-                        ->send(new RatingLaunchMail($template->employee, $template->employee->id === $recipient->id));
-                } catch (\Throwable $exception) {
-                    $failedSending[] = sprintf('%s (**%s**)', $recipient->full_name, $recipient->email);
+                foreach ($template->clients as $client) {
+                    try {
+                        Mail::to($client->employee->email)
+                            ->send(new RatingLaunchMail($template->employee, $template->employee->id === $client->employee->id));
+                    } catch (\Throwable $exception) {
+                        $failedSending[] = sprintf('%s (**%s**)', $client->employee->full_name, $client->employee->email);
+                    }
                 }
             }
 
