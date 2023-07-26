@@ -6,6 +6,7 @@ use App\Exports\Statistic\StatisticExport;
 use App\Http\Controllers\Controller;
 use App\Models\Company\Company;
 use App\Models\Statistic\ClientCompetence;
+use App\Models\Statistic\Result;
 use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -19,7 +20,7 @@ class CompanyController extends Controller
 {
     public function index(): Response
     {
-        $filters = Request::only('companies');
+        $filters = Request::only(['year', 'companies']);
 
         return Inertia::render('Statistic/StatisticPage', [
             'title' => 'Статистика по компании',
@@ -66,6 +67,9 @@ class CompanyController extends Controller
                     $query->whereHas('rating', function (Builder $query) {
                         $query->where('status', 'closed');
                     })
+                        ->when(Request::input('year'), function (Builder $query, string $year) {
+                            $query->whereYear('created_at', $year);
+                        })
                         ->whereIn('company_id', Request::input('companies'));
                 })
                 ->with('competence')
@@ -89,8 +93,18 @@ class CompanyController extends Controller
 
     private function getFormFields(): array
     {
+        $years = Result::selectRaw('YEAR(created_at) as year')
+            ->distinct()
+            ->orderBy('year')
+            ->get()
+            ->map(fn(Result $result) => [
+                'value' => (string) $result->year,
+                'label' => $result->year.' год',
+            ]);
+
         $companies = Company::select('id', 'name')
             ->distinct()
+            ->orderBy('name')
             ->get()
             ->map(fn(Company $company) => [
                 'value' => (string) $company->id,
@@ -98,6 +112,12 @@ class CompanyController extends Controller
             ]);
 
         return [
+            [
+                'label' => 'Год',
+                'name' => 'year',
+                'type' => 'select',
+                'data' => $years
+            ],
             [
                 'label' => 'Компания',
                 'name' => 'companies',

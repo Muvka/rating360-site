@@ -26,7 +26,7 @@ class ValueController extends Controller
 {
     public function index(): Response
     {
-        $filters = Request::only(['city', 'company', 'division', 'subdivision', 'direction', 'level', 'position', 'value']);
+        $filters = Request::only(['year', 'city', 'company', 'division', 'subdivision', 'direction', 'level', 'position', 'value']);
 
         return Inertia::render('Statistic/StatisticPage', [
             'title' => 'Статистика по ценностям',
@@ -87,31 +87,34 @@ class ValueController extends Controller
                 $query->where('status', 'closed');
             })
             ->whereNotNull('statistic_markers.rating_value_id')
+            ->when(Request::input('year'), function (Builder $query, string $year) {
+                $query->whereYear('statistic_results.created_at', $year);
+            })
             ->when(Request::input('city'), function (Builder $query, string $city) {
-                return $query->where('city_id', $city);
+                $query->where('city_id', $city);
             })
             ->when(Request::input('company'), function (Builder $query, string $company) {
-                return $query->where('company_id', $company);
+                $query->where('company_id', $company);
             })
             ->when(Request::input('division'), function (Builder $query, string $division) {
-                return $query->where('company_division_id', $division);
+                $query->where('company_division_id', $division);
             })
             ->when(Request::input('subdivision'), function (Builder $query, string $subdivision) {
-                return $query->where('company_subdivision_id', $subdivision);
+                $query->where('company_subdivision_id', $subdivision);
             })
             ->when(Request::input('direction'), function (Builder $query, string $direction) {
-                return $query->whereHas('directions', function (Builder $query) use ($direction) {
+                $query->whereHas('directions', function (Builder $query) use ($direction) {
                     $query->where('company_direction_id', $direction);
                 });
             })
             ->when(Request::input('level'), function (Builder $query, string $level) {
-                return $query->where('company_level_id', $level);
+                $query->where('company_level_id', $level);
             })
             ->when(Request::input('position'), function (Builder $query, string $position) {
-                return $query->where('company_position_id', $position);
+                $query->where('company_position_id', $position);
             })
             ->when(Request::input('value'), function (Builder $query, string $value) {
-                return $query->where('rating_value_id', $value);
+                $query->where('rating_value_id', $value);
             })
             ->groupBy(
                 'statistic_results.company_employee_id',
@@ -201,8 +204,18 @@ class ValueController extends Controller
 
     private function getFormFields(): array
     {
+        $years = Result::selectRaw('YEAR(created_at) as year')
+            ->distinct()
+            ->orderBy('year')
+            ->get()
+            ->map(fn(Result $result) => [
+                'value' => (string) $result->year,
+                'label' => $result->year.' год',
+            ]);
+
         $cities = City::select('id', 'name')
             ->distinct()
+            ->orderBy('name')
             ->get()
             ->map(fn(City $city) => [
                 'value' => (string) $city->id,
@@ -211,6 +224,7 @@ class ValueController extends Controller
 
         $companies = Company::select('id', 'name')
             ->distinct()
+            ->orderBy('name')
             ->get()
             ->map(fn(Company $company) => [
                 'value' => (string) $company->id,
@@ -219,6 +233,7 @@ class ValueController extends Controller
 
         $divisions = Division::select('id', 'name')
             ->distinct()
+            ->orderBy('name')
             ->get()
             ->map(fn(Division $division) => [
                 'value' => (string) $division->id,
@@ -227,6 +242,7 @@ class ValueController extends Controller
 
         $subdivisions = Subdivision::select('id', 'name')
             ->distinct()
+            ->orderBy('name')
             ->get()
             ->map(fn(Subdivision $subdivision) => [
                 'value' => (string) $subdivision->id,
@@ -235,6 +251,7 @@ class ValueController extends Controller
 
         $directions = Direction::select('id', 'name')
             ->distinct()
+            ->orderBy('name')
             ->get()
             ->map(fn(Direction $direction) => [
                 'value' => (string) $direction->id,
@@ -242,6 +259,7 @@ class ValueController extends Controller
             ]);
 
         $levels = Level::select('id', 'name')
+            ->orderBy('name')
             ->get()
             ->map(fn(Level $level) => [
                 'value' => (string) $level->id,
@@ -250,6 +268,7 @@ class ValueController extends Controller
 
         $positions = Position::select('id', 'name')
             ->distinct()
+            ->orderBy('name')
             ->get()
             ->map(fn(Position $position) => [
                 'value' => (string) $position->id,
@@ -258,6 +277,7 @@ class ValueController extends Controller
 
         $values = Value::select('id', 'name')
             ->distinct()
+            ->orderBy('name')
             ->get()
             ->map(fn(Value $values) => [
                 'value' => (string) $values->id,
@@ -265,6 +285,12 @@ class ValueController extends Controller
             ]);
 
         return [
+            [
+                'label' => 'Год',
+                'name' => 'year',
+                'type' => 'select',
+                'data' => $years
+            ],
             [
                 'label' => 'Город',
                 'name' => 'city',
