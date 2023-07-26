@@ -15,6 +15,7 @@ use App\Models\Statistic\Review;
 use Carbon\Carbon;
 use GuzzleHttp\Client as GuzzleClient;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Exception\RuntimeException;
@@ -72,12 +73,14 @@ class ImportResults extends Command
 
         $this->info('Сохранение данных...');
 
-        $rating = $this->createRating($year);
+        DB::transaction(function () use ($data, $year) {
+            $rating = $this->createRating($year);
 
-        $results = collect($data['result']);
+            $results = collect($data['result']);
 
-        $this->withProgressBar($results, function (array $result) use ($rating, $year) {
-            $this->performTask(rating: $rating, result: $result, year: $year);
+            $this->withProgressBar($results, function (array $result) use ($rating, $year) {
+                $this->performTask(rating: $rating, result: $result, year: $year);
+            });
         });
     }
 
