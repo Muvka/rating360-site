@@ -141,6 +141,8 @@ class ImportResults extends Command
             'company_subdivision_id' => $employee->company_subdivision_id,
             'company_position_id' => $employee->company_position_id,
             'company_level_id' => $employee->company_level_id,
+            'created_at' => $date,
+            'updated_at' => $date,
         ]);
 
         if ($employee->directions) {
