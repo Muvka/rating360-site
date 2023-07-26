@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Rating\MatrixResource\RelationManagers;
 
-use App\Filament\Resources\Rating\MatrixResource;
+use App\Filament\Resources\Company\EmployeeResource;
 use App\Models\Company\Employee;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Closure;
@@ -123,7 +123,6 @@ class MatrixTemplatesRelationManager extends RelationManager
                         Select::make('type')
                             ->label('Клиент')
                             ->options([
-                                'manager' => 'Руководитель',
                                 'inner' => 'Внутренний',
                                 'outer' => 'Внешний',
                             ])
@@ -182,7 +181,12 @@ class MatrixTemplatesRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('edit_client')
+                        ->label('Изменить сотрудника')
+                        ->icon('heroicon-s-pencil')
+                        ->url(fn(Model $record): string => EmployeeResource::getUrl('edit', $record->employee)),
                     Tables\Actions\EditAction::make()
+                        ->label('Изменить шаблон')
                         ->modalWidth('4xl'),
                     Tables\Actions\DeleteAction::make(),
                 ]),
@@ -194,6 +198,6 @@ class MatrixTemplatesRelationManager extends RelationManager
 
     protected function getTableQuery(): Builder|Relation
     {
-        return parent::getTableQuery()->with('clientsWithoutSelf');
+        return parent::getTableQuery()->with(['clientsWithoutSelf', 'employee']);
     }
 }

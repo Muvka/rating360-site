@@ -3,14 +3,17 @@
 namespace App\Observers\Company;
 
 use App\Models\Company\Employee;
+use App\Models\Rating\MatrixTemplate;
+use App\Models\Rating\MatrixTemplateClient;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
 class EmployeeObserver
 {
     public function updated(Employee $employee): void
     {
-        $levelId = $employee->level?->id;
+        $isManager = $employee->level?->is_manager;
 
-        if (!$levelId || (int)$levelId === 5) {
+        if ( ! $isManager) {
             $directSubordinates = $employee->directSubordinates;
 
             if ($directSubordinates) {
@@ -30,6 +33,34 @@ class EmployeeObserver
             }
 
             $employee->managerAccess()->detach();
+        }
+
+        if ($employee->isDirty(['direct_manager_id', 'functional_manager_id'])) {
+            $managerClients = [];
+
+            if ($employee->direct_manager_id) {
+                $managerClients[] = new MatrixTemplateClient([
+                    'company_employee_id' => $employee->direct_manager_id,
+                    'type' => 'manager',
+                ]);
+            }
+
+            if ($employee->functional_manager_id) {
+                $managerClients[] = new MatrixTemplateClient([
+                    'company_employee_id' => $employee->functional_manager_id,
+                    'type' => 'manager',
+                ]);
+            }
+
+            MatrixTemplate::where('company_employee_id', $employee->id)
+                ->each(function (MatrixTemplate $template) use ($managerClients) {
+                    $template->clients()
+                        ->where('type', 'manager')
+                        ->delete();
+
+                    $template->clients()
+                        ->saveMany($managerClients);
+                });
         }
     }
 }
