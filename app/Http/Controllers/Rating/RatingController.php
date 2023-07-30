@@ -12,7 +12,8 @@ use Inertia\Inertia;
 
 class RatingController extends Controller
 {
-    public function index(AppGeneralSettings $settings) {
+    public function index(AppGeneralSettings $settings)
+    {
         $ratings = Rating::with([
             'matrixTemplates' => function (Builder $query) {
                 $query->whereHas('clients')
@@ -38,14 +39,15 @@ class RatingController extends Controller
                         }
 
                         $isCompleted = Client::with('result')
-                            ->whereHas('result', function (Builder $query) use ($rating) {
-                                $query->where('rating_id', $rating->id);
+                            ->whereHas('result', function (Builder $query) use ($rating, $matrixTemplate) {
+                                $query->where('rating_id', $rating->id)
+                                    ->where('company_employee_id', $matrixTemplate->company_employee_id);
                             })
                             ->where('company_employee_id', $client->company_employee_id)
                             ->exists();
 
                         return [
-                            'id' => $rating->id . $client->id,
+                            'id' => $rating->id.$client->id,
                             'title' => $title,
                             'isCompleted' => $isCompleted,
                             'href' => route('client.statistic.results.create', [
