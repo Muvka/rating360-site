@@ -171,14 +171,19 @@ class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows, W
     private function getEmployeeByFullName(string $fullName): Employee|null
     {
         $nameParts = explode(' ', $fullName);
+        $lastName = $nameParts[0];
+        $firstName = $nameParts[1] ?? '';
+        $middleName = $nameParts[2] ?? '';
 
-        $foundEmployees = Employee::whereRaw('LOWER(first_name) = ?', [Str::lower($nameParts[1])])
-            ->whereRaw('LOWER(last_name) = ?', [Str::lower($nameParts[0])])
+        $foundEmployees = Employee::when($firstName, function (Builder $query, string $firstName) {
+            $query->whereRaw('LOWER(first_name) = ?', [Str::lower($firstName)]);
+        })
+            ->whereRaw('LOWER(last_name) = ?', [Str::lower($lastName)])
             ->get();
 
-        if ($foundEmployees->count() > 1 && count($nameParts) === 3) {
-            $filteredEmployees = $foundEmployees->filter(function (Employee $employee) use ($nameParts) {
-                return $employee->middle_name && (Str::lower($employee->middle_name) === Str::lower($nameParts[2]));
+        if ($foundEmployees->count() > 1 && $middleName) {
+            $filteredEmployees = $foundEmployees->filter(function (Employee $employee) use ($middleName) {
+                return $employee->middle_name && (Str::lower($employee->middle_name) === Str::lower($middleName));
             });
 
             if ($filteredEmployees->isNotEmpty()) {

@@ -29,12 +29,25 @@ class StartedNotification extends Notification
     public function toMail(Employee $notifiable): MailMessage
     {
         $url = 'https://edu.zhcom.ru/my/?redirect=threesixo';
+        $text = app(AppGeneralSettings::class)->notification_rating_start;
 
-        return (new MailMessage)
-            ->subject('Новая оценка')
-            ->greeting('Уважаемый '.$notifiable->full_name.'!')
-            ->line(app(AppGeneralSettings::class)->notification_rating_start)
-            ->action('Перейти', $url);
+        $mailMessage = (new MailMessage)
+            ->subject('Оценка 360')
+            ->greeting('Добрый день, '.$notifiable->full_name.'!');
+
+        if ($text) {
+            $lines = explode("\n", $text);
+
+            if ($lines) {
+                foreach ($lines as $line) {
+                    $mailMessage->line($line);
+                }
+            }
+        }
+
+        $mailMessage->action('Перейти', $url);
+
+        return $mailMessage;
     }
 
     /**

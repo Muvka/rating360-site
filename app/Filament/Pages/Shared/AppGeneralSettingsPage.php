@@ -6,6 +6,7 @@ use App\Settings\AppGeneralSettings;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\SettingsPage;
 
@@ -68,7 +69,7 @@ class AppGeneralSettingsPage extends SettingsPage
                 ]),
             Section::make('Уведомления')
                 ->schema([
-                    TextInput::make('notification_rating_start')
+                    Textarea::make('notification_rating_start')
                         ->label('Начало оценки')
                         ->required(),
                 ])
