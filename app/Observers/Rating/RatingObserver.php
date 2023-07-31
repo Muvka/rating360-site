@@ -2,12 +2,11 @@
 
 namespace App\Observers\Rating;
 
-use App\Mail\Rating\RatingLaunchMail;
 use App\Models\Rating\Rating;
+use App\Notifications\Rating\StartedNotification;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Mail;
 
 class RatingObserver
 {
@@ -18,14 +17,14 @@ class RatingObserver
         }
 
         if ( ! $rating->launched_at && $rating->status === 'in progress') {
-            $this->sendEmails($rating);
+            $this->notify($rating);
 
             $rating->launched_at = now();
             $rating->save();
         }
     }
 
-    private function sendEmails(Rating $rating): void
+    private function notify(Rating $rating): void
     {
         if (empty($rating->matrix->templates)) {
             return;
@@ -39,8 +38,7 @@ class RatingObserver
 
                 foreach ($template->clients as $client) {
                     try {
-                        Mail::to($client->employee->email)
-                            ->send(new RatingLaunchMail($template->employee, $template->employee->id === $client->employee->id));
+                        $client->employee->notify(new StartedNotification(employee: $template->employee, rating: $rating));
                     } catch (\Throwable $exception) {
                         $failedSending[] = sprintf('%s (**%s**)', $client->employee->full_name, $client->employee->email);
                     }

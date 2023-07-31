@@ -70,6 +70,7 @@ class AppGeneralSettingsPage extends SettingsPage
                 ->schema([
                     TextInput::make('notification_rating_start')
                         ->label('Начало оценки')
+                        ->hint(':employee будет заменен на имя оцениваемого сотрудника')
                         ->required(),
                 ])
         ];
