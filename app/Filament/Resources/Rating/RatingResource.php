@@ -176,7 +176,6 @@ class RatingResource extends Resource
                         ->visible(fn(Rating $record): bool => in_array($record->status, ['in progress', 'paused']))
                         ->color('danger')
                         ->requiresConfirmation(),
-                    Tables\Actions\ViewAction::make(),
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make(),
                 ]),
@@ -208,7 +207,6 @@ class RatingResource extends Resource
         return [
             'index' => Pages\ListRatings::route('/'),
             'create' => Pages\CreateRating::route('/create'),
-            'view' => Pages\ViewRating::route('/{record}'),
             'edit' => Pages\EditRating::route('/{record}/edit'),
         ];
     }
