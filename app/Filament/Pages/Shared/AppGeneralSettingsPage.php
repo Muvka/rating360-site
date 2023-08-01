@@ -4,6 +4,7 @@ namespace App\Filament\Pages\Shared;
 
 use App\Settings\AppGeneralSettings;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
@@ -69,10 +70,31 @@ class AppGeneralSettingsPage extends SettingsPage
                 ]),
             Section::make('Уведомления')
                 ->schema([
-                    Textarea::make('notification_rating_start')
-                        ->label('Начало оценки')
-                        ->required(),
+                    Fieldset::make('Начало оценки')
+                        ->columns(1)
+                        ->schema([
+                            Textarea::make('notification_rating_start_text')
+                                ->label('Текст')
+                                ->required(),
+                            TextInput::make('notification_rating_start_url')
+                                ->label('Ссылка')
+                                ->url(),
+                        ])
                 ])
         ];
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $data['notification_rating_start_text'] = explode("\n", $data['notification_rating_start_text']);
+
+        return $data;
+    }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        $data['notification_rating_start_text'] = implode("\n", $data['notification_rating_start_text']);
+
+        return $data;
     }
 }

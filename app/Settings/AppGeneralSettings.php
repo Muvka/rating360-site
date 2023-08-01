@@ -12,7 +12,9 @@ class AppGeneralSettings extends Settings
 
     public ?array $admin_emails;
 
-    public ?string $notification_rating_start;
+    public ?array $notification_rating_start_text;
+
+    public ?string $notification_rating_start_url;
 
     public ?string $moodle_account_url;
 

@@ -9,7 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class StartedNotification extends Notification
+class StartedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -28,24 +28,22 @@ class StartedNotification extends Notification
      */
     public function toMail(Employee $notifiable): MailMessage
     {
-        $url = 'https://edu.zhcom.ru/my/?redirect=threesixo';
-        $text = app(AppGeneralSettings::class)->notification_rating_start;
+        $url = app(AppGeneralSettings::class)->notification_rating_start_url;
+        $lines = app(AppGeneralSettings::class)->notification_rating_start_text;
 
         $mailMessage = (new MailMessage)
             ->subject('Оценка 360')
             ->greeting('Добрый день, '.$notifiable->full_name.'!');
 
-        if ($text) {
-            $lines = explode("\n", $text);
-
-            if ($lines) {
-                foreach ($lines as $line) {
-                    $mailMessage->line($line);
-                }
+        if ($lines) {
+            foreach ($lines as $line) {
+                $mailMessage->line($line);
             }
         }
 
-        $mailMessage->action('Перейти', $url);
+        if ($url) {
+            $mailMessage->action('Перейти', $url);
+        }
 
         return $mailMessage;
     }
