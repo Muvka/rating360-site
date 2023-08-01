@@ -150,32 +150,32 @@ class ImportResults extends Command
         }
 
         foreach ($result['result'] as $competence) {
-            if ($competence['compName'] === 'Обратная связь') {
-                foreach ($competence['results'] as $title => $clients) {
-                    foreach ($clients as $type => $reviews) {
-                        $reviewObjects = [];
-                        $client = Client::firstOrCreate([
-                            'statistic_result_id' => $resultObject->id,
-                            'company_employee_id' => 1,
-                            'type' => $clientData[$type]
-                        ], [
-                            'created_at' => $date,
-                            'updated_at' => $date
-                        ]);
-
-                        foreach ($reviews as $review) {
-                            $reviewObjects[] = new Review([
-                                'title' => $title,
-                                'text' => $review,
-                                'created_at' => $date,
-                                'updated_at' => $date
-                            ]);
-                        }
-
-                        $client->reviews()->saveMany($reviewObjects);
-                    }
-                }
-            } else {
+//            if ($competence['compName'] === 'Обратная связь') {
+//                foreach ($competence['results'] as $title => $clients) {
+//                    foreach ($clients as $type => $reviews) {
+//                        $reviewObjects = [];
+//                        $client = Client::firstOrCreate([
+//                            'statistic_result_id' => $resultObject->id,
+//                            'company_employee_id' => 1,
+//                            'type' => $clientData[$type]
+//                        ], [
+//                            'created_at' => $date,
+//                            'updated_at' => $date
+//                        ]);
+//
+//                        foreach ($reviews as $review) {
+//                            $reviewObjects[] = new Review([
+//                                'title' => $title,
+//                                'text' => $review,
+//                                'created_at' => $date,
+//                                'updated_at' => $date
+//                            ]);
+//                        }
+//
+//                        $client->reviews()->saveMany($reviewObjects);
+//                    }
+//                }
+//            } else {
                 $competenceObject = Competence::firstOrCreate([
                     'name' => $competence['compName'],
                 ]);
@@ -213,7 +213,7 @@ class ImportResults extends Command
                         $clientCompetence->save();
                     }
                 }
-            }
+//            }
         }
     }
 }
