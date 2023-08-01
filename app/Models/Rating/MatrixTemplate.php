@@ -18,7 +18,8 @@ class MatrixTemplate extends Model
     }
 
     public function matrix(): BelongsTo {
-        return $this->belongsTo(Matrix::class, 'rating_matrix_id');
+        return $this->belongsTo(Matrix::class, 'rating_matrix_id')
+            ->withTrashed();
     }
 
     public function clients(): HasMany {
