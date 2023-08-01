@@ -77,7 +77,7 @@ class ProgressPage extends Page
                     Select::make('rating_id')
                         ->label('Оценка')
                         ->options(function () {
-                            return Rating::where('status', 'in progress')
+                            return Rating::whereNot('status', 'closed')
                                 ->get()
                                 ->pluck('name', 'id')
                                 ->toArray();
