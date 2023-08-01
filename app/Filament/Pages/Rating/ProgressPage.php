@@ -111,7 +111,8 @@ class ProgressPage extends Page
             ->join('rating_matrix_templates', 'rating_matrix_templates.id', '=', 'rating_matrix_template_clients.rating_matrix_template_id')
             ->join('rating_matrices', 'rating_matrices.id', '=', 'rating_matrix_templates.rating_matrix_id')
             ->join('ratings', 'ratings.rating_matrix_id', '=', 'rating_matrices.id')
-            ->whereNot('status', 'closed')
+            ->whereNot('ratings.status', 'closed')
+            ->whereNull('ratings.deleted_at')
             ->groupBy('rating_matrix_template_clients.company_employee_id')
             ->get()
             ->pluck('count', 'company_employee_id');
