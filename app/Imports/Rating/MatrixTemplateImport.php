@@ -11,6 +11,7 @@ use App\Models\Company\Position;
 use App\Models\Company\Subdivision;
 use App\Models\Rating\Matrix;
 use App\Models\Rating\MatrixTemplate;
+use App\Models\Rating\MatrixTemplateClient;
 use App\Models\Shared\City;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Log;
@@ -84,20 +85,24 @@ class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows, W
         }
 
         $directions = [];
-        $innerClients = [];
-        $outerClients = [];
+        $clients = [];
 
         foreach ($row as $key => $value) {
             if (Str::startsWith($key, 'napravlenie') && trim($value)) {
                 $directions[] = $value;
             }
 
-            if (Str::startsWith($key, 'vnutrennii_klient') && trim($value)) {
-                $innerClients[] = $value;
-            }
+            if ((Str::startsWith($key, 'vnutrennii_klient') || Str::startsWith($key, 'vnesnii_klient')) && trim($value)) {
+                $client = $this->getEmployeeByFullName($value);
 
-            if (Str::startsWith($key, 'vnesnii_klient') && trim($value)) {
-                $outerClients[] = $value;
+                if ( ! $client) {
+                    continue;
+                }
+
+                $clients[] = new MatrixTemplateClient([
+                    'company_employee_id' => $client->id,
+                    'type' => Str::startsWith($key, 'vnutrennii_klient') ? 'inner' : 'outer',
+                ]);
             }
         }
 
@@ -109,17 +114,11 @@ class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows, W
             }
         }
 
-        $matrixTemplate = $this->matrix->templates()->create(['company_employee_id' => $employee->id]);
-
         if ( ! $employee->directManager && isset($row['rukovoditel_1_neposredstvennyi']) && $row['rukovoditel_1_neposredstvennyi']) {
             $directManager = $this->getEmployeeByFullName($row['rukovoditel_1_neposredstvennyi']);
 
             if ($directManager) {
                 $employee->direct_manager_id = $directManager->id;
-                $matrixTemplate->clients()->create([
-                    'company_employee_id' => $directManager->id,
-                    'type' => 'manager',
-                ]);
             }
         }
 
@@ -128,43 +127,12 @@ class MatrixTemplateImport implements ToModel, WithHeadingRow, SkipsEmptyRows, W
 
             if ($functionalManager) {
                 $employee->functional_manager_id = $functionalManager->id;
-                $matrixTemplate->clients()->create([
-                    'company_employee_id' => $functionalManager->id,
-                    'type' => 'manager',
-                ]);
             }
         }
 
-        if ( ! empty($innerClients)) {
-            foreach ($innerClients as $innerClient) {
-                $client = $this->getEmployeeByFullName($innerClient);
+        $matrixTemplate = $this->matrix->templates()->create(['company_employee_id' => $employee->id]);
 
-                if ( ! $client) {
-                    continue;
-                }
-
-                $matrixTemplate->clients()->create([
-                    'company_employee_id' => $client->id,
-                    'type' => 'inner',
-                ]);
-            }
-        }
-
-        if ( ! empty($outerClients)) {
-            foreach ($outerClients as $outerClient) {
-                $client = $this->getEmployeeByFullName($outerClient);
-
-                if ( ! $client) {
-                    continue;
-                }
-
-                $matrixTemplate->clients()->create([
-                    'company_employee_id' => $client->id,
-                    'type' => 'outer',
-                ]);
-            }
-        }
-
+        $matrixTemplate->clients()->saveMany($clients);
         $employee->save();
     }
 
