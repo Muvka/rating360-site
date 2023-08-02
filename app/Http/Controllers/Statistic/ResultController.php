@@ -29,6 +29,7 @@ class ResultController extends Controller
     {
         $this->authorize('viewAny', Result::class);
         $subordinates = Employee::where('direct_manager_id', Auth::user()?->id)
+            ->orWhere('functional_manager_id', Auth::user()?->id)
             ->get()
             ->map(function (Employee $subordinate) {
                 return [

@@ -21,6 +21,7 @@ class ResultPolicy
         }
 
         return Employee::where('direct_manager_id', $user->id)
+                ->orWhere('functional_manager_id', $user->id)
                 ->find($employee->id) || Employee::whereHas('managerAccessRevert', function (Builder $query) use ($user) {
                 $query->where('manager_id', $user->id);
             })->find($employee->id);
