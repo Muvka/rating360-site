@@ -106,13 +106,7 @@ class ResultController extends Controller
 
         $employee->load('company');
 
-        $latestRating = Rating::select('id', 'status', 'launched_at')
-            ->where('status', 'closed')
-            ->whereHas('results', function (Builder $query) use ($employee) {
-                $query->where('company_employee_id', $employee->id);
-            })
-            ->latest('launched_at')
-            ->first();
+        $latestRating = $this->getLatestRating($employee);
 
         $competenceRatingResults = [];
         $markerRatingResults = [];
@@ -413,6 +407,41 @@ class ResultController extends Controller
         }
 
         return redirect(route('client.rating.ratings.index'));
+    }
+
+    private function getLatestRating(Employee $employee): ?Rating
+    {
+        $result = Rating::select(['ratings.id', 'status', 'launched_at'])
+            ->whereIn('status', ['in progress', 'paused'])
+            ->whereHas('results', function (Builder $query) use ($employee) {
+                $query->where('company_employee_id', $employee->id);
+            })
+            ->latest('launched_at')
+            ->get()
+            ->first(function (Rating $rating) use ($employee) {
+                $matrixClients = MatrixTemplateClient::select('company_employee_id')
+                    ->whereHas('template.matrix.ratings', function (Builder $query) use ($rating) {
+                        $query->where('id', $rating->id);
+                    })
+                    ->whereHas('template', function (Builder $query) use ($employee) {
+                        $query->where('company_employee_id', $employee->id);
+                    })
+                    ->get();
+
+                return Client::whereIn('company_employee_id', $matrixClients->pluck('company_employee_id'))->count() === $matrixClients->count();
+            });
+
+        if ($result) {
+            return $result;
+        }
+
+        return Rating::select(['id', 'status', 'launched_at'])
+            ->where('status', 'closed')
+            ->whereHas('results', function (Builder $query) use ($employee) {
+                $query->where('company_employee_id', $employee->id);
+            })
+            ->latest('launched_at')
+            ->first();
     }
 
     private function getProgressText(Employee $employee): string
