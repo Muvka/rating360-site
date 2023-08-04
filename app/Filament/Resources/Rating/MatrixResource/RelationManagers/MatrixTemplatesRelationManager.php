@@ -3,7 +3,9 @@
 namespace App\Filament\Resources\Rating\MatrixResource\RelationManagers;
 
 use App\Filament\Resources\Company\EmployeeResource;
+use App\Models\Company\Company;
 use App\Models\Company\Employee;
+use App\Models\Shared\City;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use Closure;
 use Filament\Forms\Components\Card;
@@ -194,7 +196,52 @@ class MatrixTemplatesRelationManager extends RelationManager
             ->defaultSort('sort')
             ->reorderable()
             ->filters([
-
+                SelectFilter::make('city_id')
+                    ->options(fn() => City::get()->pluck('name', 'id')->toArray())
+                    ->label('Город')
+                    ->query(function (EloquentBuilder $query, array $data) {
+                        if (!empty($data['value'])) {
+                            $query->whereHas(
+                                'employee.city',
+                                fn (EloquentBuilder $query) => $query->where('id', '=', (int) $data['value'])
+                            );
+                        }
+                    }),
+                SelectFilter::make('company_id')
+                    ->options(fn() => Company::get()->pluck('name', 'id')->toArray())
+                    ->label('Компания')
+                    ->query(function (EloquentBuilder $query, array $data) {
+                        if (!empty($data['value'])) {
+                            $query->whereHas(
+                                'employee.company',
+                                fn (EloquentBuilder $query) => $query->where('id', '=', (int) $data['value'])
+                            );
+                        }
+                    }),
+                SelectFilter::make('direct_manager_id')
+                    ->options(fn() => Employee::get()->pluck('full_name', 'id')->toArray())
+                    ->label('Непосредственный руководитель')
+                    ->searchable()
+                    ->query(function (EloquentBuilder $query, array $data) {
+                        if (!empty($data['value'])) {
+                            $query->whereHas(
+                                'employee',
+                                fn (EloquentBuilder $query) => $query->where('direct_manager_id', '=', (int) $data['value'])
+                            );
+                        }
+                    }),
+                SelectFilter::make('functional_manager_id')
+                    ->options(fn() => Employee::get()->pluck('full_name', 'id')->toArray())
+                    ->label('Функциональный руководитель')
+                    ->searchable()
+                    ->query(function (EloquentBuilder $query, array $data) {
+                        if (!empty($data['value'])) {
+                            $query->whereHas(
+                                'employee',
+                                fn (EloquentBuilder $query) => $query->where('functional_manager_id', '=', (int) $data['value'])
+                            );
+                        }
+                    })
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
