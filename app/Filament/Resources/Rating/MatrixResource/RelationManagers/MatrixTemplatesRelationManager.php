@@ -163,24 +163,24 @@ class MatrixTemplatesRelationManager extends RelationManager
                     ->label('Город')
                     ->sortable(query: function (EloquentBuilder $query, string $direction): EloquentBuilder {
                         return $query
-                            ->join('company_employees', 'company_employees.id', '=', 'rating_matrix_templates.company_employee_id')
-                            ->join('cities', 'cities.id', '=', 'company_employees.city_id')
+                            ->leftJoin('company_employees', 'company_employees.id', '=', 'rating_matrix_templates.company_employee_id')
+                            ->leftJoin('cities', 'cities.id', '=', 'company_employees.city_id')
                             ->orderBy('cities.name', $direction);
                     }),
                 TextColumn::make('employee.company.name')
                     ->label('Компания')
                     ->sortable(query: function (EloquentBuilder $query, string $direction): EloquentBuilder {
                         return $query
-                            ->join('company_employees', 'company_employees.id', '=', 'rating_matrix_templates.company_employee_id')
-                            ->join('companies', 'companies.id', '=', 'company_employees.company_id')
+                            ->leftJoin('company_employees', 'company_employees.id', '=', 'rating_matrix_templates.company_employee_id')
+                            ->leftJoin('companies', 'companies.id', '=', 'company_employees.company_id')
                             ->orderBy('companies.name', $direction);
                     }),
                 TextColumn::make('employee.directManager.full_name')
                     ->label('Непосредственный руководитель')
                     ->sortable(query: function (EloquentBuilder $query, string $direction): EloquentBuilder {
                         return $query
-                            ->join('company_employees as ce1', 'ce1.id', '=', 'rating_matrix_templates.company_employee_id')
-                            ->join('company_employees as ce2', 'ce2.id', '=', 'ce1.direct_manager_id')
+                            ->leftJoin('company_employees as ce1', 'ce1.id', '=', 'rating_matrix_templates.company_employee_id')
+                            ->leftJoin('company_employees as ce2', 'ce2.id', '=', 'ce1.direct_manager_id')
                             ->orderBy('ce2.last_name', $direction);
                     }),
                 TextColumn::make('employee.functionalManager.full_name')
@@ -188,8 +188,8 @@ class MatrixTemplatesRelationManager extends RelationManager
                     ->placeholder('-')
                     ->sortable(query: function (EloquentBuilder $query, string $direction): EloquentBuilder {
                         return $query
-                            ->join('company_employees as ce1', 'ce1.id', '=', 'rating_matrix_templates.company_employee_id')
-                            ->join('company_employees as ce2', 'ce2.id', '=', 'ce1.functional_manager_id')
+                            ->leftJoin('company_employees as ce1', 'ce1.id', '=', 'rating_matrix_templates.company_employee_id')
+                            ->leftJoin('company_employees as ce2', 'ce2.id', '=', 'ce1.functional_manager_id')
                             ->orderBy('ce2.last_name', $direction);
                     }),
             ])
