@@ -14,7 +14,9 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Contracts\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Validation\Rules\Unique;
@@ -156,19 +158,43 @@ class MatrixTemplatesRelationManager extends RelationManager
                     ->counts('outerClients')
                     ->sortable(),
                 TextColumn::make('employee.city.name')
-                    ->label('Город'),
+                    ->label('Город')
+                    ->sortable(query: function (EloquentBuilder $query, string $direction): EloquentBuilder {
+                        return $query
+                            ->join('company_employees', 'company_employees.id', '=', 'rating_matrix_templates.company_employee_id')
+                            ->join('cities', 'cities.id', '=', 'company_employees.city_id')
+                            ->orderBy('cities.name', $direction);
+                    }),
                 TextColumn::make('employee.company.name')
-                    ->label('Компания'),
+                    ->label('Компания')
+                    ->sortable(query: function (EloquentBuilder $query, string $direction): EloquentBuilder {
+                        return $query
+                            ->join('company_employees', 'company_employees.id', '=', 'rating_matrix_templates.company_employee_id')
+                            ->join('companies', 'companies.id', '=', 'company_employees.company_id')
+                            ->orderBy('companies.name', $direction);
+                    }),
                 TextColumn::make('employee.directManager.full_name')
-                    ->label('Непосредственный руководитель'),
+                    ->label('Непосредственный руководитель')
+                    ->sortable(query: function (EloquentBuilder $query, string $direction): EloquentBuilder {
+                        return $query
+                            ->join('company_employees as ce1', 'ce1.id', '=', 'rating_matrix_templates.company_employee_id')
+                            ->join('company_employees as ce2', 'ce2.id', '=', 'ce1.direct_manager_id')
+                            ->orderBy('ce2.last_name', $direction);
+                    }),
                 TextColumn::make('employee.functionalManager.full_name')
                     ->label('Функциональный руководитель')
-                    ->placeholder('-'),
+                    ->placeholder('-')
+                    ->sortable(query: function (EloquentBuilder $query, string $direction): EloquentBuilder {
+                        return $query
+                            ->join('company_employees as ce1', 'ce1.id', '=', 'rating_matrix_templates.company_employee_id')
+                            ->join('company_employees as ce2', 'ce2.id', '=', 'ce1.functional_manager_id')
+                            ->orderBy('ce2.last_name', $direction);
+                    }),
             ])
             ->defaultSort('sort')
             ->reorderable()
             ->filters([
-                //
+
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
