@@ -405,34 +405,31 @@ class ResultController extends Controller
 
     private function getProgressText(Employee $employee): string
     {
-        $rating = Rating::with([
-            'matrixTemplates' => function (Builder $query) use ($employee) {
-                $query->with('clients:rating_matrix_template_id,company_employee_id')
-                    ->where('company_employee_id', $employee->id);
-            }
-        ])
-            ->where('status', 'in progress')
-            ->whereHas('matrixTemplates', function (Builder $query) use ($employee) {
+        $rating = Rating::select(['ratings.id', 'status', 'launched_at'])
+            ->whereIn('status', ['in progress', 'paused'])
+            ->whereHas('results', function (Builder $query) use ($employee) {
                 $query->where('company_employee_id', $employee->id);
             })
             ->latest('launched_at')
             ->first();
 
-        if ( ! $rating) {
-            return '';
-        }
+        $matrixClients = MatrixTemplateClient::select('company_employee_id')
+            ->whereHas('template.matrix.ratings', function (Builder $query) use ($rating) {
+                $query->where('id', $rating->id);
+            })
+            ->whereHas('template', function (Builder $query) use ($employee) {
+                $query->where('company_employee_id', $employee->id);
+            })
+            ->get();
 
-        $resultClients = Client::whereHas('result', function (Builder $query) use ($rating) {
-            $query->where('rating_id', $rating->id);
-        })
-            ->get()
-            ->pluck('company_employee_id');
-
-        $matrixTemplate = $rating->matrixTemplates->first();
-        $totalClients = $matrixTemplate->clients->count();
-        $finishedClients = $matrixTemplate->clients
-            ->pluck('company_employee_id')
-            ->intersect($resultClients)
+        $totalClients = $matrixClients->count();
+        $finishedClients = Client::whereIn('company_employee_id', $matrixClients->pluck('company_employee_id'))
+            ->whereHas('result', function (Builder $query) use ($employee, $rating) {
+                $query->whereHas('rating', function (Builder $query) use ($rating) {
+                    $query->where('id', $rating->id);
+                })
+                    ->where('company_employee_id', $employee->id);
+            })
             ->count();
 
         return sprintf('Оценили %s из %s', $finishedClients, $totalClients);
