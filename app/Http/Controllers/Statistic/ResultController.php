@@ -413,6 +413,8 @@ class ResultController extends Controller
             ->latest('launched_at')
             ->first();
 
+        if (!$rating) return '';
+
         $matrixClients = MatrixTemplateClient::select('company_employee_id')
             ->whereHas('template.matrix.ratings', function (Builder $query) use ($rating) {
                 $query->where('id', $rating->id);
