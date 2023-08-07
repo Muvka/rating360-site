@@ -83,7 +83,7 @@ class GeneralController extends Controller
                 'directions:id,name',
             ])
             ->whereHas('rating', function (Builder $query) {
-                $query->where('status', 'closed');
+                $query->whereNot('status', 'draft');
             })
             ->when(Request::input('year'), function (Builder $query, string $year) {
                 $query->whereYear('statistic_results.created_at', $year);

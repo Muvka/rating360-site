@@ -85,7 +85,7 @@ class ValueController extends Controller
                 'directions:id,name',
             ])
             ->whereHas('rating', function (Builder $query) {
-                $query->where('status', 'closed');
+                $query->whereNot('status', 'draft');
             })
             ->whereNotNull('statistic_markers.rating_value_id')
             ->when(Request::input('year'), function (Builder $query, string $year) {

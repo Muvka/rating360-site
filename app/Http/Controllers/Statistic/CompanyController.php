@@ -65,7 +65,7 @@ class CompanyController extends Controller
                     'statistic_clients.id')
                 ->whereHas('client.result', function (Builder $query) {
                     $query->whereHas('rating', function (Builder $query) {
-                        $query->where('status', 'closed');
+                        $query->whereNot('status', 'draft');
                     })
                         ->when(Request::input('year'), function (Builder $query, string $year) {
                             $query->whereYear('created_at', $year);
