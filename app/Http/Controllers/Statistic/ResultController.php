@@ -233,12 +233,12 @@ class ResultController extends Controller
                 $resultsByYear[] = [
                     'id' => 'tab-'.$year,
                     'title' => $year,
-                    'competence' => $competenceRatingResults[$year]->values()
-                        ->toArray(),
-                    'marker' => $markerRatingResults[$year]->values()
-                        ->toArray(),
-                    'reviews' => $reviews[$year],
-                    'company' => $companySummary[$year]
+                    'competence' => isset($competenceRatingResults[$year]) ? $competenceRatingResults[$year]->values()
+                        ->toArray() : [],
+                    'marker' => isset($markerRatingResults[$year]) ? $markerRatingResults[$year]->values()
+                        ->toArray() : [],
+                    'reviews' => $reviews[$year] ?? [],
+                    'company' => $companySummary[$year] ?? []
                 ];
             }
         }
