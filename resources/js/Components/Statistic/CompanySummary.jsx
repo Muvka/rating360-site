@@ -1,12 +1,17 @@
-import React from 'react';
+import React, { useId } from 'react';
 import clsx from 'clsx';
 
 const CompanySummary = ({ data = [], className = '' }) => {
+	const titleId = useId();
+
 	if (!data.length) return false;
 
 	return (
-		<section className={clsx('company-summary', className)}>
-			<h2 className='title title--small company-summary__title'>
+		<section
+			className={clsx('company-summary', className)}
+			aria-labelledby={titleId}
+		>
+			<h2 id={titleId} className='title title--small company-summary__title'>
 				Сводные данные по компании
 			</h2>
 			{Boolean(data.length) ? (

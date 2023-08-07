@@ -1,12 +1,17 @@
-import React from 'react';
+import React, { useId } from 'react';
 import clsx from 'clsx';
 
 const EmployeeFeedback = ({ data = {}, className = '' }) => {
+	const titleId = useId();
+
 	if (!Object.keys(data).length) return false;
 
 	return (
-		<section className={clsx('employee-feedback', className)}>
-			<h2 className='title title--small employee-feedback__title'>
+		<section
+			className={clsx('employee-feedback', className)}
+			aria-labelledby={titleId}
+		>
+			<h2 id={titleId} className='title title--small employee-feedback__title'>
 				Обратная связь
 			</h2>
 			<p className='text employee-feedback__description'>

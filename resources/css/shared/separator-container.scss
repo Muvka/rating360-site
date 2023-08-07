@@ -1,0 +1,40 @@
+.separator-container {
+    --separator-size: 1px;
+}
+
+.separator-container > *:not(:last-child) {
+    position: relative;
+
+    margin-bottom: calc(var(--vertical-spacing) + var(--separator-size));
+}
+
+.separator-container > *:not(:last-child)::after {
+    content: '';
+
+    position: absolute;
+    bottom: calc(var(--vertical-spacing) / -2 - var(--separator-size));
+    left: 0;
+
+    width: 100%;
+    height: var(--separator-size);
+
+    background-color: var(--color-border-secondary);
+}
+
+@media (max-width: 599px) {
+    .separator-container {
+        --vertical-spacing: 48px;
+    }
+}
+
+@media (min-width: 600px) and (max-width: 1199px) {
+    .separator-container {
+        --vertical-spacing: 56px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .separator-container {
+        --vertical-spacing: 64px;
+    }
+}

@@ -1,0 +1,145 @@
+.tabs__tablist-container {
+    position: relative;
+
+    margin: calc(var(--offset) * -1);
+    margin-bottom: 0;
+}
+
+.tabs__tablist-container::after {
+    content: '';
+
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+
+    width: var(--column-gap);
+
+    background-image: linear-gradient(to left, var(--color-background-secondary), rgba(255, 255, 255, 0));
+
+    pointer-events: none;
+}
+
+.tabs__tablist {
+    position: relative;
+
+    display: flex;
+    column-gap: var(--column-gap);
+    padding: var(--offset);
+    padding-right: calc(var(--column-gap) + var(--offset));
+
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    overflow-x: auto;
+}
+
+.tabs__tablist::-webkit-scrollbar {
+    display: none;
+}
+
+.tabs__tablist::before {
+    content: '';
+
+    position: absolute;
+    right: calc(var(--offset) * -1);
+    bottom: 0;
+    left: var(--offset);
+
+    height: 1px;
+
+    background-color: var(--color-border-primary);
+}
+
+.tabs__button {
+    padding: 0;
+
+    font-family: var(--font-body-primary);
+    font-weight: 400;
+    line-height: 1.5em;
+    color: var(--color-text-primary);
+
+    border: none;
+    background-color: transparent;
+    appearance: none;
+
+    transition: color 200ms ease;
+}
+
+.tabs__button::before {
+    content: '';
+
+    position: absolute;
+    bottom: calc(var(--offset) * -1);
+    left: 0;
+    z-index: 2;
+
+    width: 100%;
+    height: 1px;
+
+    background-color: var(--color-brand-primary);
+
+    transform-origin: center center;
+    transform: scaleX(0);
+
+    transition: transform 200ms ease;
+}
+
+.tabs__button[aria-selected="true"] {
+    position: relative;
+
+    color: var(--color-brand-primary);
+
+    pointer-events: none;
+}
+
+.tabs__button[aria-selected="true"]::before {
+    transform: scaleX(1);
+}
+
+.tabs__button:hover {
+    color: var(--color-brand-secondary)
+}
+
+@media (max-width: 599px) {
+    .tabs {
+        --column-gap: 16px;
+        --offset: 6px;
+    }
+
+    .tabs__button {
+        font-size: 15px;
+    }
+
+    .tabs__panel {
+        margin-top: 24px;
+    }
+}
+
+@media (min-width: 600px) {
+    .tabs__button {
+        font-size: 16px;
+    }
+}
+
+@media (min-width: 600px) and (max-width: 1199px) {
+    .tabs {
+        --column-gap: 20px;
+        --offset: 7px;
+    }
+
+    .tabs__panel {
+        margin-top: 28px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .tabs {
+        --column-gap: 24px;
+        --offset: 8px;
+    }
+
+    .tabs__panel {
+        margin-top: 32px;
+    }
+}

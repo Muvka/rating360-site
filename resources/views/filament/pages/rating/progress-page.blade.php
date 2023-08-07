@@ -1,7 +1,7 @@
 <x-filament::page>
     <form wire:submit.prevent="submit" class="space-y-6">
         {{ $this->form }}
-        <x-forms::button wire:loading="!$data" loa size="md" type="submit">
+        <x-forms::button size="md" type="submit">
             Фильтровать
         </x-forms::button>
     </form>

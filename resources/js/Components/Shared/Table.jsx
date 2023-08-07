@@ -24,7 +24,21 @@ const Table = ({
 			<tr key={`row-${rowIndex}`} className='table__row'>
 				{columns.map((column, columnIndex) => (
 					<td key={`column-${rowIndex}-${columnIndex}`} className='table__cell'>
-						{row[column.key] ?? placeholder}
+						{row[column.key] ? (
+							row[column.key]['href'] ? (
+								<a
+									href={row[column.key]['href']}
+									target='_blank'
+									className='table__link'
+								>
+									{row[column.key]['text']}
+								</a>
+							) : (
+								row[column.key]
+							)
+						) : (
+							placeholder
+						)}
 					</td>
 				))}
 			</tr>

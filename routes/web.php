@@ -78,3 +78,6 @@ Route::middleware('auth')
 
 Route::get('login', [\App\Http\Controllers\User\AuthController::class, 'login'])
     ->name('client.user.auth.login');
+
+Route::get('employee/autocomplete', [\App\Http\Controllers\Company\EmployeeController::class, 'autocomplete'])
+    ->name('client.company.employees.autocomplete');

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Company\Company;
 use App\Models\Company\Direction;
 use App\Models\Company\Division;
+use App\Models\Company\Employee;
 use App\Models\Company\Level;
 use App\Models\Company\Position;
 use App\Models\Company\Subdivision;
@@ -26,13 +27,13 @@ class CompetenceController extends Controller
 {
     public function index(): Response
     {
-        $filters = Request::only(['year', 'city', 'company', 'division', 'subdivision', 'direction', 'level', 'position', 'competences', 'self']);
+        $filters = Request::only(['year', 'city', 'company', 'division', 'subdivision', 'direction', 'level', 'position', 'employees', 'competences', 'self']);
 
         return Inertia::render('Statistic/StatisticPage', [
             'title' => 'Статистика по компетенциям',
             'fields' => $this->getFormFields(),
             'filters' => $filters,
-            'statistic' => $filters ? $this->getStatistic() : [],
+            'statistic' => $filters ? $this->getStatistic(withHref: true) : [],
             'exportUrl' => route('client.statistic.competence.export', $filters)
         ]);
     }
@@ -53,7 +54,7 @@ class CompetenceController extends Controller
         return Excel::download(new StatisticExport($this->getStatistic()), $fileName);
     }
 
-    private function getStatistic(): array
+    private function getStatistic($withHref = false): array
     {
         $dbPrefix = config('database.connections.mysql.prefix');
 
@@ -100,6 +101,9 @@ class CompetenceController extends Controller
             ->when(Request::input('year'), function (Builder $query, string $year) {
                 $query->whereYear('statistic_results.created_at', $year);
             })
+            ->when(Request::input('employees'), function (Builder $query, array $employees) {
+                $query->whereIn('statistic_results.company_employee_id', $employees);
+            })
             ->when(Request::input('city'), function (Builder $query, string $city) {
                 $query->where('city_id', $city);
             })
@@ -138,7 +142,7 @@ class CompetenceController extends Controller
                 'statistic_competence_id'
             )
             ->get()
-            ->reduce(function (array $carry, Result $result) use (&$directionCount, $competenceIds) {
+            ->reduce(function (array $carry, Result $result) use (&$directionCount, $competenceIds, $withHref) {
                 $key = $result['company_employee_id'].'-'.$result['city_id'].'-'.$result['company_id'].'-'.$result['company_division_id'].'-'.$result['company_subdivision_id'].'-'.$result['company_level_id'].'-'.$result['company_position_id'].'-'.$result['company_direction_ids'];
 
                 $directionCount = $result->directions->count() > $directionCount ? $result->directions->count() : $directionCount;
@@ -148,7 +152,10 @@ class CompetenceController extends Controller
                     $carry[$key]['competence-'.$result->statistic_competence_id] = $result->averageRating;
                 } else {
                     $carry[$key] = [
-                        'employee' => $result->employee->full_name,
+                        'employee' => $withHref ? [
+                            'text' => $result->employee->full_name,
+                            'href' => route('client.statistic.results.show', $result->employee->id)
+                        ] : $result->employee->full_name,
                         'city' => $result->city?->name,
                         'company' => $result->company?->name,
                         'division' => $result->division?->name,
@@ -351,6 +358,18 @@ class CompetenceController extends Controller
                 'name' => 'competences',
                 'type' => 'multiselect',
                 'data' => $competences
+            ],
+            [
+                'label' => 'Сотрудники',
+                'name' => 'employees',
+                'type' => 'async-select',
+                'value' => Employee::findMany(Request::input('employees'))
+                    ->map(function (Employee $employee) {
+                        return [
+                            'value' => (string) $employee->id,
+                            'label' => $employee->full_name
+                        ];
+                    })
             ],
             [
                 'label' => 'С учетом самооценки',

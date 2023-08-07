@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Company\Company;
 use App\Models\Company\Direction;
 use App\Models\Company\Division;
+use App\Models\Company\Employee;
 use App\Models\Company\Level;
 use App\Models\Company\Position;
 use App\Models\Company\Subdivision;
@@ -25,13 +26,13 @@ class GeneralController extends Controller
 {
     public function index(): Response
     {
-        $filters = Request::only(['year', 'city', 'company', 'division', 'subdivision', 'direction', 'level', 'position']);
+        $filters = Request::only(['year', 'city', 'company', 'division', 'subdivision', 'direction', 'level', 'position', 'employees']);
 
         return Inertia::render('Statistic/StatisticPage', [
             'title' => 'Общая статистика',
             'fields' => $this->getFormFields(),
             'filters' => $filters,
-            'statistic' => $filters ? $this->getStatistic() : [],
+            'statistic' => $filters ? $this->getStatistic(withHref: true) : [],
             'exportUrl' => route('client.statistic.general.export', $filters)
         ]);
     }
@@ -43,7 +44,7 @@ class GeneralController extends Controller
         return Excel::download(new StatisticExport($this->getStatistic()), $fileName);
     }
 
-    private function getStatistic(): array
+    private function getStatistic($withHref = false): array
     {
         $dbPrefix = config('database.connections.mysql.prefix');
         $directionCount = 0;
@@ -87,6 +88,9 @@ class GeneralController extends Controller
             ->when(Request::input('year'), function (Builder $query, string $year) {
                 $query->whereYear('statistic_results.created_at', $year);
             })
+            ->when(Request::input('employees'), function (Builder $query, array $employees) {
+                $query->whereIn('statistic_results.company_employee_id', $employees);
+            })
             ->when(Request::input('city'), function (Builder $query, string $city) {
                 $query->where('city_id', $city);
             })
@@ -121,11 +125,14 @@ class GeneralController extends Controller
                 'company_direction_ids',
             )
             ->get()
-            ->map(function (Result $result) use (&$directionCount) {
+            ->map(function (Result $result) use (&$directionCount, $withHref) {
                 $directionCount = $result->directions->count() > $directionCount ? $result->directions->count() : $directionCount;
 
                 return [
-                    'employee' => $result->employee->full_name,
+                    'employee' => $withHref ? [
+                        'text' => $result->employee->full_name,
+                        'href' => route('client.statistic.results.show', $result->employee->id)
+                    ] : $result->employee->full_name,
                     'city' => $result->city?->name,
                     'company' => $result->company?->name,
                     'division' => $result->division?->name,
@@ -328,6 +335,18 @@ class GeneralController extends Controller
                 'name' => 'position',
                 'type' => 'select',
                 'data' => $positions
+            ],
+            [
+                'label' => 'Сотрудники',
+                'name' => 'employees',
+                'type' => 'async-select',
+                'value' => Employee::findMany(Request::input('employees'))
+                    ->map(function (Employee $employee) {
+                        return [
+                            'value' => (string) $employee->id,
+                            'label' => $employee->full_name
+                        ];
+                    })
             ]
         ];
     }

@@ -1,10 +1,12 @@
 import React, { useId } from 'react';
 import { useForm, usePage } from '@inertiajs/react';
 import clsx from 'clsx';
+import axios from 'axios';
 
 import FormField from '../Shared/FormField.jsx';
 import Select from '../Shared/Select.jsx';
 import Checkbox from '../Shared/Checkbox.jsx';
+import AsyncSelect from '../Shared/AsyncSelect.jsx';
 
 const StatisticFilter = ({ className = '' }) => {
 	const { fields = [], filters = {} } = usePage().props;
@@ -22,6 +24,16 @@ const StatisticFilter = ({ className = '' }) => {
 
 		return result;
 	});
+
+	const employeeAutocomplete = async inputValue => {
+		const response = await axios.get(
+			route('client.company.employees.autocomplete', {
+				search: inputValue
+			})
+		);
+
+		return response.data;
+	};
 
 	const submitHandler = event => {
 		event.preventDefault();
@@ -84,9 +96,27 @@ const StatisticFilter = ({ className = '' }) => {
 								/>
 							</FormField>
 						);
+					} else if (field.type === 'async-select') {
+						return (
+							<FormField key={field.name} label={field.label} idProp='inputId'>
+								<AsyncSelect
+									defaultValue={field.value}
+									isMulti
+									isClearable
+									loadOptions={employeeAutocomplete}
+									onChange={newValues => {
+										setData(
+											field.name,
+											newValues.length
+												? newValues.map(newValue => newValue.value)
+												: []
+										);
+									}}
+								/>
+							</FormField>
+						);
 					} else if (field.type === 'checkbox') {
 						return (
-							/* TODO: Исправить 'true' */
 							<Checkbox
 								key={field.name}
 								label='Показать с учётом самооценки'
