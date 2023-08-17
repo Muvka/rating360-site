@@ -3,7 +3,9 @@
 namespace App\Filament\Resources\Rating;
 
 use App\Filament\Resources\Rating\RatingResource\Pages;
+use App\Models\Rating\MatrixTemplateClient;
 use App\Models\Rating\Rating;
+use App\Models\Statistic\Client;
 use App\Models\Statistic\Result;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Select;
@@ -14,8 +16,11 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Contracts\HasTable;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use RyanChandler\FilamentProgressColumn\ProgressColumn;
 use stdClass;
 
@@ -79,30 +84,48 @@ class RatingResource extends Resource
                             return 100;
                         }
 
-                        $totalClients = 0;
-                        $finishedClients = 0;
-                        $matrixTemplates = $record->matrix
-                            ->templates()
-                            ->with('clients')
-                            ->get();
-                        $results = Result::with('clients')
-                            ->where('rating_id', $record->id)
-                            ->get();
+//                        $totalClients = 0;
+//                        $finishedClients = 0;
+//                        $matrixTemplates = $record->matrix
+//                            ->templates()
+//                            ->with('clients')
+//                            ->get();
+//                        $results = Result::with('clients')
+//                            ->where('rating_id', $record->id)
+//                            ->get();
+//
+//                        foreach ($matrixTemplates as $matrixTemplate) {
+//                            $matrixClients = $matrixTemplate->clients
+//                                ->pluck('company_employee_id');
+//                            $resultClients = $results->firstWhere('company_employee_id', $matrixTemplate->company_employee_id)
+//                                ?->clients
+//                                ?->pluck('company_employee_id');
+//
+//                            $intersect = $matrixClients->intersect($resultClients);
+//
+//                            $totalClients += $matrixClients->count();
+//                            $finishedClients += $intersect->count();
+//                        }
 
-                        foreach ($matrixTemplates as $matrixTemplate) {
-                            $matrixClients = $matrixTemplate->clients
-                                ->pluck('company_employee_id');
-                            $resultClients = $results->firstWhere('company_employee_id', $matrixTemplate->company_employee_id)
-                                ?->clients
-                                ?->pluck('company_employee_id');
+                        $totalClientsNew = MatrixTemplateClient::select(DB::raw('count(*) as count'))
+                            ->whereHas('template.matrix.ratings', function (Builder $query) use ($record) {
+                                $query->where('id', $record->id);
+                            })
+                            ->get()
+                            ->pluck('count')
+                            ->first();
 
-                            $intersect = $matrixClients->intersect($resultClients);
+                        $finishedClientsNew = Client::select(DB::raw('count(*) as count'))
+                            ->whereHas('result.rating', function (Builder $query) use ($record) {
+                                $query->where('id', $record->id);
+                            })
+                            ->get()
+                            ->pluck('count')
+                            ->first();
 
-                            $totalClients += $matrixClients->count();
-                            $finishedClients += $intersect->count();
-                        }
+//                        dd($totalClients, $finishedClients, $totalClientsNew, $finishedClientsNew);
 
-                        return (int) $totalClients === 0 ? $totalClients : round(($finishedClients / $totalClients) * 100);
+                        return (int) $totalClientsNew === 0 ? $totalClientsNew : round(($finishedClientsNew / $totalClientsNew) * 100);
                     })
                     ->color('success'),
                 TextColumn::make('created_at')
@@ -127,6 +150,8 @@ class RatingResource extends Resource
                     ->label('Матрица')
                     ->wrap()
                     ->sortable(),
+                ToggleColumn::make('show_results_before_completion')
+                    ->label('Результаты до завершения'),
                 BadgeColumn::make('status')
                     ->label('Статус')
                     ->enum([

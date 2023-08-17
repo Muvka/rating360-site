@@ -110,6 +110,8 @@ class ResultController extends Controller
             ->whereHas('results', function (Builder $query) use ($employee) {
                 $query->where('company_employee_id', $employee->id);
             })
+            ->where('status', 'closed')
+            ->orWhere('show_results_before_completion', true)
             ->latest('year')
             ->groupBy('year')
             ->get()
@@ -128,6 +130,11 @@ class ResultController extends Controller
                 'statistic_clients.statistic_result_id')
             ->join('ratings', 'ratings.id', '=', 'statistic_results.rating_id')
             ->where('statistic_results.company_employee_id', $employee->id)
+            ->whereNull('ratings.deleted_at')
+            ->where(function (Builder $query) {
+                $query->where('ratings.status', 'closed')
+                    ->orWhere('ratings.show_results_before_completion', true);
+            })
             ->groupBy('launched_year', 'competence', 'type')
             ->get()
             ->groupBy('launched_year')
@@ -161,6 +168,11 @@ class ResultController extends Controller
                 'statistic_clients.statistic_result_id')
             ->join('ratings', 'ratings.id', '=', 'statistic_results.rating_id')
             ->where('statistic_results.company_employee_id', $employee->id)
+            ->whereNull('ratings.deleted_at')
+            ->where(function (Builder $query) {
+                $query->where('ratings.status', 'closed')
+                    ->orWhere('ratings.show_results_before_completion', true);
+            })
             ->groupBy('launched_year', 'type', 'competence', 'text')
             ->get()
             ->groupBy('launched_year')
@@ -190,7 +202,11 @@ class ResultController extends Controller
 
         $reviews = Review::select(['id', 'statistic_client_id', 'title', 'text'])
             ->whereHas('client.result', function (Builder $query) use ($employee) {
-                $query->where('company_employee_id', $employee->id);
+                $query->whereHas('rating', function (Builder $query) {
+                    $query->where('status', 'closed')
+                        ->orWhere('show_results_before_completion', true);
+                })
+                    ->where('company_employee_id', $employee->id);
             })
             ->with([
                 'client.result.rating' => function (Builder $query) {
@@ -214,6 +230,11 @@ class ResultController extends Controller
                 'statistic_clients.statistic_result_id')
             ->join('ratings', 'ratings.id', '=', 'statistic_results.rating_id')
             ->where('statistic_results.company_id', $employee->company?->id)
+            ->whereNull('ratings.deleted_at')
+            ->where(function (Builder $query) {
+                $query->where('ratings.status', 'closed')
+                    ->orWhere('ratings.show_results_before_completion', true);
+            })
             ->groupBy('launched_year', 'competence')
             ->get()
             ->groupBy('launched_year')
@@ -251,6 +272,11 @@ class ResultController extends Controller
             ->join('statistic_results', 'statistic_results.id', '=', 'statistic_clients.statistic_result_id')
             ->join('ratings', 'ratings.id', '=', 'statistic_results.rating_id')
             ->where('statistic_results.company_employee_id', $employee->id)
+            ->whereNull('ratings.deleted_at')
+            ->where(function (Builder $query) {
+                $query->where('ratings.status', 'closed')
+                    ->orWhere('ratings.show_results_before_completion', true);
+            })
             ->oldest('launched_year')
             ->groupBy('competence', 'launched_year')
             ->get()
@@ -274,6 +300,11 @@ class ResultController extends Controller
                 ->join('statistic_results', 'statistic_results.id', '=', 'statistic_clients.statistic_result_id')
                 ->join('ratings', 'ratings.id', '=', 'statistic_results.rating_id')
                 ->where('statistic_results.company_employee_id', $employee->id)
+                ->whereNull('ratings.deleted_at')
+                ->where(function (Builder $query) {
+                    $query->where('ratings.status', 'closed')
+                        ->orWhere('ratings.show_results_before_completion', true);
+                })
                 ->oldest('launched_year')
                 ->groupBy('launched_year')
                 ->whereNotNull('rating_value_id')
