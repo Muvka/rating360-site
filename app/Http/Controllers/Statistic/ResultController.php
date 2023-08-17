@@ -106,8 +106,6 @@ class ResultController extends Controller
 
         $employee->load('company');
 
-        $tabs = [];
-
         $years = Rating::select(DB::raw('YEAR(launched_at) as year'))
             ->whereHas('results', function (Builder $query) use ($employee) {
                 $query->where('company_employee_id', $employee->id);
@@ -245,7 +243,7 @@ class ResultController extends Controller
 
         $comparisonData = ClientCompetence::select([
             'statistic_competences.name as competence',
-            DB::raw('YEAR(launched_at) as year'),
+            DB::raw('YEAR(launched_at) as launched_year'),
             DB::raw('cast(avg(average_rating) as decimal(3, 2)) as averageRating')
         ])
             ->join('statistic_competences', 'statistic_competences.id', '=', 'statistic_client_competences.statistic_competence_id')
@@ -253,21 +251,46 @@ class ResultController extends Controller
             ->join('statistic_results', 'statistic_results.id', '=', 'statistic_clients.statistic_result_id')
             ->join('ratings', 'ratings.id', '=', 'statistic_results.rating_id')
             ->where('statistic_results.company_employee_id', $employee->id)
-            ->oldest('year')
-            ->groupBy('competence', 'year')
+            ->oldest('launched_year')
+            ->groupBy('competence', 'launched_year')
             ->get()
             ->groupBy('competence')
             ->map(function (Collection $collection, string $competence) {
                 return [
                     'competence' => $competence,
-                    ...$collection->groupBy('year')->mapWithKeys(function (Collection $collection, string $year) {
+                    ...$collection->groupBy('launched_year')->mapWithKeys(function (Collection $collection, string $year) {
                         return ['rating-'.$year => $collection->first()->averageRating];
                     })
                 ];
-            })
-            ->values();
+            });
 
         if ($comparisonData) {
+            $corporateValues = Marker::select(
+                DB::raw('YEAR(launched_at) as launched_year'),
+                DB::raw('cast(avg(rating) as decimal(3, 2)) as average_rating')
+            )
+                ->join('statistic_client_competences', 'statistic_client_competences.id', '=', 'statistic_markers.statistic_client_competence_id')
+                ->join('statistic_clients', 'statistic_clients.id', '=', 'statistic_client_competences.statistic_client_id')
+                ->join('statistic_results', 'statistic_results.id', '=', 'statistic_clients.statistic_result_id')
+                ->join('ratings', 'ratings.id', '=', 'statistic_results.rating_id')
+                ->where('statistic_results.company_employee_id', $employee->id)
+                ->oldest('launched_year')
+                ->groupBy('launched_year')
+                ->whereNotNull('rating_value_id')
+                ->get()
+                ->flatMap(function (Marker $marker) {
+                    return ['rating-'.$marker->launched_year => $marker->average_rating];
+                })
+                ->put('competence', 'Корпоративные ценности');
+
+            if ($corporateValues) {
+                $comparisonData->when($comparisonData->get('Корпоративные ценности'), function (Collection $collection, array $value) use ($corporateValues) {
+                    $collection->put('Корпоративные ценности', collect($value)->merge(collect($corporateValues)));
+                }, function (Collection $collection) use ($corporateValues) {
+                    $collection->put('Корпоративные ценности', $corporateValues);
+                });
+            }
+
             $ratingComparison = [
                 'columns' => [
                     ['key' => 'competence', 'label' => 'Компетенция'],
@@ -275,7 +298,7 @@ class ResultController extends Controller
                         return ['key' => 'rating-'.$year, 'label' => $year.' год'];
                     }),
                 ],
-                'data' => $comparisonData
+                'data' => $comparisonData->values()
             ];
         } else {
             $ratingComparison = [];
@@ -413,7 +436,9 @@ class ResultController extends Controller
             ->latest('launched_at')
             ->first();
 
-        if (!$rating) return '';
+        if ( ! $rating) {
+            return '';
+        }
 
         $matrixClients = MatrixTemplateClient::select('company_employee_id')
             ->whereHas('template.matrix.ratings', function (Builder $query) use ($rating) {
