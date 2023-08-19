@@ -1,0 +1,106 @@
+.main-menu__navigation,
+.main-menu__user {
+    margin: 0;
+}
+
+@media (max-width: 599px) {
+    .main-menu__content-container {
+        grid-row-gap: 20px;
+        row-gap: 20px;
+        padding: 16px 12px;
+    }
+}
+
+@media (max-width: 999px) {
+    .main-menu {
+        position: relative;
+    }
+
+    .main-menu__button {
+        display: block;
+        padding: 0;
+
+        color: var(--color-text-primary);
+
+        border: none;
+        background-color: transparent;
+        appearance: none;
+
+        transition: color 200ms ease;
+    }
+
+    .main-menu__button:hover {
+        color: var(--color-brand-primary);
+    }
+
+    .main-menu__icon {
+        display: block;
+
+        width: 24px;
+        height: 24px;
+    }
+
+    .main-menu__content-container {
+        container-type: inline-size;
+        container-name: menu-content;
+
+        position: absolute;
+        top: calc(100% + 24px);
+        right: 0;
+        z-index: 5;
+
+        display: grid;
+        justify-items: center;
+        grid-template-columns: 100%;
+        width: 280px;
+
+        border-radius: var(--border-radius-secondary);
+        box-shadow: 0 4px 12px var(--color-shadow-primary);
+        background-color: var(--color-background-secondary);
+
+        animation: fadeInTop 400ms ease;
+    }
+
+    .main-menu__content-container--hidden {
+        display: none;
+    }
+
+    .main-menu__navigation {
+        width: 100%;
+    }
+
+    .main-menu__user {
+        order: -1;
+    }
+}
+
+@media (min-width: 1000px) {
+    .main-menu__button {
+        display: none;
+    }
+
+    .main-menu__content-container {
+        display: flex;
+        flex-wrap: wrap;
+    }
+}
+
+@media (min-width: 600px) and (max-width: 999px) {
+    .main-menu__content-container {
+        grid-row-gap: 28px;
+        row-gap: 28px;
+        padding: 24px 18px;
+    }
+}
+
+@media (min-width: 1000px) and (max-width: 1199px) {
+    .main-menu__content-container {
+        gap: 20px
+    }
+}
+
+@media (min-width: 1200px) {
+    .main-menu__content-container {
+        gap: 24px
+    }
+}
