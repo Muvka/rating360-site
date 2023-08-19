@@ -9,7 +9,8 @@ class StatisticExport implements FromView
 {
     protected array $data;
 
-    public function __construct(array $data = []) {
+    public function __construct(array $data = [])
+    {
         $this->data = $data;
     }
 

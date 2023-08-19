@@ -59,7 +59,8 @@ class Employee extends Authenticatable implements FilamentUser, HasName
         return $this->full_name;
     }
 
-    public function isAdmin() {
+    public function isAdmin()
+    {
         return $this->is_admin;
     }
 
@@ -133,6 +134,6 @@ class Employee extends Authenticatable implements FilamentUser, HasName
 
     public function isManager(): bool
     {
-        return (bool)$this->level?->is_manager;
+        return (bool) $this->level?->is_manager;
     }
 }

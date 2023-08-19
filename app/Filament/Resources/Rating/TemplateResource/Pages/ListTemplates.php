@@ -37,7 +37,7 @@ class ListTemplates extends ListRecords
                     TextInput::make('name')
                         ->label('Название')
                         ->placeholder('Шаблон общий')
-                        ->hidden(fn(Closure $get) => $get('file') === [])
+                        ->hidden(fn (Closure $get) => $get('file') === [])
                         ->maxLength(128)
                         ->required(),
                 ]),

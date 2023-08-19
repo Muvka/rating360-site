@@ -56,8 +56,8 @@ class EmployeePositionResource extends Resource
                             return (string) (
                                 $rowLoop->iteration +
                                 ($livewire->tableRecordsPerPage * (
-                                        $livewire->page - 1
-                                    ))
+                                    $livewire->page - 1
+                                ))
                             );
                         }
                     ),
@@ -72,12 +72,12 @@ class EmployeePositionResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
-                    ->action(fn(Position $record) => static::deleteAction($record)),
+                    ->action(fn (Position $record) => static::deleteAction($record)),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make()
-                    ->action(fn(Collection $records) => $records->each(
-                        fn(Position $record) => static::deleteAction($record))
+                    ->action(fn (Collection $records) => $records->each(
+                        fn (Position $record) => static::deleteAction($record))
                     ),
             ]);
     }

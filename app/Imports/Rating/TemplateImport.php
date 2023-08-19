@@ -2,9 +2,9 @@
 
 namespace App\Imports\Rating;
 
-use App\Models\Rating\Template;
 use App\Models\Rating\Competence;
 use App\Models\Rating\CompetenceMarker;
+use App\Models\Rating\Template;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
@@ -49,7 +49,7 @@ class TemplateImport implements OnEachRow, WithHeadingRow, SkipsEmptyRows
             $this->markerSort = 1;
         }
 
-        if ( ! isset($row['povedenceskie_markery']) || ! trim($row['povedenceskie_markery']) || ! $this->competence) {
+        if (! isset($row['povedenceskie_markery']) || ! trim($row['povedenceskie_markery']) || ! $this->competence) {
             return;
         }
 

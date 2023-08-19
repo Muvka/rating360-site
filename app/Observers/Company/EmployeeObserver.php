@@ -5,7 +5,6 @@ namespace App\Observers\Company;
 use App\Models\Company\Employee;
 use App\Models\Rating\MatrixTemplate;
 use App\Models\Rating\MatrixTemplateClient;
-use Illuminate\Contracts\Database\Eloquent\Builder;
 
 class EmployeeObserver
 {
@@ -13,7 +12,7 @@ class EmployeeObserver
     {
         $isManager = $employee->level?->is_manager;
 
-        if ( ! $isManager) {
+        if (! $isManager) {
             $directSubordinates = $employee->directSubordinates;
 
             if ($directSubordinates) {

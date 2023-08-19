@@ -11,8 +11,8 @@ use App\Models\Company\Employee;
 use App\Models\Company\Level;
 use App\Models\Company\Position;
 use App\Models\Company\Subdivision;
-use App\Models\Statistic\Competence;
 use App\Models\Shared\City;
+use App\Models\Statistic\Competence;
 use App\Models\Statistic\Result;
 use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -34,7 +34,7 @@ class CompetenceController extends Controller
             'fields' => $this->getFormFields(),
             'filters' => $filters,
             'statistic' => $filters ? $this->getStatistic(withHref: true) : [],
-            'exportUrl' => route('client.statistic.competence.export', $filters)
+            'exportUrl' => route('client.statistic.competence.export', $filters),
         ]);
     }
 
@@ -154,7 +154,7 @@ class CompetenceController extends Controller
                     $carry[$key] = [
                         'employee' => $withHref ? [
                             'text' => $result->employee->full_name,
-                            'href' => route('client.statistic.results.show', $result->employee->id)
+                            'href' => route('client.statistic.results.show', $result->employee->id),
                         ] : $result->employee->full_name,
                         'city' => $result->city?->name,
                         'company' => $result->company?->name,
@@ -175,33 +175,33 @@ class CompetenceController extends Controller
         $columns = [
             [
                 'key' => 'employee',
-                'label' => 'Сотрудник'
+                'label' => 'Сотрудник',
             ], [
                 'key' => 'city',
-                'label' => 'Город'
+                'label' => 'Город',
             ], [
                 'key' => 'company',
-                'label' => 'Компания'
+                'label' => 'Компания',
             ], [
                 'key' => 'division',
-                'label' => 'Отдел'
+                'label' => 'Отдел',
             ], [
                 'key' => 'subdivision',
-                'label' => 'Подразделение'
+                'label' => 'Подразделение',
             ], [
                 'key' => 'position',
-                'label' => 'Должность'
+                'label' => 'Должность',
             ], [
                 'key' => 'level',
-                'label' => 'Уровень сотрудника'
-            ]
+                'label' => 'Уровень сотрудника',
+            ],
         ];
 
         if ($directionCount > 0) {
             foreach (range(1, $directionCount) as $number) {
                 $columns[] = [
                     'key' => 'direction-'.$number,
-                    'label' => 'Направление'.($number > 1 ? ' '.$number : '')
+                    'label' => 'Направление'.($number > 1 ? ' '.$number : ''),
                 ];
             }
         }
@@ -212,7 +212,7 @@ class CompetenceController extends Controller
             ->each(function (Competence $item) use (&$columns) {
                 $columns[] = [
                     'key' => 'competence-'.$item->id,
-                    'label' => $item->name
+                    'label' => $item->name,
                 ];
             });
 
@@ -228,7 +228,7 @@ class CompetenceController extends Controller
             ->distinct()
             ->orderBy('year')
             ->get()
-            ->map(fn(Result $result) => [
+            ->map(fn (Result $result) => [
                 'value' => (string) $result->year,
                 'label' => $result->year.' год',
             ]);
@@ -237,7 +237,7 @@ class CompetenceController extends Controller
             ->distinct()
             ->orderBy('name')
             ->get()
-            ->map(fn(City $city) => [
+            ->map(fn (City $city) => [
                 'value' => (string) $city->id,
                 'label' => $city->name,
             ]);
@@ -246,7 +246,7 @@ class CompetenceController extends Controller
             ->distinct()
             ->orderBy('name')
             ->get()
-            ->map(fn(Company $company) => [
+            ->map(fn (Company $company) => [
                 'value' => (string) $company->id,
                 'label' => $company->name,
             ]);
@@ -255,7 +255,7 @@ class CompetenceController extends Controller
             ->distinct()
             ->orderBy('name')
             ->get()
-            ->map(fn(Division $division) => [
+            ->map(fn (Division $division) => [
                 'value' => (string) $division->id,
                 'label' => $division->name,
             ]);
@@ -264,7 +264,7 @@ class CompetenceController extends Controller
             ->distinct()
             ->orderBy('name')
             ->get()
-            ->map(fn(Subdivision $subdivision) => [
+            ->map(fn (Subdivision $subdivision) => [
                 'value' => (string) $subdivision->id,
                 'label' => $subdivision->name,
             ]);
@@ -273,7 +273,7 @@ class CompetenceController extends Controller
             ->distinct()
             ->orderBy('name')
             ->get()
-            ->map(fn(Direction $direction) => [
+            ->map(fn (Direction $direction) => [
                 'value' => (string) $direction->id,
                 'label' => $direction->name,
             ]);
@@ -281,7 +281,7 @@ class CompetenceController extends Controller
         $levels = Level::select('id', 'name')
             ->orderBy('name')
             ->get()
-            ->map(fn(Level $level) => [
+            ->map(fn (Level $level) => [
                 'value' => (string) $level->id,
                 'label' => $level->name,
             ]);
@@ -290,7 +290,7 @@ class CompetenceController extends Controller
             ->distinct()
             ->orderBy('name')
             ->get()
-            ->map(fn(Position $position) => [
+            ->map(fn (Position $position) => [
                 'value' => (string) $position->id,
                 'label' => $position->name,
             ]);
@@ -299,7 +299,7 @@ class CompetenceController extends Controller
             ->distinct()
             ->orderBy('name')
             ->get()
-            ->map(fn(Competence $competences) => [
+            ->map(fn (Competence $competences) => [
                 'value' => (string) $competences->id,
                 'label' => $competences->name,
             ]);
@@ -309,55 +309,55 @@ class CompetenceController extends Controller
                 'label' => 'Год',
                 'name' => 'year',
                 'type' => 'select',
-                'data' => $years
+                'data' => $years,
             ],
             [
                 'label' => 'Город',
                 'name' => 'city',
                 'type' => 'select',
-                'data' => $cities
+                'data' => $cities,
             ],
             [
                 'label' => 'Компания',
                 'name' => 'company',
                 'type' => 'select',
-                'data' => $companies
+                'data' => $companies,
             ],
             [
                 'label' => 'Отдел',
                 'name' => 'division',
                 'type' => 'select',
-                'data' => $divisions
+                'data' => $divisions,
             ],
             [
                 'label' => 'Подразделение',
                 'name' => 'subdivision',
                 'type' => 'select',
-                'data' => $subdivisions
+                'data' => $subdivisions,
             ],
             [
                 'label' => 'Направление',
                 'name' => 'direction',
                 'type' => 'select',
-                'data' => $directions
+                'data' => $directions,
             ],
             [
                 'label' => 'Уровень сотрудника',
                 'name' => 'level',
                 'type' => 'select',
-                'data' => $levels
+                'data' => $levels,
             ],
             [
                 'label' => 'Должность',
                 'name' => 'position',
                 'type' => 'select',
-                'data' => $positions
+                'data' => $positions,
             ],
             [
                 'label' => 'Компетенции',
                 'name' => 'competences',
                 'type' => 'multiselect',
-                'data' => $competences
+                'data' => $competences,
             ],
             [
                 'label' => 'Сотрудники',
@@ -367,15 +367,15 @@ class CompetenceController extends Controller
                     ->map(function (Employee $employee) {
                         return [
                             'value' => (string) $employee->id,
-                            'label' => $employee->full_name
+                            'label' => $employee->full_name,
                         ];
-                    })
+                    }),
             ],
             [
                 'label' => 'С учетом самооценки',
                 'name' => 'self',
-                'type' => 'checkbox'
-            ]
+                'type' => 'checkbox',
+            ],
         ];
     }
 }

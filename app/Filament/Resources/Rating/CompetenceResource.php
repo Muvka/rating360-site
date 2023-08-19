@@ -3,10 +3,8 @@
 namespace App\Filament\Resources\Rating;
 
 use App\Filament\Resources\Rating\CompetenceResource\Pages;
-use App\Filament\Resources\Rating\CompetenceResource\RelationManagers;
 use App\Models\Rating\Competence;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
-use Filament\Forms;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -19,8 +17,6 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Contracts\HasTable;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use stdClass;
 
 class CompetenceResource extends Resource
@@ -85,8 +81,8 @@ class CompetenceResource extends Resource
                                         'text' => 'Текст',
                                     ])
                                     ->required(),
-                            ])
-                    ])
+                            ]),
+                    ]),
             ]);
     }
 
@@ -100,8 +96,8 @@ class CompetenceResource extends Resource
                             return (string) (
                                 $rowLoop->iteration +
                                 ($livewire->tableRecordsPerPage * (
-                                        $livewire->page - 1
-                                    ))
+                                    $livewire->page - 1
+                                ))
                             );
                         }
                     ),

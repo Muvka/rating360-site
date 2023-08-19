@@ -20,36 +20,36 @@ class LevelSeeder extends Seeder
                 'is_manager' => true,
                 'requires_manager' => false,
                 'created_at' => $now,
-                'updated_at' => $now
+                'updated_at' => $now,
             ],
             [
                 'name' => 'L1',
                 'is_manager' => true,
                 'requires_manager' => false,
                 'created_at' => $now,
-                'updated_at' => $now
+                'updated_at' => $now,
             ],
             [
                 'name' => 'L2',
                 'is_manager' => true,
                 'requires_manager' => true,
                 'created_at' => $now,
-                'updated_at' => $now
+                'updated_at' => $now,
             ],
             [
                 'name' => 'L3',
                 'is_manager' => true,
                 'requires_manager' => true,
                 'created_at' => $now,
-                'updated_at' => $now
+                'updated_at' => $now,
             ],
             [
                 'name' => 'Специалист',
                 'is_manager' => false,
                 'requires_manager' => true,
                 'created_at' => $now,
-                'updated_at' => $now
-            ]
+                'updated_at' => $now,
+            ],
         ];
 
         Level::insert($levels);

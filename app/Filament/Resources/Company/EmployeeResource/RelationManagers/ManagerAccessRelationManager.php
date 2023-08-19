@@ -9,7 +9,6 @@ use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class ManagerAccessRelationManager extends RelationManager
@@ -39,17 +38,17 @@ class ManagerAccessRelationManager extends RelationManager
                 Tables\Actions\AttachAction::make()->recordSelect(function (Select $select) {
                     return $select->searchable()
                         ->getSearchResultsUsing(
-                            fn(string $search) => Employee::where('last_name', 'like', "%{$search}%")
+                            fn (string $search) => Employee::where('last_name', 'like', "%{$search}%")
                                 ->limit(20)
                                 ->get()
                                 ->pluck('full_name', 'id'))
-                        ->getOptionLabelUsing(fn($value): ?string => Employee::find($value)
+                        ->getOptionLabelUsing(fn ($value): ?string => Employee::find($value)
                             ->full_name);
                 }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->url(fn(Employee $record): string => route('filament.resources.company/employees.edit', $record->id)),
+                    ->url(fn (Employee $record): string => route('filament.resources.company/employees.edit', $record->id)),
                 Tables\Actions\DetachAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])

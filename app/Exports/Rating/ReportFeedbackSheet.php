@@ -10,7 +10,8 @@ class ReportFeedbackSheet implements FromView, WithTitle
 {
     protected array $results;
 
-    public function __construct(array $results = []) {
+    public function __construct(array $results = [])
+    {
         $this->results = $results;
     }
 

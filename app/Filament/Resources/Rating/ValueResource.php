@@ -5,8 +5,8 @@ namespace App\Filament\Resources\Rating;
 use App\Filament\Resources\Rating\ValueResource\Pages;
 use App\Models\Rating\Value;
 use Filament\Forms\Components\Card;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
@@ -38,7 +38,7 @@ class ValueResource extends Resource
                     ->schema([
                         Placeholder::make('id')
                             ->label('Идентификатор')
-                            ->content(fn(?Value $record): ?string => $record?->id),
+                            ->content(fn (?Value $record): ?string => $record?->id),
                         TextInput::make('name')
                             ->label('Название')
                             ->placeholder('Уважение и доверие')

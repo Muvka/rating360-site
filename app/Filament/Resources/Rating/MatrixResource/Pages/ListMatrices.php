@@ -42,14 +42,14 @@ class ListMatrices extends ListRecords
                         ->required(),
                     Fieldset::make()
                         ->label('Матрица')
-                        ->visible(fn(Closure $get) => (boolean) $get('file'))
+                        ->visible(fn (Closure $get) => (bool) $get('file'))
                         ->columns(1)
                         ->schema([
                             Select::make('matrix_id')
                                 ->label('Выбрать')
                                 ->disableLabel()
                                 ->options(Matrix::all()->pluck('name', 'id'))
-                                ->hidden(fn(Closure $get) => (boolean) $get('create'))
+                                ->hidden(fn (Closure $get) => (bool) $get('create'))
                                 ->required(),
                             Toggle::make('create')
                                 ->reactive()
@@ -57,7 +57,7 @@ class ListMatrices extends ListRecords
                             TextInput::make('name')
                                 ->label('Название')
                                 ->placeholder('Общая матрица')
-                                ->visible(fn(Closure $get) => $get('create'))
+                                ->visible(fn (Closure $get) => $get('create'))
                                 ->maxLength(128)
                                 ->required(),
                         ]),
@@ -68,7 +68,7 @@ class ListMatrices extends ListRecords
 
     private function import(array $data): void
     {
-        if ( ! empty($data['matrix_id'])) {
+        if (! empty($data['matrix_id'])) {
             $matrix = Matrix::findOrFail($data['matrix_id']);
         } else {
             $matrix = Matrix::create([

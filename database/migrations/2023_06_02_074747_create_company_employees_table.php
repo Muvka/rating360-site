@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -20,7 +21,7 @@ return new class extends Migration {
             $table->string('middle_name', 64)
                 ->nullable()
                 ->index();
-            $table->string('full_name',200)
+            $table->string('full_name', 200)
                 ->virtualAs("TRIM(CONCAT_WS(' ',last_name,first_name,middle_name))")
                 ->index();
             $table->string('email')

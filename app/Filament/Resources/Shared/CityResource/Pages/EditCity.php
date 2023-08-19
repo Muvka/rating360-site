@@ -15,7 +15,7 @@ class EditCity extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
-                ->using(fn(City $record) => CityResource::deleteAction($record))
+                ->using(fn (City $record) => CityResource::deleteAction($record))
                 ->successRedirectUrl(CityResource::getUrl()),
         ];
     }

@@ -15,7 +15,7 @@ class EditSubdivision extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
-                ->using(fn(Subdivision $record) => SubdivisionResource::deleteAction($record))
+                ->using(fn (Subdivision $record) => SubdivisionResource::deleteAction($record))
                 ->successRedirectUrl(SubdivisionResource::getUrl()),
         ];
     }

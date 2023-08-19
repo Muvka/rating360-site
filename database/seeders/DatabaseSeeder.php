@@ -4,8 +4,8 @@ namespace Database\Seeders;
 
 use Database\Seeders\Company\DirectionSeeder;
 use Database\Seeders\Company\DivisionSeeder;
-use Database\Seeders\Company\LevelSeeder;
 use Database\Seeders\Company\EmployeeSeeder;
+use Database\Seeders\Company\LevelSeeder;
 use Database\Seeders\Company\PositionSeeder;
 use Database\Seeders\Rating\ValueSeeder;
 use Database\Seeders\Shared\CitySeeder;

@@ -13,35 +13,42 @@ class MatrixTemplate extends Model
 
     protected $guarded = [];
 
-    public function employee(): BelongsTo {
+    public function employee(): BelongsTo
+    {
         return $this->belongsTo(Employee::class, 'company_employee_id');
     }
 
-    public function matrix(): BelongsTo {
+    public function matrix(): BelongsTo
+    {
         return $this->belongsTo(Matrix::class, 'rating_matrix_id')
             ->withTrashed();
     }
 
-    public function clients(): HasMany {
+    public function clients(): HasMany
+    {
         return $this->hasMany(MatrixTemplateClient::class, 'rating_matrix_template_id');
     }
 
-    public function clientsWithoutSelf(): HasMany {
+    public function clientsWithoutSelf(): HasMany
+    {
         return $this->hasMany(MatrixTemplateClient::class, 'rating_matrix_template_id')
             ->whereNot('type', 'self');
     }
 
-    public function editableClients(): HasMany {
+    public function editableClients(): HasMany
+    {
         return $this->hasMany(MatrixTemplateClient::class, 'rating_matrix_template_id')
             ->whereIn('type', ['inner', 'outer']);
     }
 
-    public function innerClients(): HasMany {
+    public function innerClients(): HasMany
+    {
         return $this->hasMany(MatrixTemplateClient::class, 'rating_matrix_template_id')
             ->where('type', 'inner');
     }
 
-    public function outerClients(): HasMany {
+    public function outerClients(): HasMany
+    {
         return $this->hasMany(MatrixTemplateClient::class, 'rating_matrix_template_id')
             ->where('type', 'outer');
     }

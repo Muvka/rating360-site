@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\Rating;
 
-use App\Filament\Resources\Rating\TemplateResource\RelationManagers\CompetencesRelationManager;
 use App\Filament\Resources\Rating\TemplateResource\Pages;
+use App\Filament\Resources\Rating\TemplateResource\RelationManagers\CompetencesRelationManager;
 use App\Models\Rating\Template;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\TextInput;
@@ -56,8 +56,8 @@ class TemplateResource extends Resource
                             return (string) (
                                 $rowLoop->iteration +
                                 ($livewire->tableRecordsPerPage * (
-                                        $livewire->page - 1
-                                    ))
+                                    $livewire->page - 1
+                                ))
                             );
                         }
                     ),
@@ -83,7 +83,7 @@ class TemplateResource extends Resource
     public static function getRelations(): array
     {
         return [
-            CompetencesRelationManager::class
+            CompetencesRelationManager::class,
         ];
     }
 

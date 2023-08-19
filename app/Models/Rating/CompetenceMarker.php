@@ -11,15 +11,17 @@ class CompetenceMarker extends Model
 
     protected $guarded = [];
 
-//    public function template(): BelongsTo {
-//        return $this->belongsTo(Template::class, 'rating_template_id');
-//    }
+    //    public function template(): BelongsTo {
+    //        return $this->belongsTo(Template::class, 'rating_template_id');
+    //    }
 
-    public function competence(): BelongsTo {
+    public function competence(): BelongsTo
+    {
         return $this->belongsTo(Competence::class, 'rating_competence_id');
     }
 
-    public function value(): BelongsTo {
+    public function value(): BelongsTo
+    {
         return $this->belongsTo(Value::class, 'rating_value_id');
     }
 }

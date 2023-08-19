@@ -12,11 +12,13 @@ class MatrixTemplateClient extends Model
 
     protected $guarded = [];
 
-    public function template(): BelongsTo {
+    public function template(): BelongsTo
+    {
         return $this->belongsTo(MatrixTemplate::class, 'rating_matrix_template_id');
     }
 
-    public function employee(): BelongsTo {
+    public function employee(): BelongsTo
+    {
         return $this->belongsTo(Employee::class, 'company_employee_id');
     }
 }

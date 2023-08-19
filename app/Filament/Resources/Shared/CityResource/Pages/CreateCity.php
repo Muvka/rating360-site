@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Shared\CityResource\Pages;
 
 use App\Filament\Resources\Shared\CityResource;
-use Filament\Pages\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateCity extends CreateRecord

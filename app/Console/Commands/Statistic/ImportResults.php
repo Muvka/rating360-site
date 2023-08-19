@@ -6,11 +6,11 @@ use App\Models\Company\Employee;
 use App\Models\Rating\Matrix;
 use App\Models\Rating\Rating;
 use App\Models\Rating\Template;
+use App\Models\Statistic\Client;
 use App\Models\Statistic\ClientCompetence;
 use App\Models\Statistic\Competence;
 use App\Models\Statistic\Marker;
 use App\Models\Statistic\Result;
-use App\Models\Statistic\Client;
 use App\Models\Statistic\Review;
 use Carbon\Carbon;
 use GuzzleHttp\Client as GuzzleClient;
@@ -67,7 +67,7 @@ class ImportResults extends Command
         $body = $response->getBody();
         $data = json_decode($body, true);
 
-        if ( ! $data || empty($data['result'])) {
+        if (! $data || empty($data['result'])) {
             throw new RuntimeException('При получении данных возникла ошибка!');
         }
 
@@ -90,12 +90,12 @@ class ImportResults extends Command
         $matrix = Matrix::create([
             'name' => 'Матрица '.$year,
             'created_at' => $date,
-            'updated_at' => $date
+            'updated_at' => $date,
         ]);
         $template = Template::create([
             'name' => 'Шаблон '.$year,
             'created_at' => $date,
-            'updated_at' => $date
+            'updated_at' => $date,
         ]);
         $rating = Rating::create([
             'name' => 'Оценка '.$year,
@@ -104,7 +104,7 @@ class ImportResults extends Command
             'status' => 'closed',
             'created_at' => $date,
             'updated_at' => $date,
-            'launched_at' => $date
+            'launched_at' => $date,
         ]);
 
         return $rating;
@@ -112,23 +112,23 @@ class ImportResults extends Command
 
     private function performTask($rating, $result, $year): void
     {
-        if ( ! isset($result['target']) || ! isset($result['result'])) {
+        if (! isset($result['target']) || ! isset($result['result'])) {
             return;
         }
 
         $date = Carbon::createFromDate($year, 1, 1);
         $clientData = [
-            "Оценка внутренних клиентов" => 'inner',
-            "Оценка внешних клиентов" => 'outer',
-            "Оценка руководителя" => 'manager',
-            "Самооценка" => 'self',
+            'Оценка внутренних клиентов' => 'inner',
+            'Оценка внешних клиентов' => 'outer',
+            'Оценка руководителя' => 'manager',
+            'Самооценка' => 'self',
         ];
 
         $employee = Employee::with('directions')
             ->where('email', $result['target'])
             ->first();
 
-        if ( ! $employee) {
+        if (! $employee) {
             return;
         }
 
@@ -150,70 +150,70 @@ class ImportResults extends Command
         }
 
         foreach ($result['result'] as $competence) {
-//            if ($competence['compName'] === 'Обратная связь') {
-//                foreach ($competence['results'] as $title => $clients) {
-//                    foreach ($clients as $type => $reviews) {
-//                        $reviewObjects = [];
-//                        $client = Client::firstOrCreate([
-//                            'statistic_result_id' => $resultObject->id,
-//                            'company_employee_id' => 1,
-//                            'type' => $clientData[$type]
-//                        ], [
-//                            'created_at' => $date,
-//                            'updated_at' => $date
-//                        ]);
-//
-//                        foreach ($reviews as $review) {
-//                            $reviewObjects[] = new Review([
-//                                'title' => $title,
-//                                'text' => $review,
-//                                'created_at' => $date,
-//                                'updated_at' => $date
-//                            ]);
-//                        }
-//
-//                        $client->reviews()->saveMany($reviewObjects);
-//                    }
-//                }
-//            } else {
-                $competenceObject = Competence::firstOrCreate([
-                    'name' => $competence['compName'],
-                ]);
+            //            if ($competence['compName'] === 'Обратная связь') {
+            //                foreach ($competence['results'] as $title => $clients) {
+            //                    foreach ($clients as $type => $reviews) {
+            //                        $reviewObjects = [];
+            //                        $client = Client::firstOrCreate([
+            //                            'statistic_result_id' => $resultObject->id,
+            //                            'company_employee_id' => 1,
+            //                            'type' => $clientData[$type]
+            //                        ], [
+            //                            'created_at' => $date,
+            //                            'updated_at' => $date
+            //                        ]);
+            //
+            //                        foreach ($reviews as $review) {
+            //                            $reviewObjects[] = new Review([
+            //                                'title' => $title,
+            //                                'text' => $review,
+            //                                'created_at' => $date,
+            //                                'updated_at' => $date
+            //                            ]);
+            //                        }
+            //
+            //                        $client->reviews()->saveMany($reviewObjects);
+            //                    }
+            //                }
+            //            } else {
+            $competenceObject = Competence::firstOrCreate([
+                'name' => $competence['compName'],
+            ]);
 
-                foreach ($competence['results'] as $marker => $clients) {
-                    foreach ($clients as $type => $ratings) {
-                        $client = Client::firstOrCreate([
-                            'statistic_result_id' => $resultObject->id,
-                            'company_employee_id' => 1,
-                            'type' => $clientData[$type]
-                        ], [
-                            'created_at' => $date,
-                            'updated_at' => $date
-                        ]);
+            foreach ($competence['results'] as $marker => $clients) {
+                foreach ($clients as $type => $ratings) {
+                    $client = Client::firstOrCreate([
+                        'statistic_result_id' => $resultObject->id,
+                        'company_employee_id' => 1,
+                        'type' => $clientData[$type],
+                    ], [
+                        'created_at' => $date,
+                        'updated_at' => $date,
+                    ]);
 
-                        $clientCompetence = ClientCompetence::firstOrCreate([
-                            'statistic_client_id' => $client->id,
-                            'statistic_competence_id' => $competenceObject->id
-                        ], [
-                            'created_at' => $date,
-                            'updated_at' => $date
-                        ]);
+                    $clientCompetence = ClientCompetence::firstOrCreate([
+                        'statistic_client_id' => $client->id,
+                        'statistic_competence_id' => $competenceObject->id,
+                    ], [
+                        'created_at' => $date,
+                        'updated_at' => $date,
+                    ]);
 
-                        $clientCompetence->markers()
-                            ->saveManyQuietly(collect($ratings)->map(function (int $rating) use ($date, $marker) {
-                                return new Marker([
-                                    'text' => Str::ucfirst($marker),
-                                    'rating' => $rating,
-                                    'created_at' => $date,
-                                    'updated_at' => $date
-                                ]);
-                            }));
+                    $clientCompetence->markers()
+                        ->saveManyQuietly(collect($ratings)->map(function (int $rating) use ($date, $marker) {
+                            return new Marker([
+                                'text' => Str::ucfirst($marker),
+                                'rating' => $rating,
+                                'created_at' => $date,
+                                'updated_at' => $date,
+                            ]);
+                        }));
 
-                        $clientCompetence->average_rating = $clientCompetence->markers->avg('rating');
-                        $clientCompetence->save();
-                    }
+                    $clientCompetence->average_rating = $clientCompetence->markers->avg('rating');
+                    $clientCompetence->save();
                 }
-//            }
+            }
+            //            }
         }
     }
 }

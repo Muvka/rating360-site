@@ -33,7 +33,7 @@ class GeneralController extends Controller
             'fields' => $this->getFormFields(),
             'filters' => $filters,
             'statistic' => $filters ? $this->getStatistic(withHref: true) : [],
-            'exportUrl' => route('client.statistic.general.export', $filters)
+            'exportUrl' => route('client.statistic.general.export', $filters),
         ]);
     }
 
@@ -131,7 +131,7 @@ class GeneralController extends Controller
                 return [
                     'employee' => $withHref ? [
                         'text' => $result->employee->full_name,
-                        'href' => route('client.statistic.results.show', $result->employee->id)
+                        'href' => route('client.statistic.results.show', $result->employee->id),
                     ] : $result->employee->full_name,
                     'city' => $result->city?->name,
                     'company' => $result->company?->name,
@@ -158,7 +158,7 @@ class GeneralController extends Controller
             foreach (range(1, $directionCount) as $number) {
                 $directionColumns[] = [
                     'key' => 'direction-'.$number,
-                    'label' => 'Направление'.($number > 1 ? ' '.$number : '')
+                    'label' => 'Направление'.($number > 1 ? ' '.$number : ''),
                 ];
             }
         }
@@ -166,46 +166,46 @@ class GeneralController extends Controller
         $columns = [
             [
                 'key' => 'employee',
-                'label' => 'Сотрудник'
+                'label' => 'Сотрудник',
             ], [
                 'key' => 'city',
-                'label' => 'Город'
+                'label' => 'Город',
             ], [
                 'key' => 'company',
-                'label' => 'Компания'
+                'label' => 'Компания',
             ], [
                 'key' => 'division',
-                'label' => 'Отдел'
+                'label' => 'Отдел',
             ], [
                 'key' => 'subdivision',
-                'label' => 'Подразделение'
+                'label' => 'Подразделение',
             ], [
                 'key' => 'position',
-                'label' => 'Должность'
+                'label' => 'Должность',
             ], [
                 'key' => 'level',
-                'label' => 'Уровень сотрудника'
+                'label' => 'Уровень сотрудника',
             ],
             ...$directionColumns,
             [
                 'key' => 'self',
-                'label' => 'Самооценка'
+                'label' => 'Самооценка',
             ], [
                 'key' => 'outer',
-                'label' => 'Внешние клиенты'
+                'label' => 'Внешние клиенты',
             ], [
                 'key' => 'inner',
-                'label' => 'Внутренние клиенты'
+                'label' => 'Внутренние клиенты',
             ], [
                 'key' => 'manager',
-                'label' => 'Руководитель'
+                'label' => 'Руководитель',
             ], [
                 'key' => 'averageRating',
-                'label' => 'Средняя оценка'
+                'label' => 'Средняя оценка',
             ], [
                 'key' => 'averageRatingWithoutSelf',
-                'label' => 'Средняя оценка (без самооценки)'
-            ]
+                'label' => 'Средняя оценка (без самооценки)',
+            ],
         ];
 
         return [
@@ -220,7 +220,7 @@ class GeneralController extends Controller
             ->distinct()
             ->orderBy('year')
             ->get()
-            ->map(fn(Result $result) => [
+            ->map(fn (Result $result) => [
                 'value' => (string) $result->year,
                 'label' => $result->year.' год',
             ]);
@@ -229,7 +229,7 @@ class GeneralController extends Controller
             ->distinct()
             ->orderBy('name')
             ->get()
-            ->map(fn(City $city) => [
+            ->map(fn (City $city) => [
                 'value' => (string) $city->id,
                 'label' => $city->name,
             ]);
@@ -238,7 +238,7 @@ class GeneralController extends Controller
             ->distinct()
             ->orderBy('name')
             ->get()
-            ->map(fn(Company $company) => [
+            ->map(fn (Company $company) => [
                 'value' => (string) $company->id,
                 'label' => $company->name,
             ]);
@@ -247,7 +247,7 @@ class GeneralController extends Controller
             ->distinct()
             ->orderBy('name')
             ->get()
-            ->map(fn(Division $division) => [
+            ->map(fn (Division $division) => [
                 'value' => (string) $division->id,
                 'label' => $division->name,
             ]);
@@ -256,7 +256,7 @@ class GeneralController extends Controller
             ->distinct()
             ->orderBy('name')
             ->get()
-            ->map(fn(Subdivision $subdivision) => [
+            ->map(fn (Subdivision $subdivision) => [
                 'value' => (string) $subdivision->id,
                 'label' => $subdivision->name,
             ]);
@@ -265,7 +265,7 @@ class GeneralController extends Controller
             ->distinct()
             ->orderBy('name')
             ->get()
-            ->map(fn(Direction $direction) => [
+            ->map(fn (Direction $direction) => [
                 'value' => (string) $direction->id,
                 'label' => $direction->name,
             ]);
@@ -273,7 +273,7 @@ class GeneralController extends Controller
         $levels = Level::select('id', 'name')
             ->orderBy('name')
             ->get()
-            ->map(fn(Level $level) => [
+            ->map(fn (Level $level) => [
                 'value' => (string) $level->id,
                 'label' => $level->name,
             ]);
@@ -282,7 +282,7 @@ class GeneralController extends Controller
             ->distinct()
             ->orderBy('name')
             ->get()
-            ->map(fn(Position $position) => [
+            ->map(fn (Position $position) => [
                 'value' => (string) $position->id,
                 'label' => $position->name,
             ]);
@@ -292,49 +292,49 @@ class GeneralController extends Controller
                 'label' => 'Год',
                 'name' => 'year',
                 'type' => 'select',
-                'data' => $years
+                'data' => $years,
             ],
             [
                 'label' => 'Город',
                 'name' => 'city',
                 'type' => 'select',
-                'data' => $cities
+                'data' => $cities,
             ],
             [
                 'label' => 'Компания',
                 'name' => 'company',
                 'type' => 'select',
-                'data' => $companies
+                'data' => $companies,
             ],
             [
                 'label' => 'Отдел',
                 'name' => 'division',
                 'type' => 'select',
-                'data' => $divisions
+                'data' => $divisions,
             ],
             [
                 'label' => 'Подразделение',
                 'name' => 'subdivision',
                 'type' => 'select',
-                'data' => $subdivisions
+                'data' => $subdivisions,
             ],
             [
                 'label' => 'Направление',
                 'name' => 'direction',
                 'type' => 'select',
-                'data' => $directions
+                'data' => $directions,
             ],
             [
                 'label' => 'Уровень сотрудника',
                 'name' => 'level',
                 'type' => 'select',
-                'data' => $levels
+                'data' => $levels,
             ],
             [
                 'label' => 'Должность',
                 'name' => 'position',
                 'type' => 'select',
-                'data' => $positions
+                'data' => $positions,
             ],
             [
                 'label' => 'Сотрудники',
@@ -344,10 +344,10 @@ class GeneralController extends Controller
                     ->map(function (Employee $employee) {
                         return [
                             'value' => (string) $employee->id,
-                            'label' => $employee->full_name
+                            'label' => $employee->full_name,
                         ];
-                    })
-            ]
+                    }),
+            ],
         ];
     }
 }

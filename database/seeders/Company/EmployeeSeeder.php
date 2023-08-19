@@ -25,14 +25,14 @@ class EmployeeSeeder extends Seeder
 
         $admin = Employee::firstOrCreate(['email' => 'admin@localhost.ru'], [
             'first_name' => 'Admin',
-            'password' => Hash::make('11111111')
+            'password' => Hash::make('11111111'),
         ]);
 
         $admin->is_admin = true;
         $admin->save();
 
         foreach ($userData as $user) {
-            if ( ! $user->email || ! $user->institution) {
+            if (! $user->email || ! $user->institution) {
                 continue;
             }
 
@@ -49,7 +49,7 @@ class EmployeeSeeder extends Seeder
                 [strtolower($companySearch)])
                 ->first();
 
-            if ( ! $company) {
+            if (! $company) {
                 $company = Company::create([
                     'name' => $user->institution,
                 ]);
@@ -66,7 +66,7 @@ class EmployeeSeeder extends Seeder
                 ]);
             }
 
-            list($first_name, $last_name) = explode(' ', $user->name);
+            [$first_name, $last_name] = explode(' ', $user->name);
 
             $employeeData = [
                 'first_name' => $first_name,

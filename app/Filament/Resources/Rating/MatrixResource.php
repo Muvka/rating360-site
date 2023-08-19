@@ -40,7 +40,7 @@ class MatrixResource extends Resource
                             ->placeholder('Общая матрица')
                             ->maxLength(128)
                             ->required(),
-                    ])
+                    ]),
             ]);
     }
 
@@ -54,8 +54,8 @@ class MatrixResource extends Resource
                             return (string) (
                                 $rowLoop->iteration +
                                 ($livewire->tableRecordsPerPage * (
-                                        $livewire->page - 1
-                                    ))
+                                    $livewire->page - 1
+                                ))
                             );
                         }
                     ),
@@ -81,7 +81,7 @@ class MatrixResource extends Resource
     public static function getRelations(): array
     {
         return [
-            MatrixTemplatesRelationManager::class
+            MatrixTemplatesRelationManager::class,
         ];
     }
 

@@ -2,10 +2,9 @@
 
 namespace App\Filament\Resources\Company;
 
-use App\Filament\Resources\Company\CompanyResource\RelationManagers\EmployeesRelationManager;
 use App\Filament\Resources\Company\CompanyResource\Pages;
+use App\Filament\Resources\Company\CompanyResource\RelationManagers\EmployeesRelationManager;
 use App\Models\Company\Company;
-use Filament\Facades\Filament;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -58,8 +57,8 @@ class CompanyResource extends Resource
                             return (string) (
                                 $rowLoop->iteration +
                                 ($livewire->tableRecordsPerPage * (
-                                        $livewire->page - 1
-                                    ))
+                                    $livewire->page - 1
+                                ))
                             );
                         }
                     ),
@@ -74,12 +73,12 @@ class CompanyResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
-                    ->action(fn(Company $record) => static::deleteAction($record)),
+                    ->action(fn (Company $record) => static::deleteAction($record)),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make()
-                    ->action(fn(Collection $records) => $records->each(
-                        fn(Company $record) => static::deleteAction($record))
+                    ->action(fn (Collection $records) => $records->each(
+                        fn (Company $record) => static::deleteAction($record))
                     ),
             ]);
     }

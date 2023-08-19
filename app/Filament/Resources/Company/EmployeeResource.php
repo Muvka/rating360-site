@@ -7,7 +7,6 @@ use App\Filament\Resources\Company\EmployeeResource\RelationManagers\DirectSubor
 use App\Filament\Resources\Company\EmployeeResource\RelationManagers\FunctionalSubordinatesRelationManager;
 use App\Filament\Resources\Company\EmployeeResource\RelationManagers\ManagerAccessRelationManager;
 use App\Models\Company\Employee;
-
 /**/
 
 use App\Models\Company\Level;
@@ -61,8 +60,8 @@ class EmployeeResource extends Resource
                         TextInput::make('password')
                             ->label('Пароль')
                             ->password()
-                            ->dehydrateStateUsing(fn($state) => Hash::make($state))
-                            ->dehydrated(fn($state) => filled($state)),
+                            ->dehydrateStateUsing(fn ($state) => Hash::make($state))
+                            ->dehydrated(fn ($state) => filled($state)),
                         TextInput::make('email')
                             ->label('Адрес электронной почты')
                             ->email()
@@ -117,24 +116,24 @@ class EmployeeResource extends Resource
                         Select::make('direct_manager_id')
                             ->label('Непосредственный')
                             ->getSearchResultsUsing(
-                                fn(string $search) => Employee::where('last_name', 'like', "%{$search}%")
+                                fn (string $search) => Employee::where('last_name', 'like', "%{$search}%")
                                     ->limit(20)
                                     ->get()
                                     ->pluck('full_name', 'id'))
-                            ->getOptionLabelUsing(fn($value): ?string => Employee::find($value)
+                            ->getOptionLabelUsing(fn ($value): ?string => Employee::find($value)
                                 ->full_name)
                             ->searchable()
                             ->required(
-                                fn(Closure $get) => $get('company_level_id') ? Level::find($get('company_level_id'))?->requires_manager : true
+                                fn (Closure $get) => $get('company_level_id') ? Level::find($get('company_level_id'))?->requires_manager : true
                             ),
                         Select::make('functional_manager_id')
                             ->label('Функциональный')
                             ->getSearchResultsUsing(
-                                fn(string $search) => Employee::where('last_name', 'like', "%{$search}%")
+                                fn (string $search) => Employee::where('last_name', 'like', "%{$search}%")
                                     ->limit(20)
                                     ->get()
                                     ->pluck('full_name', 'id'))
-                            ->getOptionLabelUsing(fn($value): ?string => Employee::find($value)
+                            ->getOptionLabelUsing(fn ($value): ?string => Employee::find($value)
                                 ->full_name)
                             ->searchable(),
                     ]),
@@ -151,8 +150,8 @@ class EmployeeResource extends Resource
                             return (string) (
                                 $rowLoop->iteration +
                                 ($livewire->tableRecordsPerPage * (
-                                        $livewire->page - 1
-                                    ))
+                                    $livewire->page - 1
+                                ))
                             );
                         }
                     ),
@@ -169,7 +168,7 @@ class EmployeeResource extends Resource
                     ->sortable(),
                 Tables\Columns\ToggleColumn::make('is_admin')
                     ->label('Администратор')
-                    ->sortable()
+                    ->sortable(),
             ])
             ->filters([
                 SelectFilter::make('city')

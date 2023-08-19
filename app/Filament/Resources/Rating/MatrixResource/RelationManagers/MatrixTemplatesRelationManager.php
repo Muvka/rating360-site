@@ -17,8 +17,8 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Contracts\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Validation\Rules\Unique;
@@ -38,11 +38,11 @@ class MatrixTemplatesRelationManager extends RelationManager
             ->schema([
                 Select::make('company_employee_id')
                     ->getSearchResultsUsing(
-                        fn(string $search) => Employee::where('last_name', 'like', "%{$search}%")
+                        fn (string $search) => Employee::where('last_name', 'like', "%{$search}%")
                             ->limit(20)
                             ->get()
                             ->pluck('full_name', 'id'))
-                    ->getOptionLabelUsing(fn($value): ?string => Employee::find($value)
+                    ->getOptionLabelUsing(fn ($value): ?string => Employee::find($value)
                         ->full_name)
                     ->label('Сотрудник')
                     ->searchable()
@@ -54,53 +54,53 @@ class MatrixTemplatesRelationManager extends RelationManager
                     }, ignoreRecord: true)
                     ->required(),
                 Card::make()
-                    ->visible(fn(Closure $get): bool => (bool) $get('company_employee_id'))
+                    ->visible(fn (Closure $get): bool => (bool) $get('company_employee_id'))
                     ->columns(3)
                     ->schema([
                         Placeholder::make('city')
                             ->label('Город')
-                            ->content(fn(Closure $get): ?string => Employee::find($get('company_employee_id'))
+                            ->content(fn (Closure $get): ?string => Employee::find($get('company_employee_id'))
                                 ?->city
                                 ?->name),
                         Placeholder::make('company')
                             ->label('Компания')
-                            ->content(fn(Closure $get): ?string => Employee::find($get('company_employee_id'))
+                            ->content(fn (Closure $get): ?string => Employee::find($get('company_employee_id'))
                                 ?->company
                                 ?->name),
                         Placeholder::make('division')
                             ->label('Отдел')
-                            ->content(fn(Closure $get): ?string => Employee::find($get('company_employee_id'))
+                            ->content(fn (Closure $get): ?string => Employee::find($get('company_employee_id'))
                                 ?->division
                                 ?->name),
                         Placeholder::make('subdivision')
                             ->label('Подразделение')
-                            ->content(fn(Closure $get): ?string => Employee::find($get('company_employee_id'))
+                            ->content(fn (Closure $get): ?string => Employee::find($get('company_employee_id'))
                                 ?->subdivision
                                 ?->name),
                         Placeholder::make('directions')
                             ->label('Направления')
-                            ->content(fn(Closure $get): ?string => Employee::find($get('company_employee_id'))
+                            ->content(fn (Closure $get): ?string => Employee::find($get('company_employee_id'))
                                 ?->directions
                                 ->pluck('name')
                                 ->join(', ')),
                         Placeholder::make('position')
                             ->label('Должность')
-                            ->content(fn(Closure $get): ?string => Employee::find($get('company_employee_id'))
+                            ->content(fn (Closure $get): ?string => Employee::find($get('company_employee_id'))
                                 ?->position
                                 ?->name),
                         Placeholder::make('level')
                             ->label('Уровень сотрудника')
-                            ->content(fn(Closure $get): ?string => Employee::find($get('company_employee_id'))
+                            ->content(fn (Closure $get): ?string => Employee::find($get('company_employee_id'))
                                 ?->level
                                 ?->name),
                         Placeholder::make('direct_manager')
                             ->label('Непосредственный руководитель')
-                            ->content(fn(Closure $get): ?string => Employee::find($get('company_employee_id'))
+                            ->content(fn (Closure $get): ?string => Employee::find($get('company_employee_id'))
                                 ?->directManager
                                 ?->full_name),
                         Placeholder::make('functional_manager')
                             ->label('Функциональный руководитель')
-                            ->content(fn(Closure $get): ?string => Employee::find($get('company_employee_id'))
+                            ->content(fn (Closure $get): ?string => Employee::find($get('company_employee_id'))
                                 ?->functionalManager
                                 ?->full_name),
                     ]),
@@ -114,11 +114,11 @@ class MatrixTemplatesRelationManager extends RelationManager
                     ->schema([
                         Select::make('company_employee_id')
                             ->getSearchResultsUsing(
-                                fn(string $search) => Employee::where('last_name', 'like', "%{$search}%")
+                                fn (string $search) => Employee::where('last_name', 'like', "%{$search}%")
                                     ->limit(20)
                                     ->get()
                                     ->pluck('full_name', 'id'))
-                            ->getOptionLabelUsing(fn($value): ?string => Employee::find($value)
+                            ->getOptionLabelUsing(fn ($value): ?string => Employee::find($value)
                                 ->full_name)
                             ->label('Сотрудник')
                             ->disableLabel()
@@ -133,7 +133,7 @@ class MatrixTemplatesRelationManager extends RelationManager
                             ->disablePlaceholderSelection()
                             ->default('inner')
                             ->disableLabel(),
-                    ])
+                    ]),
             ]);
     }
 
@@ -150,7 +150,7 @@ class MatrixTemplatesRelationManager extends RelationManager
                     ->label('Всего клиентов')
                     ->counts('clientsWithoutSelf')
                     ->sortable()
-                    ->color(fn(Model $record) => $record->clients->count() >= 8 ? 'success' : 'danger'),
+                    ->color(fn (Model $record) => $record->clients->count() >= 8 ? 'success' : 'danger'),
                 TextColumn::make('inner_clients_count')
                     ->label('Внутренних')
                     ->counts('innerClients')
@@ -197,10 +197,10 @@ class MatrixTemplatesRelationManager extends RelationManager
             ->reorderable()
             ->filters([
                 SelectFilter::make('city_id')
-                    ->options(fn() => City::get()->pluck('name', 'id')->toArray())
+                    ->options(fn () => City::get()->pluck('name', 'id')->toArray())
                     ->label('Город')
                     ->query(function (EloquentBuilder $query, array $data) {
-                        if (!empty($data['value'])) {
+                        if (! empty($data['value'])) {
                             $query->whereHas(
                                 'employee.city',
                                 fn (EloquentBuilder $query) => $query->where('id', '=', (int) $data['value'])
@@ -208,10 +208,10 @@ class MatrixTemplatesRelationManager extends RelationManager
                         }
                     }),
                 SelectFilter::make('company_id')
-                    ->options(fn() => Company::get()->pluck('name', 'id')->toArray())
+                    ->options(fn () => Company::get()->pluck('name', 'id')->toArray())
                     ->label('Компания')
                     ->query(function (EloquentBuilder $query, array $data) {
-                        if (!empty($data['value'])) {
+                        if (! empty($data['value'])) {
                             $query->whereHas(
                                 'employee.company',
                                 fn (EloquentBuilder $query) => $query->where('id', '=', (int) $data['value'])
@@ -219,11 +219,11 @@ class MatrixTemplatesRelationManager extends RelationManager
                         }
                     }),
                 SelectFilter::make('direct_manager_id')
-                    ->options(fn() => Employee::get()->pluck('full_name', 'id')->toArray())
+                    ->options(fn () => Employee::get()->pluck('full_name', 'id')->toArray())
                     ->label('Непосредственный руководитель')
                     ->searchable()
                     ->query(function (EloquentBuilder $query, array $data) {
-                        if (!empty($data['value'])) {
+                        if (! empty($data['value'])) {
                             $query->whereHas(
                                 'employee',
                                 fn (EloquentBuilder $query) => $query->where('direct_manager_id', '=', (int) $data['value'])
@@ -231,17 +231,17 @@ class MatrixTemplatesRelationManager extends RelationManager
                         }
                     }),
                 SelectFilter::make('functional_manager_id')
-                    ->options(fn() => Employee::get()->pluck('full_name', 'id')->toArray())
+                    ->options(fn () => Employee::get()->pluck('full_name', 'id')->toArray())
                     ->label('Функциональный руководитель')
                     ->searchable()
                     ->query(function (EloquentBuilder $query, array $data) {
-                        if (!empty($data['value'])) {
+                        if (! empty($data['value'])) {
                             $query->whereHas(
                                 'employee',
                                 fn (EloquentBuilder $query) => $query->where('functional_manager_id', '=', (int) $data['value'])
                             );
                         }
-                    })
+                    }),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
@@ -257,7 +257,7 @@ class MatrixTemplatesRelationManager extends RelationManager
                     Tables\Actions\Action::make('edit_client')
                         ->label('Изменить сотрудника')
                         ->icon('heroicon-s-pencil')
-                        ->url(fn(Model $record): string => EmployeeResource::getUrl('edit', $record->employee)),
+                        ->url(fn (Model $record): string => EmployeeResource::getUrl('edit', $record->employee)),
                     Tables\Actions\EditAction::make()
                         ->label('Изменить шаблон')
                         ->modalWidth('4xl'),

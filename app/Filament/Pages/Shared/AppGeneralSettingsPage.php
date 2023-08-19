@@ -66,7 +66,7 @@ class AppGeneralSettingsPage extends SettingsPage
                         ->url()
                         ->required(),
                     TextInput::make('moodle_token')
-                        ->label('Токен')
+                        ->label('Токен'),
                 ]),
             Section::make('Уведомления')
                 ->schema([
@@ -79,8 +79,8 @@ class AppGeneralSettingsPage extends SettingsPage
                             TextInput::make('notification_rating_start_url')
                                 ->label('Ссылка')
                                 ->url(),
-                        ])
-                ])
+                        ]),
+                ]),
         ];
     }
 

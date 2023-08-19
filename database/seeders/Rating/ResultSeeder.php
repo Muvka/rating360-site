@@ -4,8 +4,8 @@ namespace Database\Seeders\Rating;
 
 use App\Models\Company\Employee;
 use App\Models\Rating\Rating;
-use App\Models\Statistic\Result;
 use App\Models\Rating\ResultClient;
+use App\Models\Statistic\Result;
 use Illuminate\Database\Seeder;
 
 class ResultSeeder extends Seeder
@@ -68,7 +68,8 @@ class ResultSeeder extends Seeder
         }
     }
 
-    private function createMarkers(Rating $rating, ResultClient $client) {
+    private function createMarkers(Rating $rating, ResultClient $client)
+    {
         foreach ($rating->template->markers as $marker) {
             $client->markers()->create([
                 'competence' => $marker->competence->name,

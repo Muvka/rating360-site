@@ -57,8 +57,8 @@ class CityResource extends Resource
                             return (string) (
                                 $rowLoop->iteration +
                                 ($livewire->tableRecordsPerPage * (
-                                        $livewire->page - 1
-                                    ))
+                                    $livewire->page - 1
+                                ))
                             );
                         }
                     ),
@@ -73,12 +73,12 @@ class CityResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
-                    ->action(fn(City $record) => static::deleteAction($record)),
+                    ->action(fn (City $record) => static::deleteAction($record)),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make()
-                    ->action(fn(Collection $records) => $records->each(
-                        fn(City $record) => static::deleteAction($record))
+                    ->action(fn (Collection $records) => $records->each(
+                        fn (City $record) => static::deleteAction($record))
                     ),
             ]);
     }

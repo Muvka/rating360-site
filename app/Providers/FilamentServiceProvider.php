@@ -7,10 +7,10 @@ use Illuminate\Support\ServiceProvider;
 
 class FilamentServiceProvider extends ServiceProvider
 {
-	public function boot(): void
-	{
-		Filament::registerNavigationGroups([
-			// ...
-		]);
-	}
+    public function boot(): void
+    {
+        Filament::registerNavigationGroups([
+            // ...
+        ]);
+    }
 }

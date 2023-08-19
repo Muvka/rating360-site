@@ -2,6 +2,6 @@
 
 return [
     'only' => [
-        'client.*'
-    ]
+        'client.*',
+    ],
 ];

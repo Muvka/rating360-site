@@ -23,9 +23,9 @@ class RatingController extends Controller
 
                             $query->with('employee')
                                 ->where('company_employee_id', $employeeId);
-                        }
+                        },
                     ]);
-            }
+            },
         ])
             ->where('status', 'in progress')
             ->get()
@@ -53,7 +53,7 @@ class RatingController extends Controller
                             'href' => route('client.statistic.results.create', [
                                 $rating->id,
                                 $matrixTemplate->company_employee_id,
-                            ])
+                            ]),
                         ];
                     });
                 });

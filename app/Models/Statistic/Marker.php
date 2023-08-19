@@ -31,7 +31,7 @@ class Marker extends Model
     public function client(): BelongsToThrough
     {
         return $this->belongsToThrough(Client::class, ClientCompetence::class, null, '', [
-            ClientCompetence::class => 'statistic_client_competence_id'
+            ClientCompetence::class => 'statistic_client_competence_id',
         ]);
     }
 }

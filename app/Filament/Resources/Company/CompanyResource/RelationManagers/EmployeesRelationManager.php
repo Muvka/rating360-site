@@ -35,7 +35,7 @@ class EmployeesRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->url(fn(Employee $record): string => route('filament.resources.company/employees.edit', $record->id)),
+                    ->url(fn (Employee $record): string => route('filament.resources.company/employees.edit', $record->id)),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

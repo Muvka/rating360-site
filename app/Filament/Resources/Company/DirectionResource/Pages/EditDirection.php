@@ -15,7 +15,7 @@ class EditDirection extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
-                ->using(fn(Direction $record) => DirectionResource::deleteAction($record))
+                ->using(fn (Direction $record) => DirectionResource::deleteAction($record))
                 ->successRedirectUrl(DirectionResource::getUrl()),
         ];
     }

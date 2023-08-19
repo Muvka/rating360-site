@@ -14,11 +14,11 @@ class RatingObserver
 {
     public function updated(Rating $rating): void
     {
-        if ( ! $rating->isDirty('status')) {
+        if (! $rating->isDirty('status')) {
             return;
         }
 
-        if ( ! $rating->launched_at && $rating->status === 'in progress') {
+        if (! $rating->launched_at && $rating->status === 'in progress') {
             $this->notify($rating);
 
             $rating->launched_at = now();
@@ -49,7 +49,7 @@ class RatingObserver
             }
         }
 
-        if ( ! empty($failedSending)) {
+        if (! empty($failedSending)) {
             Notification::make()
                 ->title('Внимание')
                 ->body('Не удалось отправить уведомление следующим сотрудникам - '.Arr::join($failedSending, ', '))

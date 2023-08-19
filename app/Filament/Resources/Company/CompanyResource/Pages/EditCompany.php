@@ -15,7 +15,7 @@ class EditCompany extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
-                ->using(fn(Company $record) => CompanyResource::deleteAction($record))
+                ->using(fn (Company $record) => CompanyResource::deleteAction($record))
                 ->successRedirectUrl(CompanyResource::getUrl()),
         ];
     }

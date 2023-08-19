@@ -43,7 +43,7 @@ class ProgressPage extends Page
 
     protected array $rules = [
         'rating_id' => 'required',
-        'count' => 'numeric'
+        'count' => 'numeric',
     ];
 
     public function mount(): void
@@ -51,20 +51,20 @@ class ProgressPage extends Page
         $this->columns = [
             [
                 'key' => 'employee',
-                'label' => 'Оцениваемый'
+                'label' => 'Оцениваемый',
             ],
             [
                 'key' => 'client',
-                'label' => 'Оценивающий'
+                'label' => 'Оценивающий',
             ],
             [
                 'key' => 'quantity',
-                'label' => 'Количество'
+                'label' => 'Количество',
             ],
             [
                 'key' => 'status',
-                'label' => 'Статус'
-            ]
+                'label' => 'Статус',
+            ],
         ];
     }
 
@@ -96,7 +96,7 @@ class ProgressPage extends Page
                             '1' => 'Не завершён',
                             '2' => 'Завершён',
                         ]),
-                ])
+                ]),
         ];
     }
 
@@ -105,8 +105,8 @@ class ProgressPage extends Page
         $validation = $this->validate();
 
         $counts = MatrixTemplateClient::select([
-                'rating_matrix_template_clients.company_employee_id',
-                DB::raw('count(*) as count')
+            'rating_matrix_template_clients.company_employee_id',
+            DB::raw('count(*) as count'),
         ])
             ->join('rating_matrix_templates', 'rating_matrix_templates.id', '=', 'rating_matrix_template_clients.rating_matrix_template_id')
             ->join('rating_matrices', 'rating_matrices.id', '=', 'rating_matrix_templates.rating_matrix_id')
@@ -126,7 +126,7 @@ class ProgressPage extends Page
                         });
                     });
             }, 'employee',
-            'matrix.ratings.results.clients'
+            'matrix.ratings.results.clients',
         ])
             ->whereHas('matrix.ratings', function (Builder $query) use ($validation) {
                 $query->where('id', $validation['rating_id']);
@@ -140,13 +140,13 @@ class ProgressPage extends Page
                         'quantity' => $counts->get($client->employee->id),
                         'status' => $template->matrix
                             ?->ratings
-                            ?->first(fn(Rating $rating) => $rating->id === $validation['rating_id'])
+                            ?->first(fn (Rating $rating) => $rating->id === $validation['rating_id'])
                             ?->results
-                            ?->first(fn(Result $result) => $result->company_employee_id === $template->company_employee_id)
+                            ?->first(fn (Result $result) => $result->company_employee_id === $template->company_employee_id)
                             ?->clients
                             ?->contains(function (Client $resultClient) use ($client) {
                                 return (int) $resultClient->company_employee_id === (int) $client->employee->id;
-                            })
+                            }),
                     ];
                 });
             })
@@ -157,9 +157,9 @@ class ProgressPage extends Page
             })
             ->when($validation['status'], function (Collection $collection, int|string $status) {
                 return $collection->filter(function (array $item) use ($status) {
-                    if ((int)$status === 1) {
+                    if ((int) $status === 1) {
                         return ! $item['status'];
-                    } elseif ((int)$status === 2) {
+                    } elseif ((int) $status === 2) {
                         return $item['status'];
                     }
                 });

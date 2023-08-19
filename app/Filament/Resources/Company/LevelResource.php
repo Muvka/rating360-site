@@ -3,9 +3,7 @@
 namespace App\Filament\Resources\Company;
 
 use App\Filament\Resources\Company\LevelResource\Pages;
-use App\Filament\Resources\Company\LevelResource\RelationManagers;
 use App\Models\Company\Level;
-use Filament\Forms;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -16,8 +14,6 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Contracts\HasTable;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use stdClass;
 
 class LevelResource extends Resource
@@ -51,7 +47,7 @@ class LevelResource extends Resource
                             ->label('Является руководителем'),
                         Toggle::make('requires_manager')
                             ->label('Руководитель обязателен'),
-                    ])
+                    ]),
             ]);
     }
 
@@ -65,8 +61,8 @@ class LevelResource extends Resource
                             return (string) (
                                 $rowLoop->iteration +
                                 ($livewire->tableRecordsPerPage * (
-                                        $livewire->page - 1
-                                    ))
+                                    $livewire->page - 1
+                                ))
                             );
                         }
                     ),

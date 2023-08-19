@@ -27,7 +27,7 @@ class CompanyController extends Controller
             'fields' => $this->getFormFields(),
             'filters' => $filters,
             'statistic' => $filters ? $this->getStatistic() : [],
-            'exportUrl' => route('client.statistic.company.export', $filters)
+            'exportUrl' => route('client.statistic.company.export', $filters),
         ]);
     }
 
@@ -43,14 +43,14 @@ class CompanyController extends Controller
         $columns = [
             [
                 'key' => 'competence',
-                'label' => 'Компетенция'
+                'label' => 'Компетенция',
             ], [
                 'key' => 'averageRating',
-                'label' => 'Средняя оценка'
+                'label' => 'Средняя оценка',
             ], [
                 'key' => 'averageRatingWithoutSelf',
-                'label' => 'Средняя оценка (без самооценки)'
-            ]
+                'label' => 'Средняя оценка (без самооценки)',
+            ],
         ];
 
         $data = [];
@@ -87,7 +87,7 @@ class CompanyController extends Controller
 
         return [
             'columns' => $columns,
-            'data' => $data
+            'data' => $data,
         ];
     }
 
@@ -97,7 +97,7 @@ class CompanyController extends Controller
             ->distinct()
             ->orderBy('year')
             ->get()
-            ->map(fn(Result $result) => [
+            ->map(fn (Result $result) => [
                 'value' => (string) $result->year,
                 'label' => $result->year.' год',
             ]);
@@ -106,7 +106,7 @@ class CompanyController extends Controller
             ->distinct()
             ->orderBy('name')
             ->get()
-            ->map(fn(Company $company) => [
+            ->map(fn (Company $company) => [
                 'value' => (string) $company->id,
                 'label' => $company->name,
             ]);
@@ -116,14 +116,14 @@ class CompanyController extends Controller
                 'label' => 'Год',
                 'name' => 'year',
                 'type' => 'select',
-                'data' => $years
+                'data' => $years,
             ],
             [
                 'label' => 'Компания',
                 'name' => 'companies',
                 'type' => 'multiselect',
-                'data' => $companies
-            ]
+                'data' => $companies,
+            ],
         ];
     }
 }

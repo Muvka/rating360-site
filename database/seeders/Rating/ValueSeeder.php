@@ -3,7 +3,6 @@
 namespace Database\Seeders\Rating;
 
 use App\Models\Rating\Value;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class ValueSeeder extends Seeder

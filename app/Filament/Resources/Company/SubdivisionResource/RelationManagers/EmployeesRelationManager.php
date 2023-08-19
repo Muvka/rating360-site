@@ -4,13 +4,10 @@ namespace App\Filament\Resources\Company\SubdivisionResource\RelationManagers;
 
 use App\Filament\Resources\Company\EmployeeResource;
 use App\Models\Company\Employee;
-use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class EmployeesRelationManager extends RelationManager
 {
@@ -40,7 +37,7 @@ class EmployeesRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->url(fn(Employee $record): string => route('filament.resources.company/employees.edit', $record->id)),
+                    ->url(fn (Employee $record): string => route('filament.resources.company/employees.edit', $record->id)),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

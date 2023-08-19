@@ -15,7 +15,7 @@ class EditEmployeePosition extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
-                ->using(fn(Position $record) => EmployeePositionResource::deleteAction($record))
+                ->using(fn (Position $record) => EmployeePositionResource::deleteAction($record))
                 ->successRedirectUrl(EmployeePositionResource::getUrl()),
         ];
     }

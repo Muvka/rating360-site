@@ -72,8 +72,8 @@ class RatingResource extends Resource
                             return (string) (
                                 $rowLoop->iteration +
                                 ($livewire->tableRecordsPerPage * (
-                                        $livewire->page - 1
-                                    ))
+                                    $livewire->page - 1
+                                ))
                             );
                         }
                     ),
@@ -84,28 +84,28 @@ class RatingResource extends Resource
                             return 100;
                         }
 
-//                        $totalClients = 0;
-//                        $finishedClients = 0;
-//                        $matrixTemplates = $record->matrix
-//                            ->templates()
-//                            ->with('clients')
-//                            ->get();
-//                        $results = Result::with('clients')
-//                            ->where('rating_id', $record->id)
-//                            ->get();
-//
-//                        foreach ($matrixTemplates as $matrixTemplate) {
-//                            $matrixClients = $matrixTemplate->clients
-//                                ->pluck('company_employee_id');
-//                            $resultClients = $results->firstWhere('company_employee_id', $matrixTemplate->company_employee_id)
-//                                ?->clients
-//                                ?->pluck('company_employee_id');
-//
-//                            $intersect = $matrixClients->intersect($resultClients);
-//
-//                            $totalClients += $matrixClients->count();
-//                            $finishedClients += $intersect->count();
-//                        }
+                        //                        $totalClients = 0;
+                        //                        $finishedClients = 0;
+                        //                        $matrixTemplates = $record->matrix
+                        //                            ->templates()
+                        //                            ->with('clients')
+                        //                            ->get();
+                        //                        $results = Result::with('clients')
+                        //                            ->where('rating_id', $record->id)
+                        //                            ->get();
+                        //
+                        //                        foreach ($matrixTemplates as $matrixTemplate) {
+                        //                            $matrixClients = $matrixTemplate->clients
+                        //                                ->pluck('company_employee_id');
+                        //                            $resultClients = $results->firstWhere('company_employee_id', $matrixTemplate->company_employee_id)
+                        //                                ?->clients
+                        //                                ?->pluck('company_employee_id');
+                        //
+                        //                            $intersect = $matrixClients->intersect($resultClients);
+                        //
+                        //                            $totalClients += $matrixClients->count();
+                        //                            $finishedClients += $intersect->count();
+                        //                        }
 
                         $totalClientsNew = MatrixTemplateClient::select(DB::raw('count(*) as count'))
                             ->whereHas('template.matrix.ratings', function (Builder $query) use ($record) {
@@ -123,7 +123,7 @@ class RatingResource extends Resource
                             ->pluck('count')
                             ->first();
 
-//                        dd($totalClients, $finishedClients, $totalClientsNew, $finishedClientsNew);
+                        //                        dd($totalClients, $finishedClients, $totalClientsNew, $finishedClientsNew);
 
                         return (int) $totalClientsNew === 0 ? $totalClientsNew : round(($finishedClientsNew / $totalClientsNew) * 100);
                     })
@@ -161,10 +161,10 @@ class RatingResource extends Resource
                         'closed' => 'Закрыта',
                     ])
                     ->colors([
-                        'secondary' => static fn($state): bool => $state === 'draft',
-                        'success' => static fn($state): bool => $state === 'in progress',
-                        'primary' => static fn($state): bool => $state === 'paused',
-                        'danger' => static fn($state): bool => $state === 'closed',
+                        'secondary' => static fn ($state): bool => $state === 'draft',
+                        'success' => static fn ($state): bool => $state === 'in progress',
+                        'primary' => static fn ($state): bool => $state === 'paused',
+                        'danger' => static fn ($state): bool => $state === 'closed',
                     ])
                     ->sortable(),
             ])
@@ -180,7 +180,7 @@ class RatingResource extends Resource
                             $record->setAttribute('status', 'in progress');
                             $record->save();
                         })
-                        ->visible(fn(Rating $record): bool => in_array($record->status, ['draft', 'paused']))
+                        ->visible(fn (Rating $record): bool => in_array($record->status, ['draft', 'paused']))
                         ->color('success'),
                     Tables\Actions\Action::make('pause')
                         ->label('Остановить')
@@ -189,7 +189,7 @@ class RatingResource extends Resource
                             $record->setAttribute('status', 'paused');
                             $record->save();
                         })
-                        ->visible(fn(Rating $record): bool => $record->status === 'in progress')
+                        ->visible(fn (Rating $record): bool => $record->status === 'in progress')
                         ->color('secondary'),
                     Tables\Actions\Action::make('close')
                         ->label('Завершить')
@@ -198,7 +198,7 @@ class RatingResource extends Resource
                             $record->setAttribute('status', 'closed');
                             $record->save();
                         })
-                        ->visible(fn(Rating $record): bool => in_array($record->status, ['in progress', 'paused']))
+                        ->visible(fn (Rating $record): bool => in_array($record->status, ['in progress', 'paused']))
                         ->color('danger')
                         ->requiresConfirmation(),
                     Tables\Actions\EditAction::make(),

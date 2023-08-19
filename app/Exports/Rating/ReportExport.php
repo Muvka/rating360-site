@@ -8,7 +8,8 @@ class ReportExport implements WithMultipleSheets
 {
     protected array $data;
 
-    public function __construct(array $data = []) {
+    public function __construct(array $data = [])
+    {
         $this->data = $data;
     }
 
@@ -17,7 +18,7 @@ class ReportExport implements WithMultipleSheets
         return [
             new ReportCompetencesSheet($this->data['competences']),
             new ReportMarkersSheet($this->data['markers']),
-            new ReportFeedbackSheet($this->data['feedback'])
+            new ReportFeedbackSheet($this->data['feedback']),
         ];
     }
 }

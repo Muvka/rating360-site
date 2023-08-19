@@ -11,7 +11,8 @@ class Competence extends Model
 
     protected $guarded = [];
 
-    public function clients(): BelongsToMany {
+    public function clients(): BelongsToMany
+    {
         return $this->belongsToMany(Client::class, 'statistic_client_id', 'statistic_competence_id')
             ->withTimestamps();
     }

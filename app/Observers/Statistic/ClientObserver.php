@@ -12,7 +12,7 @@ class ClientObserver
     {
         $rating = Rating::find($client->result->rating_id);
 
-        if (!$rating) {
+        if (! $rating) {
             return;
         }
 

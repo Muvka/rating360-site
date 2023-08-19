@@ -5,12 +5,12 @@ namespace App\Http\Controllers\Statistic;
 use App\Http\Controllers\Controller;
 use App\Models\Company\Employee;
 use App\Models\Rating\Competence as RatingCompetence;
-use App\Models\Statistic\Client;
-use App\Models\Statistic\Competence as StatisticCompetence;
 use App\Models\Rating\CompetenceMarker;
 use App\Models\Rating\MatrixTemplateClient;
 use App\Models\Rating\Rating;
+use App\Models\Statistic\Client;
 use App\Models\Statistic\ClientCompetence;
+use App\Models\Statistic\Competence as StatisticCompetence;
 use App\Models\Statistic\Marker;
 use App\Models\Statistic\Result;
 use App\Models\Statistic\Review;
@@ -96,7 +96,7 @@ class ResultController extends Controller
                 'fullName' => $employee->full_name,
             ],
             'competences' => $competences,
-            'storageKey' => $storageKey
+            'storageKey' => $storageKey,
         ]);
     }
 
@@ -121,7 +121,7 @@ class ResultController extends Controller
             'type',
             'statistic_competences.name as competence',
             DB::raw('YEAR(launched_at) as launched_year'),
-            DB::raw('cast(avg(average_rating) as decimal(3, 2)) as averageRating')
+            DB::raw('cast(avg(average_rating) as decimal(3, 2)) as averageRating'),
         ])
             ->join('statistic_competences', 'statistic_competences.id', '=', 'statistic_client_competences.statistic_competence_id')
             ->join('statistic_clients', 'statistic_client_competences.statistic_client_id', '=',
@@ -187,14 +187,14 @@ class ResultController extends Controller
                                     ['key' => 'outer', 'label' => 'Внешние клиенты'],
                                     ['key' => 'inner', 'label' => 'Внутренние клиенты'],
                                     ['key' => 'manager', 'label' => 'Руководитель'],
-                                    ['key' => 'self', 'label' => 'Самооценка']
+                                    ['key' => 'self', 'label' => 'Самооценка'],
                                 ],
                                 'data' => $item->groupBy('text')->map(function (Collection $item, string $marker) {
                                     return [
                                         'marker' => $marker,
-                                        ...$item->pluck('averageRating', 'type')
+                                        ...$item->pluck('averageRating', 'type'),
                                     ];
-                                })->values()
+                                })->values(),
                             ],
                         ];
                     });
@@ -211,7 +211,7 @@ class ResultController extends Controller
             ->with([
                 'client.result.rating' => function (Builder $query) {
                     $query->select(['id', DB::raw('YEAR(launched_at) as launched_year')]);
-                }
+                },
             ])
             ->get()
             ->groupBy('client.result.rating.launched_year')
@@ -222,7 +222,7 @@ class ResultController extends Controller
         $companySummary = ClientCompetence::select([
             'statistic_competences.name as competence',
             DB::raw('YEAR(launched_at) as launched_year'),
-            DB::raw('cast(avg(average_rating) as decimal(3, 2)) as averageRating')
+            DB::raw('cast(avg(average_rating) as decimal(3, 2)) as averageRating'),
         ])
             ->join('statistic_competences', 'statistic_competences.id', '=', 'statistic_client_competences.statistic_competence_id')
             ->join('statistic_clients', 'statistic_client_competences.statistic_client_id', '=', 'statistic_clients.id')
@@ -242,7 +242,7 @@ class ResultController extends Controller
                 return $collection->map(function (ClientCompetence $clientCompetence) {
                     return [
                         'competence' => $clientCompetence->competence,
-                        'rating' => $clientCompetence->averageRating
+                        'rating' => $clientCompetence->averageRating,
                     ];
                 });
             });
@@ -257,7 +257,7 @@ class ResultController extends Controller
                     'marker' => isset($markerRatingResults[$year]) ? $markerRatingResults[$year]->values()
                         ->toArray() : [],
                     'reviews' => $reviews[$year] ?? [],
-                    'company' => $companySummary[$year] ?? []
+                    'company' => $companySummary[$year] ?? [],
                 ];
             }
         }
@@ -265,7 +265,7 @@ class ResultController extends Controller
         $comparisonData = ClientCompetence::select([
             'statistic_competences.name as competence',
             DB::raw('YEAR(launched_at) as launched_year'),
-            DB::raw('cast(avg(average_rating) as decimal(3, 2)) as averageRating')
+            DB::raw('cast(avg(average_rating) as decimal(3, 2)) as averageRating'),
         ])
             ->join('statistic_competences', 'statistic_competences.id', '=', 'statistic_client_competences.statistic_competence_id')
             ->join('statistic_clients', 'statistic_clients.id', '=', 'statistic_client_competences.statistic_client_id')
@@ -286,7 +286,7 @@ class ResultController extends Controller
                     'competence' => $competence,
                     ...$collection->groupBy('launched_year')->mapWithKeys(function (Collection $collection, string $year) {
                         return ['rating-'.$year => $collection->first()->averageRating];
-                    })
+                    }),
                 ];
             });
 
@@ -329,7 +329,7 @@ class ResultController extends Controller
                         return ['key' => 'rating-'.$year, 'label' => $year.' год'];
                     }),
                 ],
-                'data' => $comparisonData->values()
+                'data' => $comparisonData->values(),
             ];
         } else {
             $ratingComparison = [];
@@ -413,7 +413,7 @@ class ResultController extends Controller
         $client->clientCompetences()->delete();
         $client->reviews()->delete();
 
-        list($textMarkers, $defaultMarkers) = $markers->partition(function (CompetenceMarker $marker) {
+        [$textMarkers, $defaultMarkers] = $markers->partition(function (CompetenceMarker $marker) {
             return $marker->answer_type === 'text';
         });
 
@@ -421,7 +421,7 @@ class ResultController extends Controller
             $reviews = $textMarkers->map(function (CompetenceMarker $marker) use ($validator) {
                 return new Review([
                     'title' => $marker->text,
-                    'text' => $validator['marker'.$marker->id]
+                    'text' => $validator['marker'.$marker->id],
                 ]);
             });
 
@@ -444,7 +444,7 @@ class ResultController extends Controller
                         return new Marker([
                             'rating_value_id' => $marker->rating_value_id,
                             'text' => $marker->text,
-                            'rating' => $validator['marker'.$marker->id]
+                            'rating' => $validator['marker'.$marker->id],
                         ]);
                     })
                 );
@@ -467,7 +467,7 @@ class ResultController extends Controller
             ->latest('launched_at')
             ->first();
 
-        if ( ! $rating) {
+        if (! $rating) {
             return '';
         }
 

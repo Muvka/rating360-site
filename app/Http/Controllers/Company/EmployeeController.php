@@ -19,8 +19,8 @@ class EmployeeController extends Controller
             ->get()
             ->map(function (Employee $employee) {
                 return [
-                    'value' => (string)$employee->id,
-                    'label' => $employee->full_name
+                    'value' => (string) $employee->id,
+                    'label' => $employee->full_name,
                 ];
             });
 
