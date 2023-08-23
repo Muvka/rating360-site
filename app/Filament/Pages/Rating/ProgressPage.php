@@ -5,9 +5,11 @@ namespace App\Filament\Pages\Rating;
 use App\Models\Rating\MatrixTemplate;
 use App\Models\Rating\MatrixTemplateClient;
 use App\Models\Rating\Rating;
+use App\Models\Shared\City;
 use App\Models\Statistic\Client;
 use App\Models\Statistic\Result;
 use Filament\Forms\Components\Card;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\Page;
@@ -33,7 +35,9 @@ class ProgressPage extends Page
 
     public int $rating_id;
 
-    public string $client;
+    public int $city_id;
+
+    public string $last_name;
 
     public int|string $count;
 
@@ -56,6 +60,10 @@ class ProgressPage extends Page
             [
                 'key' => 'client',
                 'label' => 'Оценивающий',
+            ],
+            [
+                'key' => 'city',
+                'label' => 'Город',
             ],
             [
                 'key' => 'quantity',
@@ -82,19 +90,30 @@ class ProgressPage extends Page
                                 ->pluck('name', 'id')
                                 ->toArray();
                         }),
-                    TextInput::make('client')
-                        ->label('Оценивающий')
-                        ->placeholder('Огородов'),
-                    TextInput::make('count')
-                        ->label('Количество')
-                        ->hint('от')
-                        ->placeholder('10')
-                        ->numeric(),
                     Select::make('status')
                         ->label('Статус')
                         ->options([
                             '1' => 'Не завершён',
                             '2' => 'Завершён',
+                        ]),
+                    Fieldset::make('Оценивающий')
+                        ->columns(3)
+                        ->schema([
+                            TextInput::make('last_name')
+                                ->label('Фамилия')
+                                ->placeholder('Огородов'),
+                            Select::make('city_id')
+                                ->label('Город')
+                                ->options(function () {
+                                    return City::get()
+                                        ->pluck('name', 'id')
+                                        ->toArray();
+                                }),
+                            TextInput::make('count')
+                                ->label('Количество')
+                                ->hint('от')
+                                ->placeholder('10')
+                                ->numeric(),
                         ]),
                 ]),
         ];
@@ -119,10 +138,15 @@ class ProgressPage extends Page
 
         $data = MatrixTemplate::with([
             'clients' => function (Builder $query) use ($validation) {
-                $query->with('employee')
-                    ->when($validation['client'], function (Builder $query, string $last_name) {
-                        $query->whereHas('employee', function (Builder $query) use ($last_name) {
-                            $query->where('last_name', 'LIKE', '%'.$last_name.'%');
+                $query->with(['employee', 'employee.city'])
+                    ->when($validation['last_name'], function (Builder $query, string $lastName) {
+                        $query->whereHas('employee', function (Builder $query) use ($lastName) {
+                            $query->where('last_name', 'LIKE', '%'.$lastName.'%');
+                        });
+                    })
+                    ->when($validation['city_id'], function (Builder $query, int $cityId) {
+                        $query->whereHas('employee', function (Builder $query) use ($cityId) {
+                            $query->where('city_id', $cityId);
                         });
                     });
             }, 'employee',
@@ -137,6 +161,7 @@ class ProgressPage extends Page
                     return [
                         'employee' => $template->employee->full_name,
                         'client' => $client->employee->full_name,
+                        'city' => $client->employee->city?->name,
                         'quantity' => $counts->get($client->employee->id),
                         'status' => $template->matrix
                             ?->ratings
