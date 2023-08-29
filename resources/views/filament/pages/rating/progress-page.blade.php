@@ -8,7 +8,7 @@
     @if($data)
         <x-filament::hr/>
         <div @class([
-                'p-2 space-y-2 bg-white rounded-xl shadow',
+                'p-2 space-y-2 bg-white rounded-xl shadow overflow-x-auto',
                 'dark:border-gray-600 dark:bg-gray-800' => config('filament.dark_mode'),
             ])>
             <x-tables::table class="w-full overflow-hidden text-sm">
