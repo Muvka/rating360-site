@@ -244,21 +244,25 @@ class ProgressPage extends Page
             ->get()
             ->flatMap(function (MatrixTemplate $template) use ($validation, $counts) {
                 return $template->clients->map(function (MatrixTemplateClient $client) use ($validation, $template, $counts) {
+                    $status = (bool) $template->matrix
+                        ?->ratings
+                        ?->first(fn (Rating $rating) => (int) $rating->id === (int) $validation['rating_id'])
+                        ?->results
+                        ?->where(fn (Result $result) => (int) $result->company_employee_id === (int) $template->company_employee_id)
+                        ->contains(function (Result $result) use ($client) {
+                            return $result->clients
+                                ?->contains(function (Client $resultClient) use ($client) {
+                                    return (int) $resultClient->company_employee_id === (int) $client->employee->id;
+                                });
+                        });
+
                     return [
                         'employee' => $template->employee->full_name,
                         'client' => $client->employee->full_name,
                         'city' => $client->employee->city?->name,
                         'company' => $client->employee->company?->name,
                         'quantity' => $counts->get($client->employee->id),
-                        'status' => $template->matrix
-                            ?->ratings
-                            ?->first(fn (Rating $rating) => (int) $rating->id === (int) $validation['rating_id'])
-                            ?->results
-                            ?->first(fn (Result $result) => (int) $result->company_employee_id === (int) $template->company_employee_id)
-                            ?->clients
-                            ?->contains(function (Client $resultClient) use ($client) {
-                                return (int) $resultClient->company_employee_id === (int) $client->employee->id;
-                            }),
+                        'status' => $status,
                     ];
                 });
             })
