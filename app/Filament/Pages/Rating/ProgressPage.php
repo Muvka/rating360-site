@@ -252,9 +252,9 @@ class ProgressPage extends Page
                         'quantity' => $counts->get($client->employee->id),
                         'status' => $template->matrix
                             ?->ratings
-                            ?->first(fn (Rating $rating) => $rating->id === $validation['rating_id'])
+                            ?->first(fn (Rating $rating) => (int) $rating->id === (int) $validation['rating_id'])
                             ?->results
-                            ?->first(fn (Result $result) => $result->company_employee_id === $template->company_employee_id)
+                            ?->first(fn (Result $result) => (int) $result->company_employee_id === (int) $template->company_employee_id)
                             ?->clients
                             ?->contains(function (Client $resultClient) use ($client) {
                                 return (int) $resultClient->company_employee_id === (int) $client->employee->id;
