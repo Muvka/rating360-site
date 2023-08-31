@@ -337,7 +337,7 @@ class ResultController extends Controller
 
         return Inertia::render('Statistic/ResultDetailsPage', [
             'title' => 'Отчёт по оценке 360 - '.$employee->full_name,
-            'resultsByYear' => $resultsByYear,
+            'resultsByYear' => $resultsByYear ?? [],
             'ratingComparison' => $ratingComparison,
             'progressText' => $this->getProgressText($employee),
         ]);
