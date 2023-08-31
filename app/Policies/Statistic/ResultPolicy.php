@@ -15,7 +15,7 @@ class ResultPolicy
 
     public function view(Employee $user, Employee $employee): bool
     {
-        if ($user->id === $employee->id) {
+        if ($user->id === $employee->id || $user->isAdmin()) {
             return true;
         }
 
