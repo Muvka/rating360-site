@@ -229,7 +229,7 @@ class ResultController extends Controller
             ->join('statistic_results', 'statistic_results.id', '=',
                 'statistic_clients.statistic_result_id')
             ->join('ratings', 'ratings.id', '=', 'statistic_results.rating_id')
-            ->where('statistic_results.company_id', $employee->company?->id)
+//            ->where('statistic_results.company_id', $employee->company?->id)
             ->whereNull('ratings.deleted_at')
             ->where(function (Builder $query) {
                 $query->where('ratings.status', 'closed')
