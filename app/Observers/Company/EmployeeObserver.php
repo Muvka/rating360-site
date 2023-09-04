@@ -10,29 +10,29 @@ class EmployeeObserver
 {
     public function updated(Employee $employee): void
     {
-        $isManager = $employee->level?->is_manager;
-
-        if (! $isManager) {
-            $directSubordinates = $employee->directSubordinates;
-
-            if ($directSubordinates) {
-                $directSubordinates->each(function ($subordinate) {
-                    $subordinate->direct_manager_id = null;
-                    $subordinate->save();
-                });
-            }
-
-            $functionalSubordinates = $employee->functionalSubordinates;
-
-            if ($functionalSubordinates) {
-                $functionalSubordinates->each(function ($subordinate) {
-                    $subordinate->functional_manager_id = null;
-                    $subordinate->save();
-                });
-            }
-
-            $employee->managerAccess()->detach();
-        }
+//        $isManager = $employee->level?->is_manager;
+//
+//        if (! $isManager) {
+//            $directSubordinates = $employee->directSubordinates;
+//
+//            if ($directSubordinates) {
+//                $directSubordinates->each(function ($subordinate) {
+//                    $subordinate->direct_manager_id = null;
+//                    $subordinate->save();
+//                });
+//            }
+//
+//            $functionalSubordinates = $employee->functionalSubordinates;
+//
+//            if ($functionalSubordinates) {
+//                $functionalSubordinates->each(function ($subordinate) {
+//                    $subordinate->functional_manager_id = null;
+//                    $subordinate->save();
+//                });
+//            }
+//
+//            $employee->managerAccess()->detach();
+//        }
 
         if ($employee->isDirty(['direct_manager_id', 'functional_manager_id'])) {
             $managerClients = [];
