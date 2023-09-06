@@ -117,7 +117,7 @@ class ResultController extends Controller
             ->get()
             ->pluck('year');
 
-        $competenceRatingResults = ClientCompetence::select([
+        $competenceRatingData = ClientCompetence::select([
             'type',
             'statistic_competences.name as competence',
             DB::raw('YEAR(launched_at) as launched_year'),
@@ -135,9 +135,11 @@ class ResultController extends Controller
                 $query->where('ratings.status', 'closed')
                     ->orWhere('ratings.show_results_before_completion', true);
             })
+            ->oldest('launched_year')
             ->groupBy('launched_year', 'competence', 'type')
-            ->get()
-            ->groupBy('launched_year')
+            ->get();
+
+        $competenceRatingResults = $competenceRatingData->groupBy('launched_year')
             ->map(function (Collection $collection) {
                 return $collection->groupBy('competence')
                     ->map(function (Collection $item, string $competence) {
@@ -262,31 +264,14 @@ class ResultController extends Controller
             }
         }
 
-        $comparisonData = ClientCompetence::select([
-            'statistic_competences.name as competence',
-            DB::raw('YEAR(launched_at) as launched_year'),
-            DB::raw('cast(avg(average_rating) as decimal(3, 2)) as averageRating'),
-        ])
-            ->join('statistic_competences', 'statistic_competences.id', '=', 'statistic_client_competences.statistic_competence_id')
-            ->join('statistic_clients', 'statistic_clients.id', '=', 'statistic_client_competences.statistic_client_id')
-            ->join('statistic_results', 'statistic_results.id', '=', 'statistic_clients.statistic_result_id')
-            ->join('ratings', 'ratings.id', '=', 'statistic_results.rating_id')
-            ->where('statistic_results.company_employee_id', $employee->id)
-            ->whereNull('ratings.deleted_at')
-            ->where(function (Builder $query) {
-                $query->where('ratings.status', 'closed')
-                    ->orWhere('ratings.show_results_before_completion', true);
-            })
-            ->oldest('launched_year')
-            ->groupBy('competence', 'launched_year')
-            ->get()
-            ->groupBy('competence')
+        $comparisonData = $competenceRatingData->groupBy('competence')
             ->map(function (Collection $collection, string $competence) {
                 return [
                     'competence' => $competence,
-                    ...$collection->groupBy('launched_year')->mapWithKeys(function (Collection $collection, string $year) {
-                        return ['rating-'.$year => $collection->first()->averageRating];
-                    }),
+                    ...$collection->groupBy('launched_year')
+                        ->mapWithKeys(function (Collection $collection, string $year) {
+                            return ['rating-'.$year => round($collection->avg('averageRating'), 2)];
+                        }),
                 ];
             });
 
