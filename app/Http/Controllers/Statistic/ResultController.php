@@ -117,11 +117,33 @@ class ResultController extends Controller
             ->get()
             ->pluck('year');
 
+        $corporateMarkerResults = Marker::select(
+            'type',
+            'text',
+            DB::raw('"Корпоративные ценности" as competence'),
+            DB::raw('YEAR(launched_at) as launched_year'),
+            DB::raw('cast(avg(rating) as decimal(3, 2)) as average_rating')
+        )
+            ->join('statistic_client_competences', 'statistic_client_competences.id', '=', 'statistic_markers.statistic_client_competence_id')
+            ->join('statistic_clients', 'statistic_clients.id', '=', 'statistic_client_competences.statistic_client_id')
+            ->join('statistic_results', 'statistic_results.id', '=', 'statistic_clients.statistic_result_id')
+            ->join('ratings', 'ratings.id', '=', 'statistic_results.rating_id')
+            ->where('statistic_results.company_employee_id', $employee->id)
+            ->whereNull('ratings.deleted_at')
+            ->where(function (Builder $query) {
+                $query->where('ratings.status', 'closed')
+                    ->orWhere('ratings.show_results_before_completion', true);
+            })
+            ->oldest('launched_year')
+            ->groupBy('launched_year', 'text', 'type')
+            ->whereNotNull('rating_value_id')
+            ->get();
+
         $competenceRatingData = ClientCompetence::select([
             'type',
             'statistic_competences.name as competence',
             DB::raw('YEAR(launched_at) as launched_year'),
-            DB::raw('cast(avg(average_rating) as decimal(3, 2)) as averageRating'),
+            DB::raw('cast(avg(average_rating) as decimal(3, 2)) as average_rating'),
         ])
             ->join('statistic_competences', 'statistic_competences.id', '=', 'statistic_client_competences.statistic_competence_id')
             ->join('statistic_clients', 'statistic_client_competences.statistic_client_id', '=',
@@ -139,18 +161,20 @@ class ResultController extends Controller
             ->groupBy('launched_year', 'competence', 'type')
             ->get();
 
-        $competenceRatingResults = $competenceRatingData->groupBy('launched_year')
+        $competenceRatingResults = $competenceRatingData->mergeRecursive($corporateMarkerResults)
+            ->groupBy('launched_year')
             ->map(function (Collection $collection) {
                 return $collection->groupBy('competence')
+                    ->sortKeys()
                     ->map(function (Collection $item, string $competence) {
-                        $clients = $item->mapWithKeys(function (ClientCompetence $client) {
-                            return [$client['type'] => $client['averageRating']];
+                        $clients = $item->mapWithKeys(function (ClientCompetence|Marker $client) {
+                            return [$client['type'] => $client['average_rating']];
                         });
 
                         return [
                             'competence' => $competence,
-                            'averageRating' => $clients->avg(),
-                            'averageRatingWithoutSelf' => $clients->except('self')->avg(),
+                            'averageRating' => round($clients->avg(), 2),
+                            'averageRatingWithoutSelf' => round($clients->except('self')->avg(), 2),
                             'clients' => $clients,
                         ];
                     });
@@ -161,7 +185,7 @@ class ResultController extends Controller
             'statistic_competences.name as competence',
             'text',
             DB::raw('YEAR(launched_at) as launched_year'),
-            DB::raw('cast(avg(rating) as decimal(3, 2)) as averageRating')
+            DB::raw('cast(avg(rating) as decimal(3, 2)) as average_rating')
         )
             ->join('statistic_competences', 'statistic_competences.id', '=', 'statistic_client_competences.statistic_competence_id')
             ->join('statistic_markers', 'statistic_client_competences.id', '=', 'statistic_markers.statistic_client_competence_id')
@@ -176,10 +200,13 @@ class ResultController extends Controller
                     ->orWhere('ratings.show_results_before_completion', true);
             })
             ->groupBy('launched_year', 'type', 'competence', 'text')
-            ->get()
+            ->get();
+
+        $markerRatingResults = $markerRatingResults->mergeRecursive($corporateMarkerResults)
             ->groupBy('launched_year')
             ->map(function (Collection $collection) {
                 return $collection->groupBy('competence')
+                    ->sortKeys()
                     ->map(function (Collection $item, string $competence) {
                         return [
                             'competence' => $competence,
@@ -194,7 +221,7 @@ class ResultController extends Controller
                                 'data' => $item->groupBy('text')->map(function (Collection $item, string $marker) {
                                     return [
                                         'marker' => $marker,
-                                        ...$item->pluck('averageRating', 'type'),
+                                        ...$item->pluck('average_rating', 'type'),
                                     ];
                                 })->values(),
                             ],
@@ -221,30 +248,50 @@ class ResultController extends Controller
                 return $collection->groupBy('title');
             });
 
+        $corporateMarkerSummary = Marker::select(
+            DB::raw('"Корпоративные ценности" as competence'),
+            DB::raw('YEAR(launched_at) as launched_year'),
+            DB::raw('cast(avg(rating) as decimal(3, 2)) as average_rating')
+        )
+            ->join('statistic_client_competences', 'statistic_client_competences.id', '=', 'statistic_markers.statistic_client_competence_id')
+            ->join('statistic_clients', 'statistic_clients.id', '=', 'statistic_client_competences.statistic_client_id')
+            ->join('statistic_results', 'statistic_results.id', '=', 'statistic_clients.statistic_result_id')
+            ->join('ratings', 'ratings.id', '=', 'statistic_results.rating_id')
+            ->whereNull('ratings.deleted_at')
+            ->whereNotNull('rating_value_id')
+            ->where(function (Builder $query) {
+                $query->where('ratings.status', 'closed')
+                    ->orWhere('ratings.show_results_before_completion', true);
+            })
+            ->oldest('launched_year')
+            ->groupBy('launched_year')
+            ->get();
+
         $companySummary = ClientCompetence::select([
             'statistic_competences.name as competence',
             DB::raw('YEAR(launched_at) as launched_year'),
-            DB::raw('cast(avg(average_rating) as decimal(3, 2)) as averageRating'),
+            DB::raw('cast(avg(average_rating) as decimal(3, 2)) as average_rating'),
         ])
             ->join('statistic_competences', 'statistic_competences.id', '=', 'statistic_client_competences.statistic_competence_id')
             ->join('statistic_clients', 'statistic_client_competences.statistic_client_id', '=', 'statistic_clients.id')
             ->join('statistic_results', 'statistic_results.id', '=',
                 'statistic_clients.statistic_result_id')
             ->join('ratings', 'ratings.id', '=', 'statistic_results.rating_id')
-//            ->where('statistic_results.company_id', $employee->company?->id)
             ->whereNull('ratings.deleted_at')
             ->where(function (Builder $query) {
                 $query->where('ratings.status', 'closed')
                     ->orWhere('ratings.show_results_before_completion', true);
             })
             ->groupBy('launched_year', 'competence')
-            ->get()
+            ->get();
+
+        $companySummary = $companySummary->mergeRecursive($corporateMarkerSummary)
             ->groupBy('launched_year')
             ->map(function (Collection $collection) {
-                return $collection->map(function (ClientCompetence $clientCompetence) {
+                return $collection->map(function (ClientCompetence|Marker $clientCompetence) {
                     return [
                         'competence' => $clientCompetence->competence,
-                        'rating' => $clientCompetence->averageRating,
+                        'rating' => $clientCompetence->average_rating,
                     ];
                 });
             });
@@ -264,49 +311,24 @@ class ResultController extends Controller
             }
         }
 
-        $comparisonData = $competenceRatingData->groupBy('competence')
+        $comparisonData = $competenceRatingData->mergeRecursive($corporateMarkerResults)
+            ->groupBy('competence')
+            ->sortKeys()
             ->map(function (Collection $collection, string $competence) {
                 return [
                     'competence' => $competence,
                     ...$collection->groupBy('launched_year')
-                        ->mapWithKeys(function (Collection $collection, string $year) {
-                            return ['rating-'.$year => round($collection->avg('averageRating'), 2)];
+                        ->mapWithKeys(function (Collection $item, string $year) {
+                            $clients = $item->mapWithKeys(function (ClientCompetence|Marker $client) {
+                                return [$client['type'] => $client['average_rating']];
+                            });
+
+                            return ['rating-'.$year => round($clients->avg(), 2)];
                         }),
                 ];
             });
 
         if ($comparisonData) {
-            $corporateValues = Marker::select(
-                DB::raw('YEAR(launched_at) as launched_year'),
-                DB::raw('cast(avg(rating) as decimal(3, 2)) as average_rating')
-            )
-                ->join('statistic_client_competences', 'statistic_client_competences.id', '=', 'statistic_markers.statistic_client_competence_id')
-                ->join('statistic_clients', 'statistic_clients.id', '=', 'statistic_client_competences.statistic_client_id')
-                ->join('statistic_results', 'statistic_results.id', '=', 'statistic_clients.statistic_result_id')
-                ->join('ratings', 'ratings.id', '=', 'statistic_results.rating_id')
-                ->where('statistic_results.company_employee_id', $employee->id)
-                ->whereNull('ratings.deleted_at')
-                ->where(function (Builder $query) {
-                    $query->where('ratings.status', 'closed')
-                        ->orWhere('ratings.show_results_before_completion', true);
-                })
-                ->oldest('launched_year')
-                ->groupBy('launched_year')
-                ->whereNotNull('rating_value_id')
-                ->get()
-                ->flatMap(function (Marker $marker) {
-                    return ['rating-'.$marker->launched_year => $marker->average_rating];
-                })
-                ->put('competence', 'Корпоративные ценности');
-
-            if ($corporateValues) {
-                $comparisonData->when($comparisonData->get('Корпоративные ценности'), function (Collection $collection, array $value) use ($corporateValues) {
-                    $collection->put('Корпоративные ценности', collect($value)->merge(collect($corporateValues)));
-                }, function (Collection $collection) use ($corporateValues) {
-                    $collection->put('Корпоративные ценности', $corporateValues);
-                });
-            }
-
             $ratingComparison = [
                 'columns' => [
                     ['key' => 'competence', 'label' => 'Компетенция'],
