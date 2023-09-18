@@ -9,13 +9,13 @@
 
 @media (max-width: 599px) {
     .container {
-        --container-edge-distance: 16px;
+        --container-edge-distance: 12px;
     }
 }
 
 @media (min-width: 600px) and (max-width: 1199px) {
     .container {
-        --container-edge-distance: 24px;
+        --container-edge-distance: 22px;
     }
 }
 

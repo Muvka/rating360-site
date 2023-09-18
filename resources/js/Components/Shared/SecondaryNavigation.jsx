@@ -3,9 +3,9 @@ import clsx from 'clsx';
 import { usePage } from '@inertiajs/react';
 
 const SecondaryNavigation = ({ className = '' }) => {
-	const { secondary: items = [] } = usePage().props?.shared?.navigation;
+	const { secondary: items = [] } = usePage().props?.shared?.navigation ?? {};
 
-	if (!items) return false;
+	if (!items.length) return false;
 
 	return (
 		<ul className={clsx('secondary-navigation', className)}>

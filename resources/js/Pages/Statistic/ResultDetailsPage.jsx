@@ -3,7 +3,7 @@ import { Head } from '@inertiajs/react';
 import html2pdf from 'html2pdf.js';
 
 import downloadIconId from '../../../images/shared/icons/icon-download.svg';
-import PageContentHeader from '../../Components/Shared/PageContentHeader.jsx';
+import ContentHeader from '../../Components/Shared/ContentHeader.jsx';
 import BadgeText from '../../Components/Shared/BadgeText.jsx';
 import EmployeeResults from '../../Components/Statistic/EmployeeResults.jsx';
 
@@ -43,7 +43,7 @@ const ResultDetailsPage = ({ title = '', progressText = '' }) => {
 			<Head>
 				<title>{title}</title>
 			</Head>
-			<PageContentHeader
+			<ContentHeader
 				title={title}
 				content={<BadgeText text={progressText} />}
 				trailing={pageHeaderTrailingComponent()}
