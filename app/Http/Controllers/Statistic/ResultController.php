@@ -130,13 +130,13 @@ class ResultController extends Controller
             ->join('ratings', 'ratings.id', '=', 'statistic_results.rating_id')
             ->where('statistic_results.company_employee_id', $employee->id)
             ->whereNull('ratings.deleted_at')
+            ->whereNotNull('rating_value_id')
             ->where(function (Builder $query) {
                 $query->where('ratings.status', 'closed')
                     ->orWhere('ratings.show_results_before_completion', true);
             })
             ->oldest('launched_year')
             ->groupBy('launched_year', 'text', 'type')
-            ->whereNotNull('rating_value_id')
             ->get();
 
         $competenceRatingData = ClientCompetence::select([
@@ -161,13 +161,25 @@ class ResultController extends Controller
             ->groupBy('launched_year', 'competence', 'type')
             ->get();
 
-        $competenceRatingResults = $competenceRatingData->mergeRecursive($corporateMarkerResults)
+        $groupedCorporateMarkerResult = $corporateMarkerResults->groupBy('launched_year')->flatMap(function (Collection $collection, string $year) {
+            return $collection->groupBy('type')->map(function (Collection $collection, string $type) use ($year) {
+                return collect([
+                    'launched_year' => $year,
+                    'competence' => $collection->first()->competence,
+                    'type' => $type,
+                    'average_rating' => round($collection->avg('average_rating'), 2),
+                ]);
+            })
+                ->values();
+        });
+
+        $competenceRatingResults = $competenceRatingData->mergeRecursive($groupedCorporateMarkerResult)
             ->groupBy('launched_year')
             ->map(function (Collection $collection) {
                 return $collection->groupBy('competence')
                     ->sortKeys()
                     ->map(function (Collection $item, string $competence) {
-                        $clients = $item->mapWithKeys(function (ClientCompetence|Marker $client) {
+                        $clients = $item->mapWithKeys(function (ClientCompetence|Collection $client) {
                             return [$client['type'] => $client['average_rating']];
                         });
 
