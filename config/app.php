@@ -187,4 +187,6 @@ return [
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
     ])->toArray(),
 
+    'api_token' => env('API_TOKEN', ''),
+
 ];

@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +13,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::middleware('token.auth')
+    ->prefix('company/employees')
+    ->controller(\App\Http\Controllers\Api\V1\Company\EmployeeController::class)
+    ->group(function () {
+        Route::get('managers', 'managers');
+    });
