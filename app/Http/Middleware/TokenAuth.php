@@ -10,7 +10,7 @@ class TokenAuth
     {
         $token = $request->bearerToken();
 
-        if ($token !== config('app.api_token')) {
+        if (! config('app.api_token') || $token !== config('app.api_token')) {
             return response()->json(['message' => 'Неверный токен'], 401);
         }
 
