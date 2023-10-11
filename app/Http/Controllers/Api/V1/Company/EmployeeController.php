@@ -25,6 +25,6 @@ class EmployeeController extends Controller
             })
             ->get();
 
-        return response()->json(ManagerResource::collection($managers));
+        return ManagerResource::collection($managers);
     }
 }
