@@ -323,7 +323,7 @@ class ResultController extends Controller
             }
         }
 
-        $comparisonData = $competenceRatingData->mergeRecursive($corporateMarkerResults)
+        $comparisonData = $competenceRatingData->mergeRecursive($groupedCorporateMarkerResult)
             ->groupBy('competence')
             ->sortKeys()
             ->map(function (Collection $collection, string $competence) {
@@ -331,7 +331,7 @@ class ResultController extends Controller
                     'competence' => $competence,
                     ...$collection->groupBy('launched_year')
                         ->mapWithKeys(function (Collection $item, string $year) {
-                            $clients = $item->mapWithKeys(function (ClientCompetence|Marker $client) {
+                            $clients = $item->mapWithKeys(function (ClientCompetence|Collection $client) {
                                 return [$client['type'] => $client['average_rating']];
                             });
 
