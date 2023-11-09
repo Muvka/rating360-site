@@ -17,7 +17,7 @@ class SyncEmployeesSourceId extends Command
      *
      * @var string
      */
-    protected $signature = 'company:sync-employees-source-id';
+    protected $signature = 'company:sync-employees-source-id {url} {--property=id}';
 
     /**
      * The console command description.
@@ -70,19 +70,16 @@ class SyncEmployeesSourceId extends Command
      */
     public function handle(): void
     {
-        $url = $this->ask('Адрес API внешнего источника');
-        $property = $this->ask('Название свойства с идентификатором', 'id');
-
-        $this->validateInput($url, $property);
+        $this->validateInput($this->argument('url'), $this->option('property'));
 
         $this->info('Получение данных...');
 
-        $response = Http::get($url);
+        $response = Http::get($this->argument('url'));
 
         if ($response->successful()) {
             $items = collect($response->json());
 
-            $this->sync($items, $property);
+            $this->sync($items, $this->option('property'));
         }
     }
 }
