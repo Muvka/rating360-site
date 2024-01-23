@@ -13,9 +13,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('token.auth')
-    ->prefix('company/employees')
-    ->controller(\App\Http\Controllers\Api\V1\Company\EmployeeController::class)
+Route::middleware('api.auth')
     ->group(function () {
-        Route::get('managers', 'managers');
+        Route::prefix('company/employees')
+            ->controller(\App\Http\Controllers\Api\V1\Company\EmployeeController::class)
+            ->group(function () {
+                Route::get('managers', 'managers');
+            });
+
+        Route::prefix('statistic/corporate-values')
+            ->controller(\App\Http\Controllers\Api\V1\Statistic\CorporateValueController::class)
+            ->group(function () {
+                Route::get('average', 'average');
+            });
     });

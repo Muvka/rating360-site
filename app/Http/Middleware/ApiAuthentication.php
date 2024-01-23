@@ -4,7 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 
-class TokenAuth
+class ApiAuthentication
 {
     public function handle($request, Closure $next)
     {
