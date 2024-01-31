@@ -18,7 +18,7 @@ class CorporateValueDataService
                 case
                     when rating >= 0 and rating < 3 then 0
                     when rating >= 3 and rating < 3.75 then 0.5
-                    when rating >= 3.75 and rating < 5 then 1
+                    when rating >= 3.75 and rating <= 5 then 1
                 end
             ) as decimal(3, 2)) as average_rating'),
         ])
