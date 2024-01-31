@@ -14,13 +14,7 @@ class CorporateValueDataService
         return Marker::select([
             'statistic_results.company_employee_id',
             DB::raw('YEAR(launched_at) as launched_year'),
-            DB::raw('cast(avg(
-                case
-                    when rating >= 0 and rating < 3 then 0
-                    when rating >= 3 and rating < 3.75 then 0.5
-                    when rating >= 3.75 and rating <= 5 then 1
-                end
-            ) as decimal(3, 2)) as average_rating'),
+            DB::raw('cast(avg(rating) as decimal(3, 2)) as average_rating'),
         ])
             ->join('statistic_client_competences', 'statistic_client_competences.id', '=', 'statistic_markers.statistic_client_competence_id')
             ->join('statistic_clients', 'statistic_clients.id', '=', 'statistic_client_competences.statistic_client_id')
