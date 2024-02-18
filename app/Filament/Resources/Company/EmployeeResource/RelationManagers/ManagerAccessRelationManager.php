@@ -5,9 +5,9 @@ namespace App\Filament\Resources\Company\EmployeeResource\RelationManagers;
 use App\Filament\Resources\Company\EmployeeResource;
 use App\Models\Company\Employee;
 use Filament\Forms\Components\Select;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,11 +15,9 @@ class ManagerAccessRelationManager extends RelationManager
 {
     protected static string $relationship = 'managerAccess';
 
-    protected static ?string $label = 'Сотрудник';
+    protected static ?string $title = 'Сотрудники';
 
-    protected static ?string $pluralLabel = 'Сотрудники';
-
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->schema([
@@ -27,7 +25,7 @@ class ManagerAccessRelationManager extends RelationManager
             ]);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
             ->columns(EmployeeResource::getRelationTableSchema())
@@ -48,7 +46,7 @@ class ManagerAccessRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->url(fn (Employee $record): string => route('filament.resources.company/employees.edit', $record->id)),
+                    ->url(fn (Employee $record): string => route('filament.admin.resources.company.employees.edit', $record->id)),
                 Tables\Actions\DetachAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
@@ -57,7 +55,7 @@ class ManagerAccessRelationManager extends RelationManager
             ]);
     }
 
-    public static function canViewForRecord(Model $ownerRecord): bool
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
         return $ownerRecord->company_level_id && $ownerRecord->company_level_id !== 5;
     }

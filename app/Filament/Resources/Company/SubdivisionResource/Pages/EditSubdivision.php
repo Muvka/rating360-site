@@ -11,7 +11,7 @@ class EditSubdivision extends EditRecord
 {
     protected static string $resource = SubdivisionResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make()

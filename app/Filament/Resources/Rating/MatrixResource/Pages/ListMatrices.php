@@ -20,12 +20,12 @@ class ListMatrices extends ListRecords
 {
     protected static string $resource = MatrixResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Action::make('import')
                 ->label('Импорт')
-                ->color('secondary')
+                ->color('gray')
                 ->action(function (array $data): void {
                     $this->import($data);
                 })
@@ -42,14 +42,14 @@ class ListMatrices extends ListRecords
                         ->required(),
                     Fieldset::make()
                         ->label('Матрица')
-                        ->visible(fn (Closure $get) => (bool) $get('file'))
+                        ->visible(fn (\Filament\Forms\Get $get) => (bool) $get('file'))
                         ->columns(1)
                         ->schema([
                             Select::make('matrix_id')
                                 ->label('Выбрать')
-                                ->disableLabel()
+                                ->hiddenLabel()
                                 ->options(Matrix::all()->pluck('name', 'id'))
-                                ->hidden(fn (Closure $get) => (bool) $get('create'))
+                                ->hidden(fn (\Filament\Forms\Get $get) => (bool) $get('create'))
                                 ->required(),
                             Toggle::make('create')
                                 ->reactive()
@@ -57,7 +57,7 @@ class ListMatrices extends ListRecords
                             TextInput::make('name')
                                 ->label('Название')
                                 ->placeholder('Общая матрица')
-                                ->visible(fn (Closure $get) => $get('create'))
+                                ->visible(fn (\Filament\Forms\Get $get) => $get('create'))
                                 ->maxLength(128)
                                 ->required(),
                         ]),

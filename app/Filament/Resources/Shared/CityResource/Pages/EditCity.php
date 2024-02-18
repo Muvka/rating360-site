@@ -11,7 +11,7 @@ class EditCity extends EditRecord
 {
     protected static string $resource = CityResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make()

@@ -7,9 +7,9 @@ use App\Filament\Resources\Rating\TemplateResource\RelationManagers\CompetencesR
 use App\Models\Rating\Template;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\TextInput;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
@@ -23,7 +23,7 @@ class TemplateResource extends Resource
 
     protected static ?int $navigationSort = 40;
 
-    protected static ?string $navigationIcon = 'heroicon-o-template';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-group';
 
     protected static ?string $label = 'Шаблон оценки';
 
@@ -50,17 +50,7 @@ class TemplateResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('№')
-                    ->getStateUsing(
-                        static function (stdClass $rowLoop, HasTable $livewire): string {
-                            return (string) (
-                                $rowLoop->iteration +
-                                ($livewire->tableRecordsPerPage * (
-                                    $livewire->page - 1
-                                ))
-                            );
-                        }
-                    ),
+                TextColumn::make('Номер')->rowIndex(),
                 TextColumn::make('created_at')
                     ->label('Дата создания')
                     ->date('d.m.Y')

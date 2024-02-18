@@ -3,7 +3,8 @@
 namespace App\Filament\Pages\Shared;
 
 use App\Settings\AppGeneralSettings;
-use Awcodes\FilamentTableRepeater\Components\TableRepeater;
+use Awcodes\TableRepeater\Components\TableRepeater;
+use Awcodes\TableRepeater\Header;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
@@ -40,16 +41,18 @@ class AppGeneralSettingsPage extends SettingsPage
                 ->schema([
                     TableRepeater::make('admin_emails')
                         ->defaultItems(0)
-                        ->disableItemMovement(false)
                         ->label('Email администраторов')
-                        ->headers(['Адрес'])
+                        ->headers([
+                            Header::make('address')
+                                ->label('Адрес'),
+                        ])
                         ->emptyLabel('Нет адресов')
-                        ->createItemButtonLabel('Добавить email')
-                        ->orderable()
+                        ->addActionLabel('Добавить email')
+                        ->reorderable()
                         ->schema([
                             TextInput::make('address')
                                 ->placeholder('example@localhost.ru')
-                                ->disableLabel()
+                                ->hiddenLabel()
                                 ->maxLength(128)
                                 ->email()
                                 ->required(),

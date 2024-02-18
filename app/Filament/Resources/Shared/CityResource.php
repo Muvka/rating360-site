@@ -8,9 +8,9 @@ use App\Models\Shared\City;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
@@ -25,7 +25,7 @@ class CityResource extends Resource
 
     protected static ?int $navigationSort = 20;
 
-    protected static ?string $navigationIcon = 'heroicon-o-library';
+    protected static ?string $navigationIcon = 'heroicon-o-building-library';
 
     protected static ?string $label = 'Город';
 
@@ -51,17 +51,7 @@ class CityResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('№')
-                    ->getStateUsing(
-                        static function (stdClass $rowLoop, HasTable $livewire): string {
-                            return (string) (
-                                $rowLoop->iteration +
-                                ($livewire->tableRecordsPerPage * (
-                                    $livewire->page - 1
-                                ))
-                            );
-                        }
-                    ),
+                TextColumn::make('Номер')->rowIndex(),
                 TextColumn::make('name')
                     ->label('Название')
                     ->searchable()

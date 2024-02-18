@@ -16,10 +16,10 @@ class ListTemplates extends ListRecords
 {
     protected static string $resource = TemplateResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
-            Action::make('import')->label('Импорт')->color('secondary')
+            Action::make('import')->label('Импорт')->color('gray')
                 ->action(function (array $data): void {
                     Excel::import(new TemplateImport($data['name']), $data['file'], 'public');
                 })
@@ -37,7 +37,7 @@ class ListTemplates extends ListRecords
                     TextInput::make('name')
                         ->label('Название')
                         ->placeholder('Шаблон общий')
-                        ->hidden(fn (Closure $get) => $get('file') === [])
+                        ->hidden(fn (\Filament\Forms\Get $get) => $get('file') === [])
                         ->maxLength(128)
                         ->required(),
                 ]),

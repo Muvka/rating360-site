@@ -7,9 +7,9 @@ use App\Filament\Resources\Rating\MatrixResource\RelationManagers\MatrixTemplate
 use App\Models\Rating\Matrix;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\TextInput;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
@@ -23,7 +23,7 @@ class MatrixResource extends Resource
 
     protected static ?int $navigationSort = 50;
 
-    protected static ?string $navigationIcon = 'heroicon-o-view-grid';
+    protected static ?string $navigationIcon = 'heroicon-o-squares-2x2';
 
     protected static ?string $label = 'Матрица';
 
@@ -48,17 +48,7 @@ class MatrixResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('№')
-                    ->getStateUsing(
-                        static function (stdClass $rowLoop, HasTable $livewire): string {
-                            return (string) (
-                                $rowLoop->iteration +
-                                ($livewire->tableRecordsPerPage * (
-                                    $livewire->page - 1
-                                ))
-                            );
-                        }
-                    ),
+                TextColumn::make('Номер')->rowIndex(),
                 TextColumn::make('created_at')
                     ->label('Дата создания')
                     ->date('d.m.Y')

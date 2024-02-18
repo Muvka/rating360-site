@@ -119,7 +119,7 @@ class HandleInertiaRequests extends Middleware
             $items[] = [
                 'id' => 'admin',
                 'text' => 'В админпанель',
-                'href' => route('filament.pages.dashboard'),
+                'href' => route('filament.admin.pages.dashboard'),
             ];
         }
 

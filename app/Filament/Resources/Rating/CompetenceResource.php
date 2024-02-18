@@ -4,20 +4,19 @@ namespace App\Filament\Resources\Rating;
 
 use App\Filament\Resources\Rating\CompetenceResource\Pages;
 use App\Models\Rating\Competence;
-use Awcodes\FilamentTableRepeater\Components\TableRepeater;
-use Filament\Forms\Components\Card;
+use Awcodes\TableRepeater\Components\TableRepeater;
+use Awcodes\TableRepeater\Header;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
-use Filament\Tables\Contracts\HasTable;
-use stdClass;
+use Filament\Tables\Table;
 
 class CompetenceResource extends Resource
 {
@@ -37,7 +36,7 @@ class CompetenceResource extends Resource
     {
         return $form
             ->schema([
-                Card::make()
+                Section::make()
                     ->schema([
                         TextInput::make('name')
                             ->label('Название')
@@ -49,19 +48,24 @@ class CompetenceResource extends Resource
                         TableRepeater::make('markers')
                             ->relationship()
                             ->label('Маркеры')
-                            ->headers(['Текст', 'Ценность', 'Ответ'])
-                            ->createItemButtonLabel('Добавить маркер')
-                            ->emptyLabel('Нет маркеров')
-                            ->columnWidths([
-                                'rating_value_id' => '20%',
-                                'answer_type' => '20%',
+                            ->headers([
+                                Header::make('text')
+                                    ->label('Текст'),
+                                Header::make('rating_value_id')
+                                    ->label('Ценность')
+                                    ->width('20%'),
+                                Header::make('answer_type')
+                                    ->label('Ответ')
+                                    ->width('20%'),
                             ])
+                            ->addActionLabel('Добавить маркер')
+                            ->emptyLabel('Нет маркеров')
                             ->required()
-                            ->orderable()
+                            ->reorderable()
                             ->schema([
                                 Textarea::make('text')
                                     ->label('Текст')
-                                    ->disableLabel()
+                                    ->hiddenLabel()
                                     ->placeholder('ведет за собой, показывает личный положительный пример')
                                     ->rows(3)
                                     ->maxLength(65535)
@@ -69,12 +73,12 @@ class CompetenceResource extends Resource
                                 Select::make('rating_value_id')
                                     ->relationship('value', 'name')
                                     ->label('Ценность')
-                                    ->disableLabel()
+                                    ->hiddenLabel()
                                     ->placeholder('Выберите'),
                                 Select::make('answer_type')
                                     ->label('Ответы')
-                                    ->disableLabel()
-                                    ->disablePlaceholderSelection()
+                                    ->hiddenLabel()
+                                    ->selectablePlaceholder(false)
                                     ->default('default')
                                     ->options([
                                         'default' => 'Из списка',
@@ -90,17 +94,7 @@ class CompetenceResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('№')
-                    ->getStateUsing(
-                        static function (stdClass $rowLoop, HasTable $livewire): string {
-                            return (string) (
-                                $rowLoop->iteration +
-                                ($livewire->tableRecordsPerPage * (
-                                    $livewire->page - 1
-                                ))
-                            );
-                        }
-                    ),
+                TextColumn::make('Номер')->rowIndex(),
                 TextColumn::make('name')
                     ->label('Название')
                     ->sortable(),

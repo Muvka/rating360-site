@@ -8,11 +8,12 @@ use App\Models\Rating\Rating;
 use App\Models\Statistic\Client;
 use App\Models\Statistic\Result;
 use Filament\Forms\Components\Card;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -42,7 +43,7 @@ class RatingResource extends Resource
     {
         return $form
             ->schema([
-                Card::make()
+                Section::make()
                     ->columns()
                     ->schema([
                         TextInput::make('name')
@@ -66,46 +67,13 @@ class RatingResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('№')
-                    ->getStateUsing(
-                        static function (stdClass $rowLoop, HasTable $livewire): string {
-                            return (string) (
-                                $rowLoop->iteration +
-                                ($livewire->tableRecordsPerPage * (
-                                    $livewire->page - 1
-                                ))
-                            );
-                        }
-                    ),
+                TextColumn::make('Номер')->rowIndex(),
                 ProgressColumn::make('progress')
                     ->label('Прогресс')
                     ->progress(function (Rating $record): int {
                         if ($record->status === 'closed') {
                             return 100;
                         }
-
-                        //                        $totalClients = 0;
-                        //                        $finishedClients = 0;
-                        //                        $matrixTemplates = $record->matrix
-                        //                            ->templates()
-                        //                            ->with('clients')
-                        //                            ->get();
-                        //                        $results = Result::with('clients')
-                        //                            ->where('rating_id', $record->id)
-                        //                            ->get();
-                        //
-                        //                        foreach ($matrixTemplates as $matrixTemplate) {
-                        //                            $matrixClients = $matrixTemplate->clients
-                        //                                ->pluck('company_employee_id');
-                        //                            $resultClients = $results->firstWhere('company_employee_id', $matrixTemplate->company_employee_id)
-                        //                                ?->clients
-                        //                                ?->pluck('company_employee_id');
-                        //
-                        //                            $intersect = $matrixClients->intersect($resultClients);
-                        //
-                        //                            $totalClients += $matrixClients->count();
-                        //                            $finishedClients += $intersect->count();
-                        //                        }
 
                         $totalClientsNew = MatrixTemplateClient::select(DB::raw('count(*) as count'))
                             ->whereHas('template.matrix.ratings', function (Builder $query) use ($record) {
@@ -123,11 +91,8 @@ class RatingResource extends Resource
                             ->pluck('count')
                             ->first();
 
-                        //                        dd($totalClients, $finishedClients, $totalClientsNew, $finishedClientsNew);
-
                         return (int) $totalClientsNew === 0 ? $totalClientsNew : round(($finishedClientsNew / $totalClientsNew) * 100);
-                    })
-                    ->color('success'),
+                    }),
                 TextColumn::make('created_at')
                     ->label('Дата создания')
                     ->date('d.m.Y')
@@ -152,14 +117,15 @@ class RatingResource extends Resource
                     ->sortable(),
                 ToggleColumn::make('show_results_before_completion')
                     ->label('Результаты до завершения'),
-                BadgeColumn::make('status')
+                TextColumn::make('status')
                     ->label('Статус')
-                    ->enum([
-                        'draft' => 'Черновик',
-                        'in progress' => 'Идёт',
-                        'paused' => 'На паузе',
-                        'closed' => 'Закрыта',
-                    ])
+                    ->badge()
+//                    ->enum([
+//                        'draft' => 'Черновик',
+//                        'in progress' => 'Идёт',
+//                        'paused' => 'На паузе',
+//                        'closed' => 'Закрыта',
+//                    ])
                     ->colors([
                         'secondary' => static fn ($state): bool => $state === 'draft',
                         'success' => static fn ($state): bool => $state === 'in progress',
@@ -190,7 +156,7 @@ class RatingResource extends Resource
                             $record->save();
                         })
                         ->visible(fn (Rating $record): bool => $record->status === 'in progress')
-                        ->color('secondary'),
+                        ->color('gray'),
                     Tables\Actions\Action::make('close')
                         ->label('Завершить')
                         ->icon('heroicon-o-x-circle')

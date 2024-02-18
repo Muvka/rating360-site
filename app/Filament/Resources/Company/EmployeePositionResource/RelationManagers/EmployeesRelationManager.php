@@ -4,20 +4,18 @@ namespace App\Filament\Resources\Company\EmployeePositionResource\RelationManage
 
 use App\Filament\Resources\Company\EmployeeResource;
 use App\Models\Company\Employee;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 
 class EmployeesRelationManager extends RelationManager
 {
     protected static string $relationship = 'employees';
 
-    protected static ?string $label = 'Cотрудник';
+    protected static ?string $title = 'Сотрудники';
 
-    protected static ?string $pluralLabel = 'Сотрудники';
-
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->schema([
@@ -25,7 +23,7 @@ class EmployeesRelationManager extends RelationManager
             ]);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
             ->columns(EmployeeResource::getRelationTableSchema())
@@ -37,7 +35,7 @@ class EmployeesRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->url(fn (Employee $record): string => route('filament.resources.company/employees.edit', $record->id)),
+                    ->url(fn (Employee $record): string => route('filament.admin.resources.company.employees.edit', $record->id)),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

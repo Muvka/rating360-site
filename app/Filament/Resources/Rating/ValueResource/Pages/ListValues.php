@@ -10,7 +10,7 @@ class ListValues extends ListRecords
 {
     protected static string $resource = ValueResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),

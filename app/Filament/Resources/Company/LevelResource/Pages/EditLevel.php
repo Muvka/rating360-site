@@ -10,7 +10,7 @@ class EditLevel extends EditRecord
 {
     protected static string $resource = LevelResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make(),

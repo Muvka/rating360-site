@@ -11,7 +11,7 @@ class EditEmployeePosition extends EditRecord
 {
     protected static string $resource = EmployeePositionResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make()

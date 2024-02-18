@@ -29,7 +29,7 @@ class ProgressPage extends Page
 
     protected static ?int $navigationSort = 70;
 
-    protected static ?string $navigationIcon = 'heroicon-o-badge-check';
+    protected static ?string $navigationIcon = 'heroicon-o-check-badge';
 
     protected static string $view = 'filament.pages.rating.progress-page';
 
@@ -275,9 +275,9 @@ class ProgressPage extends Page
                 return $collection->filter(function (array $item) use ($status) {
                     if ((int) $status === 1) {
                         return ! $item['status'];
-                    } elseif ((int) $status === 2) {
-                        return $item['status'];
                     }
+
+                    return $item['status'];
                 });
             })
             ->toArray();

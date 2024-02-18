@@ -8,9 +8,9 @@ use App\Models\Company\Direction;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
@@ -25,7 +25,7 @@ class DirectionResource extends Resource
 
     protected static ?int $navigationSort = 50;
 
-    protected static ?string $navigationIcon = 'heroicon-o-trending-up';
+    protected static ?string $navigationIcon = 'heroicon-o-arrow-trending-up';
 
     protected static ?string $label = 'Направление';
 
@@ -50,17 +50,7 @@ class DirectionResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('№')
-                    ->getStateUsing(
-                        static function (stdClass $rowLoop, HasTable $livewire): string {
-                            return (string) (
-                                $rowLoop->iteration +
-                                ($livewire->tableRecordsPerPage * (
-                                    $livewire->page - 1
-                                ))
-                            );
-                        }
-                    ),
+                TextColumn::make('Номер')->rowIndex(),
                 TextColumn::make('name')
                     ->label('Название')
                     ->searchable()

@@ -5,6 +5,7 @@ namespace App\Models\Company;
 use App\Models\Shared\City;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasName;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -49,7 +50,7 @@ class Employee extends Authenticatable implements FilamentUser, HasName
         'password' => 'hashed',
     ];
 
-    public function canAccessFilament(): bool
+    public function canAccessPanel(Panel $panel): bool
     {
         return $this->isAdmin();
     }

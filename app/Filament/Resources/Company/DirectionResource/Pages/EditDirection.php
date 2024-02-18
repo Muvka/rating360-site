@@ -11,7 +11,7 @@ class EditDirection extends EditRecord
 {
     protected static string $resource = DirectionResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make()

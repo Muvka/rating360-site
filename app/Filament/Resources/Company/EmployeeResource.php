@@ -14,10 +14,10 @@ use Closure;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
@@ -125,7 +125,7 @@ class EmployeeResource extends Resource
                                 ->full_name)
                             ->searchable()
                             ->required(
-                                fn (Closure $get) => $get('company_level_id') ? Level::find($get('company_level_id'))?->requires_manager : true
+                                fn (\Filament\Forms\Get $get) => $get('company_level_id') ? Level::find($get('company_level_id'))?->requires_manager : true
                             ),
                         Select::make('functional_manager_id')
                             ->label('Функциональный')
@@ -145,17 +145,7 @@ class EmployeeResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('№')
-                    ->getStateUsing(
-                        static function (stdClass $rowLoop, HasTable $livewire): string {
-                            return (string) (
-                                $rowLoop->iteration +
-                                ($livewire->tableRecordsPerPage * (
-                                    $livewire->page - 1
-                                ))
-                            );
-                        }
-                    ),
+                TextColumn::make('Номер')->rowIndex(),
                 TextColumn::make('full_name')
                     ->label('Имя')
                     ->wrap()
