@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Middleware;
+use Spatie\LaravelSettings\Exceptions\MissingSettings;
+use Storage;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -37,9 +39,17 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        try {
+            $logotypeSetting = app(AppGeneralSettings::class)->logotype;
+            $logotypeUrl = isset($logotypeSetting) ? Storage::url($logotypeSetting) : '';
+        } catch (MissingSettings $_) {
+            $logotypeUrl = '';
+        }
+
         return array_merge(parent::share($request), [
             'shared.app.name' => config('app.name'),
-            'shared.auth.user' => fn() => $request->user()
+            'shared.app.logotype' => $logotypeUrl,
+            'shared.auth.user' => fn () => $request->user()
                 ? $request->user()->only('full_name')
                 : null,
             'shared.navigation.main' => $this->getMainNavigation(),

@@ -6,6 +6,8 @@ use Spatie\LaravelSettings\Settings;
 
 class AppGeneralSettings extends Settings
 {
+    public ?string $logotype;
+
     public ?string $instruction_text;
 
     public ?string $instruction_video;

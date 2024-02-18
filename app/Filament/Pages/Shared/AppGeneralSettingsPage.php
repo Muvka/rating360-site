@@ -6,6 +6,7 @@ use App\Settings\AppGeneralSettings;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
 use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
@@ -29,6 +30,16 @@ class AppGeneralSettingsPage extends SettingsPage
     protected function getFormSchema(): array
     {
         return [
+            Section::make('Основные')
+                ->schema([
+                    FileUpload::make('logotype')
+                        ->label('Логотип')
+                        ->image()
+                        ->imageResizeMode('cover')
+                        ->imageCropAspectRatio('1:1')
+                        ->imageResizeTargetWidth('90')
+                        ->imageResizeTargetHeight('90'),
+                ]),
             Section::make('Инструкция')
                 ->schema([
                     RichEditor::make('instruction_text')
