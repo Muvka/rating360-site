@@ -30,7 +30,7 @@ class AppGeneralSettingsPage extends SettingsPage
     protected function getFormSchema(): array
     {
         return [
-            Section::make('Основные')
+            Section::make()
                 ->schema([
                     FileUpload::make('logotype')
                         ->label('Логотип')
