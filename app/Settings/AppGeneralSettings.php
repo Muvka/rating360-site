@@ -18,6 +18,8 @@ class AppGeneralSettings extends Settings
 
     public ?string $notification_rating_start_url;
 
+    public bool $moodle_auth_enabled;
+
     public ?string $moodle_account_url;
 
     public ?string $moodle_user_api_url;

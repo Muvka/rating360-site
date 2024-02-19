@@ -133,11 +133,25 @@ class HandleInertiaRequests extends Middleware
             ];
         }
 
-        if ($settings->moodle_account_url) {
+        if ($settings->moodle_auth_enabled && $settings->moodle_account_url) {
             $items[] = [
                 'id' => 'account',
                 'text' => 'Учебный портал',
                 'href' => $settings->moodle_account_url,
+            ];
+        }
+
+        if (! auth()->check()) {
+            $items[] = [
+                'id' => 'login',
+                'text' => 'Войти',
+                'href' => route('client.user.login.show'),
+            ];
+        } else {
+            $items[] = [
+                'id' => 'logout',
+                'text' => 'Выйти',
+                'href' => route('client.user.logout.logout'),
             ];
         }
 

@@ -11,6 +11,8 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Get;
 use Filament\Pages\SettingsPage;
 
 class AppGeneralSettingsPage extends SettingsPage
@@ -71,16 +73,22 @@ class AppGeneralSettingsPage extends SettingsPage
                 ]),
             Section::make('Moodle')
                 ->schema([
+                    Toggle::make('moodle_auth_enabled')
+                        ->label('Авторизация через Moodle')
+                        ->reactive(),
                     TextInput::make('moodle_account_url')
                         ->label('Личный кабинет')
                         ->url()
+                        ->visible(fn (Get $get) => $get('moodle_auth_enabled') === true)
                         ->required(),
                     TextInput::make('moodle_user_api_url')
                         ->label('Адрес пользовательского API')
                         ->url()
+                        ->visible(fn (Get $get) => $get('moodle_auth_enabled') === true)
                         ->required(),
                     TextInput::make('moodle_token')
-                        ->label('Токен'),
+                        ->label('Токен')
+                        ->visible(fn (Get $get) => $get('moodle_auth_enabled') === true),
                 ]),
             Section::make('Уведомления')
                 ->schema([

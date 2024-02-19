@@ -1,0 +1,43 @@
+.login-form {
+    display: grid;
+    grid-template-columns: 100%;
+}
+
+.login-form__title {
+    margin: 0;
+}
+
+.login-form__form {
+    display: grid;
+    grid-template-columns: 100%;
+}
+
+@media (max-width: 599px) {
+    .login-form {
+        row-gap: 16px;
+    }
+
+    .login-form__form {
+        row-gap: 12px;
+    }
+}
+
+@media (min-width: 600px) and (max-width: 1199px) {
+    .login-form {
+        row-gap: 20px;
+    }
+
+    .login-form__form {
+        row-gap: 14px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .login-form {
+        row-gap: 24px;
+    }
+
+    .login-form__form {
+        row-gap: 16px;
+    }
+}

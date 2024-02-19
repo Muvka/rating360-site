@@ -8,11 +8,18 @@ use Illuminate\Http\Request;
 
 class Authenticate extends Middleware
 {
-    /**
-     * Get the path the user should be redirected to when they are not authenticated.
-     */
     protected function redirectTo(Request $request): ?string
     {
-        return $request->expectsJson() ? null : app(AppGeneralSettings::class)->moodle_account_url;
+        $appGeneralSettings = app(AppGeneralSettings::class);
+
+        if ($request->expectsJson()) {
+            return null;
+        }
+
+        if ($appGeneralSettings->moodle_auth_enabled) {
+            return $appGeneralSettings->moodle_account_url;
+        }
+
+        return route('client.user.login.show');
     }
 }

@@ -76,8 +76,24 @@ Route::middleware('auth')
             });
     });
 
-Route::get('login', [\App\Http\Controllers\User\AuthController::class, 'login'])
-    ->name('client.user.auth.login');
-
 Route::get('employee/autocomplete', [\App\Http\Controllers\Company\EmployeeController::class, 'autocomplete'])
     ->name('client.company.employees.autocomplete');
+
+Route::name('client.user.')
+    ->group(function () {
+        Route::middleware('guest')
+            ->controller(\App\Http\Controllers\User\LoginController::class)
+            ->name('login.')
+            ->group(function () {
+                Route::get('login', 'show')
+                    ->name('show');
+                Route::post('login', 'login')
+                    ->name('login');
+                Route::get('moodle-login', 'moodleLogin')
+                    ->name('moodle_login');
+            });
+
+        Route::middleware('auth')
+            ->get('logout', [\App\Http\Controllers\User\LogoutController::class, 'logout'])
+            ->name('logout.logout');
+    });

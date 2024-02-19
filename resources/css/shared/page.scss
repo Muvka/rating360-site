@@ -27,6 +27,12 @@
     margin-bottom: var(--margin-bottom);
 }
 
+.page__container--stretch {
+    display: grid;
+    grid-template-columns: 100%;
+    flex-grow: 1;
+}
+
 .page__grid {
     display: grid;
     align-items: start;
