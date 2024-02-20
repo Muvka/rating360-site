@@ -89,9 +89,9 @@ Route::name('client.user.')
                     ->name('show');
                 Route::post('login', 'login')
                     ->name('login');
-                Route::get('moodle-login', 'moodleLogin')
-                    ->name('moodle_login');
             });
+
+        Route::get('moodle-login', [\App\Http\Controllers\User\LoginController::class, 'moodleLogin']);
 
         Route::middleware('auth')
             ->get('logout', [\App\Http\Controllers\User\LogoutController::class, 'logout'])
