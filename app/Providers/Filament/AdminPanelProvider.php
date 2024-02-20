@@ -29,13 +29,6 @@ class AdminPanelProvider extends PanelProvider
      */
     public function panel(Panel $panel): Panel
     {
-        try {
-            $logotypeSetting = app(AppGeneralSettings::class)->logotype;
-            $logotypeUrl = isset($logotypeSetting) ? Storage::url($logotypeSetting) : '';
-        } catch (MissingSettings $_) {
-            $logotypeUrl = '';
-        }
-
         return $panel
             ->default()
             ->id('admin')
@@ -68,7 +61,6 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->favicon($logotypeUrl)
             ->homeUrl('/')
             ->navigationGroups([
                 NavigationGroup::make()
@@ -86,6 +78,16 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make()
                     ->label('Система')
                     ->collapsed(),
-            ]);
+            ])
+            ->bootUsing(function (Panel $panel) {
+                try {
+                    $logotypeSetting = app(AppGeneralSettings::class)->logotype;
+                    $logotypeUrl = isset($logotypeSetting) ? Storage::url($logotypeSetting) : '';
+                } catch (MissingSettings $_) {
+                    $logotypeUrl = '';
+                }
+
+                $panel->favicon($logotypeUrl);
+            });
     }
 }
