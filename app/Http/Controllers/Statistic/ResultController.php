@@ -163,11 +163,13 @@ class ResultController extends Controller
 
         $groupedCorporateMarkerResult = $corporateMarkerResults->groupBy('launched_year')->flatMap(function (Collection $collection, string $year) {
             return $collection->groupBy('type')->map(function (Collection $collection, string $type) use ($year) {
+                $averageRating = $collection->avg('average_rating');
+
                 return collect([
                     'launched_year' => $year,
                     'competence' => $collection->first()->competence,
                     'type' => $type,
-                    'average_rating' => round($collection->avg('average_rating'), 2),
+                    'average_rating' => ! is_null($averageRating) ? round($averageRating, 2) : null,
                 ]);
             })
                 ->values();
@@ -181,8 +183,7 @@ class ResultController extends Controller
                     ->map(function (Collection $item, string $competence) {
                         $clients = $item->mapWithKeys(function (ClientCompetence|Collection $client) {
                             return [$client['type'] => $client['average_rating']];
-                        })
-                            ->filter();
+                        })->filter(fn ($rating) => ! is_null($rating));
 
                         return [
                             'competence' => $competence,
