@@ -181,7 +181,8 @@ class ResultController extends Controller
                     ->map(function (Collection $item, string $competence) {
                         $clients = $item->mapWithKeys(function (ClientCompetence|Collection $client) {
                             return [$client['type'] => $client['average_rating']];
-                        });
+                        })
+                            ->filter();
 
                         return [
                             'competence' => $competence,
