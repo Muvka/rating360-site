@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Statistic;
 
 use App\Http\Controllers\Controller;
-use App\Services\CorporateValueSelectionService;
+use App\Services\Statistic\CorporateValueSelectionService;
 use Exception;
 use Illuminate\Http\Request;
 
