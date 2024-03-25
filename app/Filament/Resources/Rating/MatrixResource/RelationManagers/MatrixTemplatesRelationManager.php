@@ -143,7 +143,9 @@ class MatrixTemplatesRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => $query->with(['clientsWithoutSelf', 'employee']))
+            ->modifyQueryUsing(fn (Builder $query) => $query->with(['clientsWithoutSelf', 'employee'])
+                ->whereHas('employee', fn (Builder $query) => $query->whereNull('deleted_at'))
+            )
             ->columns([
                 TextColumn::make('employee.full_name')
                     ->label('Сотрудник')
