@@ -18,6 +18,11 @@ class MatrixTemplate extends Model
         return $this->belongsTo(Employee::class, 'company_employee_id');
     }
 
+    public function employeeWithTrashed(): BelongsTo
+    {
+        return $this->belongsTo(Employee::class, 'company_employee_id')->withTrashed();
+    }
+
     public function matrix(): BelongsTo
     {
         return $this->belongsTo(Matrix::class, 'rating_matrix_id')

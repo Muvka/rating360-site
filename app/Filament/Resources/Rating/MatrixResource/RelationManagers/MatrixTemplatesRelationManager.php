@@ -143,11 +143,9 @@ class MatrixTemplatesRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => $query->with(['clientsWithoutSelf', 'employee'])
-                ->whereHas('employee', fn (Builder $query) => $query->whereNull('deleted_at'))
-            )
+            ->modifyQueryUsing(fn (Builder $query) => $query->with(['clientsWithoutSelf', 'employeeWithTrashed']))
             ->columns([
-                TextColumn::make('employee.full_name')
+                TextColumn::make('employeeWithTrashed.full_name')
                     ->label('Сотрудник')
                     ->weight('bold')
                     ->sortable()
@@ -165,7 +163,7 @@ class MatrixTemplatesRelationManager extends RelationManager
                     ->label('Внешних')
                     ->counts('outerClients')
                     ->sortable(),
-                TextColumn::make('employee.city.name')
+                TextColumn::make('employeeWithTrashed.city.name')
                     ->label('Город')
                     ->sortable(query: function (EloquentBuilder $query, string $direction): EloquentBuilder {
                         return $query
@@ -173,7 +171,7 @@ class MatrixTemplatesRelationManager extends RelationManager
                             ->leftJoin('cities', 'cities.id', '=', 'company_employees.city_id')
                             ->orderBy('cities.name', $direction);
                     }),
-                TextColumn::make('employee.company.name')
+                TextColumn::make('employeeWithTrashed.company.name')
                     ->label('Компания')
                     ->sortable(query: function (EloquentBuilder $query, string $direction): EloquentBuilder {
                         return $query
@@ -181,7 +179,7 @@ class MatrixTemplatesRelationManager extends RelationManager
                             ->leftJoin('companies', 'companies.id', '=', 'company_employees.company_id')
                             ->orderBy('companies.name', $direction);
                     }),
-                TextColumn::make('employee.directManager.full_name')
+                TextColumn::make('employeeWithTrashed.directManager.full_name')
                     ->label('Непосредственный руководитель')
                     ->sortable(query: function (EloquentBuilder $query, string $direction): EloquentBuilder {
                         return $query
@@ -189,7 +187,7 @@ class MatrixTemplatesRelationManager extends RelationManager
                             ->leftJoin('company_employees as ce2', 'ce2.id', '=', 'ce1.direct_manager_id')
                             ->orderBy('ce2.last_name', $direction);
                     }),
-                TextColumn::make('employee.functionalManager.full_name')
+                TextColumn::make('employeeWithTrashed.functionalManager.full_name')
                     ->label('Функциональный руководитель')
                     ->placeholder('-')
                     ->sortable(query: function (EloquentBuilder $query, string $direction): EloquentBuilder {
@@ -208,7 +206,7 @@ class MatrixTemplatesRelationManager extends RelationManager
                     ->query(function (EloquentBuilder $query, array $data) {
                         if (! empty($data['value'])) {
                             $query->whereHas(
-                                'employee.city',
+                                'employeeWithTrashed.city',
                                 fn (EloquentBuilder $query) => $query->where('id', '=', (int) $data['value'])
                             );
                         }
@@ -219,7 +217,7 @@ class MatrixTemplatesRelationManager extends RelationManager
                     ->query(function (EloquentBuilder $query, array $data) {
                         if (! empty($data['value'])) {
                             $query->whereHas(
-                                'employee.company',
+                                'employeeWithTrashed.company',
                                 fn (EloquentBuilder $query) => $query->where('id', '=', (int) $data['value'])
                             );
                         }
@@ -231,7 +229,7 @@ class MatrixTemplatesRelationManager extends RelationManager
                     ->query(function (EloquentBuilder $query, array $data) {
                         if (! empty($data['value'])) {
                             $query->whereHas(
-                                'employee',
+                                'employeeWithTrashed',
                                 fn (EloquentBuilder $query) => $query->where('direct_manager_id', '=', (int) $data['value'])
                             );
                         }
@@ -243,7 +241,7 @@ class MatrixTemplatesRelationManager extends RelationManager
                     ->query(function (EloquentBuilder $query, array $data) {
                         if (! empty($data['value'])) {
                             $query->whereHas(
-                                'employee',
+                                'employeeWithTrashed',
                                 fn (EloquentBuilder $query) => $query->where('functional_manager_id', '=', (int) $data['value'])
                             );
                         }
@@ -263,15 +261,18 @@ class MatrixTemplatesRelationManager extends RelationManager
                     Tables\Actions\Action::make('edit_client')
                         ->label('Изменить сотрудника')
                         ->icon('heroicon-s-pencil')
+                        ->visible(fn (Model $record): bool => (bool) $record->employee)
                         ->url(fn (Model $record): string => EmployeeResource::getUrl('edit', [$record->employee])),
                     Tables\Actions\EditAction::make()
                         ->label('Изменить шаблон')
+                        ->visible(fn (Model $record): bool => (bool) $record->employee)
                         ->modalWidth('4xl'),
                     Tables\Actions\DeleteAction::make(),
                 ]),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
-            ]);
+            ])
+            ->recordUrl(fn (Model $record): ?string => $record->employee ? EmployeeResource::getUrl('edit', [$record->employee]) : null);
     }
 }
