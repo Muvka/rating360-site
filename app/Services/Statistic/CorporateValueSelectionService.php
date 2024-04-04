@@ -50,9 +50,7 @@ class CorporateValueSelectionService
                 return [
                     'company_employee_id' => $companyEmployeeId,
                     'launched_year' => $collection[0]['launched_year'],
-                    'average_rating' => round($collection->filter(function (Marker $marker) {
-                        return $marker->type !== 'self';
-                    })->avg('average_rating'), 2),
+                    'average_rating' => round($collection->avg('average_rating'), 2),
                 ];
             })
             ->values();
