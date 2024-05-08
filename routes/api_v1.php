@@ -18,6 +18,9 @@ Route::middleware('api.auth')
         Route::prefix('company/employees')
             ->controller(\App\Http\Controllers\Api\V1\Company\EmployeeController::class)
             ->group(function () {
+                Route::post('/', 'store');
+                Route::put('/{employee}', 'update');
+                Route::delete('/{employee}', 'destroy');
                 Route::get('managers', 'managers');
             });
 
