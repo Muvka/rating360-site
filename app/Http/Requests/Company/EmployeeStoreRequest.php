@@ -3,20 +3,9 @@
 namespace App\Http\Requests\Company;
 
 use App\Rules\Company\EmployeeIsManager;
-use Illuminate\Foundation\Http\FormRequest;
 
-class EmployeeStoreRequest extends FormRequest
+class EmployeeStoreRequest extends EmployeeManagementBaseRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
-
-    public function attributes(): array
-    {
-        return __('attributes.company.employee');
-    }
-
     public function rules(): array
     {
         return [
