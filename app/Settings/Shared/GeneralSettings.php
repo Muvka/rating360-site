@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Settings;
+namespace App\Settings\Shared;
 
 use Spatie\LaravelSettings\Settings;
 
-class AppGeneralSettings extends Settings
+class GeneralSettings extends Settings
 {
     public ?string $logotype;
 
@@ -26,8 +26,10 @@ class AppGeneralSettings extends Settings
 
     public ?string $moodle_token;
 
+    public ?string $faq_notification_email;
+
     public static function group(): string
     {
-        return 'app_general';
+        return 'shared_general';
     }
 }

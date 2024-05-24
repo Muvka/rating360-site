@@ -2,7 +2,7 @@
 
 namespace App\Providers\Filament;
 
-use App\Settings\AppGeneralSettings;
+use App\Settings\Shared\GeneralSettings;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -81,7 +81,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->bootUsing(function (Panel $panel) {
                 try {
-                    $logotypeSetting = app(AppGeneralSettings::class)->logotype;
+                    $logotypeSetting = app(GeneralSettings::class)->logotype;
                     $logotypeUrl = isset($logotypeSetting) ? Storage::url($logotypeSetting) : '';
                 } catch (MissingSettings $_) {
                     $logotypeUrl = '';

@@ -2,18 +2,20 @@ import React from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import clsx from 'clsx';
 
-import moreCircleIconId from '../../../images/shared/icons/icon-more-circle.svg';
-import documentIconId from '../../../images/shared/icons/icon-document.svg';
-import usersIconId from '../../../images/shared/icons/icon-users.svg';
-import briefcaseIconId from '../../../images/shared/icons/icon-briefcase.svg';
-import activityIconId from '../../../images/shared/icons/icon-activity.svg';
-import graphIconId from '../../../images/shared/icons/icon-graph.svg';
-import gridIconId from '../../../images/shared/icons/icon-grid.svg';
+import moreCircleIconId from '@icons/icon-more-circle.svg';
+import documentIconId from '@icons/icon-document.svg';
+import usersIconId from '@icons/icon-users.svg';
+import faqIconId from '@icons/icon-faq.svg';
+import briefcaseIconId from '@icons/icon-briefcase.svg';
+import activityIconId from '@icons/icon-activity.svg';
+import graphIconId from '@icons/icon-graph.svg';
+import gridIconId from '@icons/icon-grid.svg';
 
 const icons = {
 	moreCircle: moreCircleIconId,
 	document: documentIconId,
 	users: usersIconId,
+	faq: faqIconId,
 	briefcase: briefcaseIconId,
 	activity: activityIconId,
 	graph: graphIconId,
@@ -31,7 +33,7 @@ const MainNavigation = ({ className = '' }) => {
 				{navigationItems.map(navigationItem => {
 					return (
 						<li
-							key={navigationItem.label}
+							key={navigationItem.text}
 							className={clsx('main-navigation__item', {
 								'main-navigation__item--separated': navigationItem.separate
 							})}
@@ -52,7 +54,7 @@ const MainNavigation = ({ className = '' }) => {
 										<use xlinkHref={`#${icons[navigationItem.icon]}`} />
 									</svg>
 								)}
-								{navigationItem.label}
+								<span>{navigationItem.text}</span>
 							</Link>
 						</li>
 					);

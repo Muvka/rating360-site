@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Providers\RouteServiceProvider;
-use App\Settings\AppGeneralSettings;
+use App\Settings\Shared\GeneralSettings;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,7 +19,7 @@ class RedirectIfAuthenticated
     public function handle(Request $request, Closure $next, string ...$guards): Response
     {
         $guards = empty($guards) ? [null] : $guards;
-        $appGeneralSettings = app(AppGeneralSettings::class);
+        $appGeneralSettings = app(GeneralSettings::class);
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {

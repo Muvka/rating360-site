@@ -7,6 +7,7 @@ import FormField from '../Shared/FormField.jsx';
 import Select from '../Shared/Select.jsx';
 import Checkbox from '../Shared/Checkbox.jsx';
 import AsyncSelect from '../Shared/AsyncSelect.jsx';
+import { Button, ButtonSize } from '@js/Components/Shared/buttons/button/';
 
 const StatisticFilter = ({ className = '' }) => {
 	const { fields = [], filters = {} } = usePage().props;
@@ -129,13 +130,14 @@ const StatisticFilter = ({ className = '' }) => {
 						);
 					}
 				})}
-				<button
+				<Button
 					type='submit'
 					disabled={processing}
-					className='button button--accent button--small statistic-filter__submit'
+					size={ButtonSize.Small}
+					className='statistic-filter__submit'
 				>
 					Применить
-				</button>
+				</Button>
 			</form>
 		</section>
 	);

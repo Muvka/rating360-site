@@ -3,7 +3,7 @@
 namespace App\Notifications\Rating;
 
 use App\Models\Company\Employee;
-use App\Settings\AppGeneralSettings;
+use App\Settings\Shared\GeneralSettings;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -28,8 +28,8 @@ class StartedNotification extends Notification implements ShouldQueue
      */
     public function toMail(Employee $notifiable): MailMessage
     {
-        $url = app(AppGeneralSettings::class)->notification_rating_start_url;
-        $lines = app(AppGeneralSettings::class)->notification_rating_start_text;
+        $url = app(GeneralSettings::class)->notification_rating_start_url;
+        $lines = app(GeneralSettings::class)->notification_rating_start_text;
 
         $mailMessage = (new MailMessage)
             ->subject('Оценка 360')

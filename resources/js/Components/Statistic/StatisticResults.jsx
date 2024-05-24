@@ -4,6 +4,7 @@ import clsx from 'clsx';
 
 import Table from '../Shared/Table.jsx';
 import EmptyMessage from '../Shared/EmptyMessage.jsx';
+import { Button } from '@js/Components/Shared/buttons/button/';
 
 const StatisticResults = ({ className = '' }) => {
 	const { statistic = {}, exportUrl = '' } = usePage().props;
@@ -28,12 +29,9 @@ const StatisticResults = ({ className = '' }) => {
 				data={statistic.data}
 				className='statistic-results__table'
 			/>
-			<a
-				href={exportUrl}
-				className='button button--accent statistic-results__export'
-			>
+			<Button href={exportUrl} className='statistic-results__export'>
 				Экспорт
-			</a>
+			</Button>
 		</section>
 	);
 };

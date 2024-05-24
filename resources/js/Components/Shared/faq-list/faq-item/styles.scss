@@ -1,0 +1,122 @@
+.faq-item {
+    border-radius: var(--border-radius-primary);
+    background-color: var(--color-background-primary);
+}
+
+.faq-item[open] .faq-item__icon-container {
+    background-color: var(--color-background-quaternary);
+}
+
+.faq-item[open] .faq-item__icon {
+    color: var(--color-brand-primary);
+
+    transform: translateY(-2px) scaleY(-1);
+}
+
+.faq-item__question {
+    display: grid;
+    grid-template-columns: 1fr max-content;
+    align-items: center;
+
+    font-family: var(--font-title-primary);
+    font-weight: 500;
+    line-height: 1.5em;
+    color: var(--color-text-primary);
+
+    list-style: none;
+    cursor: pointer;
+    user-select: none;
+
+    transition: color 200ms ease;
+}
+
+.faq-item__question::-webkit-details-marker {
+    display: none;
+}
+
+.faq-item__question:hover {
+    color: var(--color-brand-primary);
+}
+
+.faq-item__icon-container {
+    border-radius: 50%;
+    background-color: var(--color-brand-primary);
+
+    transition: background-color 200ms ease;
+}
+
+.faq-item__icon {
+    color: var(--color-text-tertiary);
+
+    transform: translateY(-1px);
+
+    transition: color 200ms ease, transform 200ms ease;
+}
+
+@media (max-width: 599px) {
+    .faq-item {
+        padding: 8px 12px;
+    }
+
+    .faq-item__question {
+        column-gap: 8px;
+
+        font-size: 15px;
+    }
+
+    .faq-item__answer {
+        margin: 8px 0 0;
+    }
+
+    .faq-item__icon-container {
+        width: 24px;
+        height: 24px;
+        padding: 4px;
+    }
+}
+
+@media (min-width: 600px) {
+    .faq-item__question {
+        font-size: 16px;
+    }
+}
+
+@media (min-width: 600px) and (max-width: 1199px) {
+    .faq-item {
+        padding: 10px 14px;
+    }
+
+    .faq-item__question {
+        column-gap: 12px;
+    }
+
+    .faq-item__answer {
+        margin: 10px 0 0;
+    }
+
+    .faq-item__icon-container {
+        width: 26px;
+        height: 26px;
+        padding: 5px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .faq-item {
+        padding: 12px 16px;
+    }
+
+    .faq-item__question {
+        column-gap: 16px;
+    }
+
+    .faq-item__answer {
+        margin: 12px 0 0;
+    }
+
+    .faq-item__icon-container {
+        width: 28px;
+        height: 28px;
+        padding: 6px;
+    }
+}

@@ -5,14 +5,14 @@ namespace App\Http\Controllers\Rating;
 use App\Http\Controllers\Controller;
 use App\Models\Rating\Rating;
 use App\Models\Statistic\Client;
-use App\Settings\AppGeneralSettings;
+use App\Settings\Shared\GeneralSettings;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class RatingController extends Controller
 {
-    public function index(AppGeneralSettings $settings)
+    public function index(GeneralSettings $settings)
     {
         $ratings = Rating::with([
             'matrixTemplates' => function (Builder $query) {

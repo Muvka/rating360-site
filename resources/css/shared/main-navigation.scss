@@ -34,6 +34,13 @@
     color: var(--color-brand-primary);
 }
 
+.main-navigation__link span {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    overflow: hidden;
+}
+
 .main-navigation__icon {
     flex-shrink: 0;
     width: 24px;
@@ -52,11 +59,9 @@
     }
 
     .main-navigation__link {
-        font-size: 15px;
-    }
+        column-gap: 6px;
 
-    .main-navigation__icon {
-        margin-right: 6px;
+        font-size: 15px;
     }
 }
 
@@ -77,8 +82,8 @@
         margin-top: 6px;
     }
 
-    .main-navigation__icon {
-        margin-right: 7px;
+    .main-navigation__link {
+        column-gap: 7px;
     }
 }
 
@@ -93,7 +98,7 @@
         margin-top: 8px;
     }
 
-    .main-navigation__icon {
-        margin-right: 8px;
+    .main-navigation__link {
+        column-gap: 8px;
     }
 }

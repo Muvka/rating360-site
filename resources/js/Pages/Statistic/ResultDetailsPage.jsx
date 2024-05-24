@@ -1,41 +1,35 @@
 import React from 'react';
 import { Head } from '@inertiajs/react';
-import html2pdf from 'html2pdf.js';
 
 import downloadIconId from '../../../images/shared/icons/icon-download.svg';
 import ContentHeader from '../../Components/Shared/ContentHeader.jsx';
+import {
+	Button,
+	ButtonSize,
+	ButtonVariant
+} from '@js/Components/Shared/buttons/button/';
 import BadgeText from '../../Components/Shared/BadgeText.jsx';
 import EmployeeResults from '../../Components/Statistic/EmployeeResults.jsx';
 
 const ResultDetailsPage = ({ title = '', progressText = '' }) => {
 	const pageHeaderTrailingComponent = () => {
 		return (
-			<button
+			<Button
 				type='button'
-				className='button button--small'
+				variant={ButtonVariant.Secondary}
+				size={ButtonSize.Small}
 				onClick={exportToPdf}
 			>
 				<svg width='24' height='24' className='button__icon' aria-hidden='true'>
 					<use xlinkHref={`#${downloadIconId}`} />
 				</svg>
 				Скачать
-			</button>
+			</Button>
 		);
 	};
 
 	const exportToPdf = async () => {
 		window.print();
-		// setDisabled(true);
-		// const contentElement = document.querySelector('.page-content');
-		//
-		// if (contentElement) {
-		// 	const options = {
-		// 		margin: [6, 0],
-		// 		html2canvas: { scale: 4 }
-		// 	};
-		// 	await html2pdf().set(options).from(contentElement).save(`${title}.pdf`);
-		// 	setDisabled(false);
-		// }
 	};
 
 	return (

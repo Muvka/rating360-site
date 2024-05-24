@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Shared\Faq;
 use Database\Seeders\Company\DirectionSeeder;
 use Database\Seeders\Company\DivisionSeeder;
 use Database\Seeders\Company\EmployeeSeeder;
@@ -34,6 +35,7 @@ class DatabaseSeeder extends Seeder
                 DirectionSeeder::class,
                 EmployeeSeeder::class,
                 ValueSeeder::class,
+                Faq::factory(10)->create(),
             ]);
         }
     }

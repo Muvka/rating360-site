@@ -1,9 +1,11 @@
+import path from 'path';
 import { defineConfig, loadEnv } from 'vite';
 import laravel from 'laravel-vite-plugin';
+import react from '@vitejs/plugin-react';
 import fs from 'fs';
 import createSvgSpritePlugin from 'vite-plugin-svg-sprite';
 
-export default ({ mode }) => {
+export default ({ mode }: { mode: string }) => {
 	process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
 	const host = process.env.VITE_DEV_HOST;
 	const certificatePath = process.env.VITE_DEV_CERTIFICATE_PATH;
@@ -11,9 +13,10 @@ export default ({ mode }) => {
 	const config = defineConfig({
 		plugins: [
 			laravel({
-				input: ['resources/css/app.scss', 'resources/js/app.jsx'],
+				input: ['resources/css/app.scss', 'resources/js/app.tsx'],
 				refresh: true
 			}),
+			react(),
 			createSvgSpritePlugin({
 				include: '**/icon-*.svg',
 				symbolId: '[name]-[hash]'
@@ -21,12 +24,15 @@ export default ({ mode }) => {
 		],
 		resolve: {
 			alias: {
-				'@': '/resources'
+				'@': '/resources',
+				'@js': path.resolve(__dirname, './resources/js'),
+				'@icons': path.resolve(__dirname, './resources/images/shared/icons')
 			}
 		}
 	});
 
 	if (host && certificatePath) {
+		// @ts-ignore
 		config.server = {
 			host,
 			hmr: { host },

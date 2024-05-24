@@ -1,6 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
 
+import { Button, ButtonVariant } from '@js/Components/Shared/buttons/button/';
 import arrowLeftIconId from '../../../images/shared/icons/icon-arrow-left.svg';
 import arrowRightIconId from '../../../images/shared/icons/icon-arrow-right.svg';
 
@@ -15,10 +16,11 @@ const RatingFormFooter = ({
 	return (
 		<footer className={clsx('rating-form__footer', className)}>
 			{showBackButton && (
-				<button
+				<Button
 					type='button'
 					disabled={processing}
-					className='button rating-form__button'
+					variant={ButtonVariant.Secondary}
+					className='rating-form__button'
 					onClick={() => changeStep(step - 1)}
 				>
 					<svg
@@ -30,12 +32,12 @@ const RatingFormFooter = ({
 						<use xlinkHref={`#${arrowLeftIconId}`} />
 					</svg>
 					Назад
-				</button>
+				</Button>
 			)}
 			{!showSubmitButton && (
-				<button
+				<Button
 					type='button'
-					className='button button--accent rating-form__button rating-form__button--right'
+					className='rating-form__button rating-form__button--right'
 					onClick={() => changeStep(step + 1)}
 				>
 					Вперед
@@ -47,16 +49,16 @@ const RatingFormFooter = ({
 					>
 						<use xlinkHref={`#${arrowRightIconId}`} />
 					</svg>
-				</button>
+				</Button>
 			)}
 			{showSubmitButton && (
-				<button
+				<Button
 					type='submit'
 					disabled={processing}
-					className='button button--accent rating-form__button rating-form__button--right'
+					className='rating-form__button rating-form__button--right'
 				>
 					Завершить
-				</button>
+				</Button>
 			)}
 		</footer>
 	);

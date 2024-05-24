@@ -1,0 +1,114 @@
+.notification {
+    display: grid;
+    grid-template-columns: 100%;
+    justify-items: center;
+}
+
+.notification--success::before,
+.notification--error::before,
+.notification--warning::before {
+    content: '';
+
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+.notification--success::before {
+    background-image: url('./assets/success.svg');
+}
+
+.notification--error::before {
+    background-image: url('./assets/error.svg');
+}
+
+.notification--warning::before {
+    background-image: url('./assets/warning.svg');
+}
+
+.notification__message-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.notification__title,
+.notification__message {
+    margin: 0;
+}
+
+.notification__buttons-container {
+    display: flex;
+    width: 100%;
+}
+
+.notification__button {
+    flex: 1;
+}
+
+@media (max-width: 599px) {
+    .notification {
+        row-gap: 8px;
+        padding: 20px;
+    }
+
+    .notification__message-container {
+        row-gap: 6px;
+    }
+
+    .notification--success::before,
+    .notification--error::before,
+    .notification--warning::before {
+        width: 54px;
+        height: 54px;
+    }
+
+    .notification__buttons-container {
+        flex-direction: column;
+        row-gap: 8px;
+    }
+}
+
+@media (min-width: 600px) and (max-width: 1199px) {
+    .notification {
+        row-gap: 12px;
+        padding: 40px;
+    }
+
+    .notification__message-container {
+        row-gap: 9px;
+    }
+
+    .notification--success::before,
+    .notification--error::before,
+    .notification--warning::before {
+        width: 76px;
+        height: 76px;
+    }
+
+    .notification__buttons-container {
+        column-gap: 12px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .notification {
+        row-gap: 16px;
+        padding: 60px;
+    }
+
+    .notification--success::before,
+    .notification--error::before,
+    .notification--warning::before {
+        width: 98px;
+        height: 98px;
+    }
+
+    .notification__message-container {
+        row-gap: 12px;
+    }
+
+    .notification__buttons-container {
+        column-gap: 16px;
+    }
+}

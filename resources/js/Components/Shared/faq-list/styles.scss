@@ -1,0 +1,30 @@
+.faq-list__list {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    margin: 0;
+
+    list-style-type: none;
+}
+
+.faq-list__text {
+    margin: 0;
+}
+
+@media (max-width: 599px) {
+    .faq-list__list {
+        row-gap: 8px;
+    }
+}
+
+@media (min-width: 600px) and (max-width: 1199px) {
+    .faq-list__list {
+        row-gap: 10px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .faq-list__list {
+        row-gap: 12px;
+    }
+}

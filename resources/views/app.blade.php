@@ -4,7 +4,8 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     @routes
-    @vite(['resources/css/app.scss', 'resources/js/app.jsx'])
+    @viteReactRefresh
+    @vite(['resources/css/app.scss', 'resources/js/app.tsx'])
     @inertiaHead
 </head>
 <body class="page__body">

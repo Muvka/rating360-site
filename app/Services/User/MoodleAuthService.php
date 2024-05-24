@@ -4,7 +4,7 @@ namespace App\Services\User;
 
 use App\Models\Company\Employee;
 use App\Providers\RouteServiceProvider;
-use App\Settings\AppGeneralSettings;
+use App\Settings\Shared\GeneralSettings;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Http;
 
 class MoodleAuthService
 {
-    public function __construct(private readonly AppGeneralSettings $settings)
+    public function __construct(private readonly GeneralSettings $settings)
     {
     }
 

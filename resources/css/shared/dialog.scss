@@ -1,0 +1,76 @@
+.dialog {
+    padding: 0;
+
+    border: none;
+    border-radius: var(--border-radius-tertiary);
+    background-color: var(--color-background-secondary);
+
+    animation: fadeInTop 400ms ease;
+}
+
+.dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.64);
+
+    animation: fadeIn 400ms ease;
+}
+
+.dialog__close-button {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 2;
+
+    padding: 4px;
+
+    color: var(--color-text-secondary);
+
+    border: none;
+    border-radius: 50%;
+    background-color: transparent;
+    appearance: none;
+
+    transition: color 200ms ease;
+}
+
+.dialog__close-button:hover {
+    color: var(--color-brand-secondary);
+}
+
+.dialog__close-icon {
+    display: block;
+    width: 16px;
+    height: 16px;
+}
+
+@media (max-width: 599px) {
+    .dialog {
+        max-width: calc(100% - 24px);
+        max-height: calc(100% - 24px);
+    }
+
+    .dialog--notification {
+        width: 320px;
+    }
+}
+
+@media (min-width: 600px) and (max-width: 1199px) {
+    .dialog {
+        max-width: calc(100% - 44px);
+        max-height: calc(100% - 44px);
+    }
+
+    .dialog--notification {
+        width: 400px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .dialog {
+        max-width: calc(100% - 64px);
+        max-height: calc(100% - 64px);
+    }
+
+    .dialog--notification {
+        width: 512px;
+    }
+}

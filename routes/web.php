@@ -74,6 +74,16 @@ Route::middleware('auth')
                             ->name('export');
                     });
             });
+
+        Route::prefix('faqs')
+            ->controller(\App\Http\Controllers\Client\Shared\FaqController::class)
+            ->name('shared.faqs.')
+            ->group(function () {
+                Route::get('/', 'index')
+                    ->name('index');
+                Route::post('/send', 'send')
+                    ->name('send');
+            });
     });
 
 Route::get('employee/autocomplete', [\App\Http\Controllers\Company\EmployeeController::class, 'autocomplete'])

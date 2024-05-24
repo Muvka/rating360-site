@@ -1,6 +1,14 @@
 <?php
 
 return [
+    'regards' => 'С уважением',
+    'shared' => [
+        'faq' => [
+            'error' => [
+                'notification_email_not_set' => 'Нужно указать почту для уведомлений в настройках.',
+            ],
+        ],
+    ],
     'company' => [
         'employee' => [
             'store' => [

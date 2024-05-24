@@ -10,7 +10,7 @@ const SecondaryNavigation = ({ className = '' }) => {
 	return (
 		<ul className={clsx('secondary-navigation', className)}>
 			{items.map(item => (
-				<li key={item.id} className='secondary-navigation__item'>
+				<li key={item.href + item.text} className='secondary-navigation__item'>
 					<a href={item.href} className='secondary-navigation__link'>
 						{item.text}
 					</a>
