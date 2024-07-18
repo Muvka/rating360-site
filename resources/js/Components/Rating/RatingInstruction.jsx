@@ -32,7 +32,7 @@ const RatingInstruction = ({ className = '' }) => {
 						Видео инструкция
 					</h3>
 					<YoutubePlayer
-						videoId={instruction.video}
+						videoUrl={instruction.video}
 						className='rating-instruction__player'
 					/>
 				</div>

@@ -55,7 +55,7 @@ class GeneralSettingsPage extends SettingsPage
                                     ->label('Текст'),
                                 TextInput::make('instruction_video')
                                     ->label('Видео')
-                                    ->hint('Идентификатор видео'),
+                                    ->hint('Ссылка на видео в YouTube'),
                             ]),
                         Tabs\Tab::make('Контакты')
                             ->columns()
