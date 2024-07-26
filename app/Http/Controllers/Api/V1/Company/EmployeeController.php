@@ -37,13 +37,15 @@ class EmployeeController extends Controller
             $employee->directions()->detach();
         }
 
+        $employee->refresh();
+
         return response()->json([
             'message' => __('messages.company.employee.update.success'),
             'data' => $employee,
         ]);
     }
 
-    public function destroy(Employee $employee)
+    public function destroy(Employee $employee): JsonResponse
     {
         $employee->delete();
 
