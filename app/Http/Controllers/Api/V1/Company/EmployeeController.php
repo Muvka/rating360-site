@@ -8,12 +8,14 @@ use App\Http\Requests\Company\EmployeeUpdateRequest;
 use App\Http\Resources\Company\ManagerResource;
 use App\Models\Company\Employee;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class EmployeeController extends Controller
 {
-    public function store(EmployeeStoreRequest $request)
+    public function store(EmployeeStoreRequest $request): JsonResponse
     {
-        $employee = Employee::create($request->validatedв());
+        $employee = Employee::create($request->validated());
 
         if ($request->has('company_direction_ids')) {
             $employee->directions()->sync($request->get('company_direction_ids'));
@@ -25,7 +27,7 @@ class EmployeeController extends Controller
         ], 201);
     }
 
-    public function update(Employee $employee, EmployeeUpdateRequest $request)
+    public function update(Employee $employee, EmployeeUpdateRequest $request): JsonResponse
     {
         $employee->update($request->validated());
 
@@ -50,7 +52,7 @@ class EmployeeController extends Controller
         ], 204);
     }
 
-    public function managers()
+    public function managers(): ResourceCollection
     {
         $managers = Employee::with([
             'city',
