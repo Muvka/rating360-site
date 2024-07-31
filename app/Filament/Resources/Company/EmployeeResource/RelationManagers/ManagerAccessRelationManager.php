@@ -2,28 +2,17 @@
 
 namespace App\Filament\Resources\Company\EmployeeResource\RelationManagers;
 
+use App\Filament\RelationManagers\Company\BaseEmployeesRelationManager;
 use App\Filament\Resources\Company\EmployeeResource;
 use App\Models\Company\Employee;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Form;
-use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Table;
 use Filament\Tables;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
-class ManagerAccessRelationManager extends RelationManager
+class ManagerAccessRelationManager extends BaseEmployeesRelationManager
 {
     protected static string $relationship = 'managerAccess';
-
-    protected static ?string $title = 'Сотрудники';
-
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                //
-            ]);
-    }
 
     public function table(Table $table): Table
     {

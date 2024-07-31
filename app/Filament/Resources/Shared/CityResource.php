@@ -7,15 +7,13 @@ use App\Filament\Resources\Shared\CityResource\RelationManagers\EmployeesRelatio
 use App\Models\Shared\City;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
-use Filament\Tables\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
 use Illuminate\Support\Collection;
-use stdClass;
 
 class CityResource extends Resource
 {

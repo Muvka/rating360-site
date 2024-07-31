@@ -6,24 +6,19 @@ use App\Filament\Resources\Rating\RatingResource\Pages;
 use App\Models\Rating\MatrixTemplateClient;
 use App\Models\Rating\Rating;
 use App\Models\Statistic\Client;
-use App\Models\Statistic\Result;
-use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables\Table;
 use Filament\Tables;
-use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
-use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use RyanChandler\FilamentProgressColumn\ProgressColumn;
-use stdClass;
 
 class RatingResource extends Resource
 {

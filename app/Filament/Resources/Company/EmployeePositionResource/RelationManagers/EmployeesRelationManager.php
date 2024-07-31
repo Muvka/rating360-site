@@ -2,36 +2,21 @@
 
 namespace App\Filament\Resources\Company\EmployeePositionResource\RelationManagers;
 
+use App\Filament\RelationManagers\Company\BaseEmployeesRelationManager;
 use App\Filament\Resources\Company\EmployeeResource;
 use App\Models\Company\Employee;
-use Filament\Forms\Form;
-use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Table;
 use Filament\Tables;
+use Filament\Tables\Table;
 
-class EmployeesRelationManager extends RelationManager
+class EmployeesRelationManager extends BaseEmployeesRelationManager
 {
-    protected static string $relationship = 'employees';
-
-    protected static ?string $title = 'Сотрудники';
-
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                //
-            ]);
-    }
-
     public function table(Table $table): Table
     {
         return $table
             ->columns(EmployeeResource::getRelationTableSchema())
             ->filters([
-                //
             ])
             ->headerActions([
-                //
             ])
             ->actions([
                 Tables\Actions\EditAction::make()

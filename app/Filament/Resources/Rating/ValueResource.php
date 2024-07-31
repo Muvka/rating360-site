@@ -9,9 +9,9 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class ValueResource extends Resource
 {
@@ -26,8 +26,6 @@ class ValueResource extends Resource
     protected static ?string $label = 'Ценность';
 
     protected static ?string $pluralLabel = 'Ценности';
-
-    protected static ?string $navigationLabel = 'Ценность';
 
     public static function form(Form $form): Form
     {

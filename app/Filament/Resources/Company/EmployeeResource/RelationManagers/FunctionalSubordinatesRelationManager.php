@@ -14,7 +14,11 @@ class FunctionalSubordinatesRelationManager extends RelationManager
 {
     protected static string $relationship = 'functionalSubordinates';
 
-    protected static ?string $title = 'Функциональные';
+    protected static ?string $title = 'Функциональные подчинённые';
+
+    protected static ?string $label = 'Функциональный подчинённый';
+
+    protected static ?string $pluralLabel = 'Функциональные подчинённые';
 
     public function form(Form $form): Form
     {

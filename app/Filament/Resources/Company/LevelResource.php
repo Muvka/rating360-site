@@ -9,12 +9,10 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
-use Filament\Tables\Contracts\HasTable;
-use stdClass;
+use Filament\Tables\Table;
 
 class LevelResource extends Resource
 {
@@ -28,7 +26,9 @@ class LevelResource extends Resource
 
     protected static ?string $label = 'Уровень сотрудника';
 
-    protected static ?string $pluralLabel = 'Уровни сотрудника';
+    protected static ?string $pluralLabel = 'Уровни сотрудников';
+
+    protected static ?string $navigationLabel = 'Уровни сотрудников';
 
     public static function form(Form $form): Form
     {

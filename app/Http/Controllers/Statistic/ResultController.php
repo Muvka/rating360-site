@@ -142,6 +142,7 @@ class ResultController extends Controller
         $competenceRatingData = ClientCompetence::select([
             'type',
             'statistic_competences.name as competence',
+//            'statistic_competences.description as description',
             DB::raw('YEAR(launched_at) as launched_year'),
             DB::raw('cast(avg(average_rating) as decimal(3, 2)) as average_rating'),
         ])
@@ -187,6 +188,7 @@ class ResultController extends Controller
 
                         return [
                             'competence' => $competence,
+//                            'description' => $item->first()['description'],
                             'averageRating' => round($clients->avg(), 2),
                             'averageRatingWithoutSelf' => round($clients->except('self')->avg(), 2),
                             'clients' => $clients,

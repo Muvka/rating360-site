@@ -29,6 +29,10 @@ class MatrixTemplatesRelationManager extends RelationManager
 
     protected static ?string $title = 'Шаблоны матрицы';
 
+    protected static ?string $label = 'Шаблон матрицы';
+
+    protected static ?string $pluralLabel = 'Шаблоны матрицы';
+
     public function form(Form $form): Form
     {
         return $form

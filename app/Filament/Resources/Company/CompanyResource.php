@@ -7,15 +7,13 @@ use App\Filament\Resources\Company\CompanyResource\RelationManagers\EmployeesRel
 use App\Models\Company\Company;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
-use Filament\Tables\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
 use Illuminate\Support\Collection;
-use stdClass;
 
 class CompanyResource extends Resource
 {

@@ -14,6 +14,10 @@ class CompetencesRelationManager extends RelationManager
 
     protected static ?string $title = 'Компетенции';
 
+    protected static ?string $label = 'Компетенция';
+
+    protected static ?string $pluralLabel = 'Компетенции';
+
     protected static ?string $recordTitleAttribute = 'name';
 
     public function form(Form $form): Form

@@ -6,15 +6,19 @@ use App\Filament\Resources\Company\EmployeeResource;
 use App\Models\Company\Employee;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Table;
 use Filament\Tables;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
 class DirectSubordinatesRelationManager extends RelationManager
 {
     protected static string $relationship = 'directSubordinates';
 
-    protected static ?string $title = 'Непосредственные';
+    protected static ?string $title = 'Непосредственные подчиненные';
+
+    protected static ?string $label = 'Непосредственный подчиненный';
+
+    protected static ?string $pluralLabel = 'Непосредственные подчиненные';
 
     public function form(Form $form): Form
     {
