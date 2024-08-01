@@ -102,11 +102,11 @@ class RatingResource extends Resource
                     ->wrap()
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('template.name')
+                TextColumn::make('templateWithTrashed.name')
                     ->label('Шаблон')
                     ->wrap()
                     ->sortable(),
-                TextColumn::make('matrix.name')
+                TextColumn::make('matrixWithTrashed.name')
                     ->label('Матрица')
                     ->wrap()
                     ->sortable(),

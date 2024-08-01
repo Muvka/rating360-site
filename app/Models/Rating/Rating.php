@@ -16,11 +16,21 @@ class Rating extends Model
 
     public function template(): BelongsTo
     {
+        return $this->belongsTo(Template::class, 'rating_template_id');
+    }
+
+    public function templateWithTrashed(): BelongsTo
+    {
         return $this->belongsTo(Template::class, 'rating_template_id')
             ->withTrashed();
     }
 
     public function matrix(): BelongsTo
+    {
+        return $this->belongsTo(Matrix::class, 'rating_matrix_id');
+    }
+
+    public function matrixWithTrashed(): BelongsTo
     {
         return $this->belongsTo(Matrix::class, 'rating_matrix_id')
             ->withTrashed();
