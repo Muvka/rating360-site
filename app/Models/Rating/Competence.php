@@ -10,7 +10,12 @@ class Competence extends Model
 {
     protected $table = 'rating_competences';
 
-    protected $guarded = [];
+    protected $fillable = [
+        'name',
+        'description',
+        'manager_only',
+        'sort',
+    ];
 
     public function templates(): BelongsToMany
     {

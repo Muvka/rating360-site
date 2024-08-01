@@ -1,15 +1,17 @@
-import React, { useMemo } from 'react';
+import React, { CSSProperties, useMemo } from 'react';
 import clsx from 'clsx';
 
-import RatingValue from '../Rating/RatingValue.jsx';
+import { ICompetencyResultCardProps } from '@js/Components/Statistic/competency-result-card/types.ts';
+import RatingValue from '@js/Components/Rating/RatingValue';
+import './styles.scss';
 
-const CompetencyResultBlock = ({
-	competence = '',
-	averageRatingByClient = {},
-	averageRating = 0,
-	averageRatingWithoutSelf = 0,
-	className = ''
-}) => {
+export const CompetencyResultCard = ({
+	competence,
+	averageRatingByClient,
+	averageRating,
+	averageRatingWithoutSelf,
+	className
+}: ICompetencyResultCardProps) => {
 	const clientData = useMemo(() => {
 		if (!Object.keys(averageRatingByClient).length) return [];
 
@@ -60,9 +62,11 @@ const CompetencyResultBlock = ({
 							</p>
 							<div
 								className='rating-result-block__progress'
-								style={{
-									'--progress-scale': `${client.rating / 5}`
-								}}
+								style={
+									{
+										'--progress-scale': `${client.rating / 5}`
+									} as CSSProperties
+								}
 							/>
 						</li>
 					))}
@@ -71,5 +75,3 @@ const CompetencyResultBlock = ({
 		</li>
 	);
 };
-
-export default CompetencyResultBlock;
