@@ -2,6 +2,7 @@
 
 namespace App\Models\Statistic;
 
+use App\Models\Company\Employee;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -16,6 +17,11 @@ class Client extends Model
     public function result(): BelongsTo
     {
         return $this->belongsTo(Result::class, 'statistic_result_id');
+    }
+
+    public function employee(): BelongsTo
+    {
+        return $this->belongsTo(Employee::class, 'company_employee_id');
     }
 
     public function competences(): BelongsToMany

@@ -6,6 +6,7 @@ use App\Filament\Resources\Rating\RatingResource\Pages;
 use App\Models\Rating\MatrixTemplateClient;
 use App\Models\Rating\Rating;
 use App\Models\Statistic\Client;
+use App\Services\Rating\ProgressService;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -66,27 +67,7 @@ class RatingResource extends Resource
                 ProgressColumn::make('progress')
                     ->label('Прогресс')
                     ->progress(function (Rating $record): int {
-                        if ($record->status === 'closed') {
-                            return 100;
-                        }
-
-                        $totalClientsNew = MatrixTemplateClient::select(DB::raw('count(*) as count'))
-                            ->whereHas('template.matrix.ratings', function (Builder $query) use ($record) {
-                                $query->where('id', $record->id);
-                            })
-                            ->get()
-                            ->pluck('count')
-                            ->first();
-
-                        $finishedClientsNew = Client::select(DB::raw('count(*) as count'))
-                            ->whereHas('result.rating', function (Builder $query) use ($record) {
-                                $query->where('id', $record->id);
-                            })
-                            ->get()
-                            ->pluck('count')
-                            ->first();
-
-                        return (int) $totalClientsNew === 0 ? $totalClientsNew : round(($finishedClientsNew / $totalClientsNew) * 100);
+                        return (new ProgressService())->getProgress($record);
                     }),
                 TextColumn::make('created_at')
                     ->label('Дата создания')
