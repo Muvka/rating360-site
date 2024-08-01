@@ -142,7 +142,7 @@ class ResultController extends Controller
         $competenceRatingData = ClientCompetence::select([
             'type',
             'statistic_competences.name as competence',
-//            'statistic_competences.description as description',
+            //            'statistic_competences.description as description',
             DB::raw('YEAR(launched_at) as launched_year'),
             DB::raw('cast(avg(average_rating) as decimal(3, 2)) as average_rating'),
         ])
@@ -188,7 +188,7 @@ class ResultController extends Controller
 
                         return [
                             'competence' => $competence,
-//                            'description' => $item->first()['description'],
+                            //                            'description' => $item->first()['description'],
                             'averageRating' => round($clients->avg(), 2),
                             'averageRatingWithoutSelf' => round($clients->except('self')->avg(), 2),
                             'clients' => $clients,
@@ -455,7 +455,10 @@ class ResultController extends Controller
             $defaultMarkersByCompetence = $defaultMarkers->groupBy('competence.name');
 
             $defaultMarkersByCompetence->each(function (Collection $markers, string $key) use ($client, $validator) {
-                $competence = StatisticCompetence::firstOrCreate(['name' => $key]);
+                $competence = StatisticCompetence::query()->firstOrCreate(
+                    ['name' => $key],
+                    ['description' => RatingCompetence::query()->where('name', $key)->first()?->description],
+                );
 
                 $clientCompetence = ClientCompetence::create([
                     'statistic_client_id' => $client->id,

@@ -9,7 +9,11 @@ class Competence extends Model
 {
     protected $table = 'statistic_competences';
 
-    protected $guarded = [];
+    protected $fillable = [
+        'name',
+        'description',
+        'sort',
+    ];
 
     public function clients(): BelongsToMany
     {

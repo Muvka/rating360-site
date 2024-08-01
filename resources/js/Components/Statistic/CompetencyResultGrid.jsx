@@ -1,7 +1,7 @@
 import React, { useId } from 'react';
 import clsx from 'clsx';
 
-import CompetencyResultBlock from './CompetencyResultBlock.jsx';
+import { CompetencyResultCard } from '@js/Components/Statistic/competency-result-card';
 
 const CompetencyResultGrid = ({ results = [], className = '' }) => {
 	const titleId = useId();
@@ -20,9 +20,10 @@ const CompetencyResultGrid = ({ results = [], className = '' }) => {
 			</h2>
 			<ul className='rating-result-grid__list'>
 				{results.map(result => (
-					<CompetencyResultBlock
+					<CompetencyResultCard
 						key={result.competence}
 						competence={result.competence}
+						description={result.description}
 						averageRatingByClient={result.clients}
 						averageRating={result.averageRating}
 						averageRatingWithoutSelf={result.averageRatingWithoutSelf}

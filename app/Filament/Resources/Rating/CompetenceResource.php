@@ -43,6 +43,11 @@ class CompetenceResource extends Resource
                             ->placeholder('Навыки постановки целей')
                             ->maxLength(255)
                             ->required(),
+                        Textarea::make('description')
+                            ->label('Описание')
+                            ->placeholder('Описание компетенции')
+                            ->rows(4)
+                            ->maxLength(65535),
                         Toggle::make('manager_only')
                             ->label('Для руководителей'),
                         TableRepeater::make('markers')
