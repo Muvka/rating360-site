@@ -1,7 +1,7 @@
 import React, { useId, useMemo } from 'react';
 import { usePage } from '@inertiajs/react';
 
-import CompetencyResultList from './CompetencyResultList.jsx';
+import { CompetencyResultList } from '@js/Components/Statistic/competency-result-list';
 import CompetencyResultGrid from './CompetencyResultGrid.jsx';
 import EmployeeFeedback from './EmployeeFeedback.jsx';
 import DetailedResults from './DetailedResults.jsx';

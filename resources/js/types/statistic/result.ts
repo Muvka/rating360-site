@@ -4,3 +4,10 @@ export interface IAverageRating {
 	inner: number;
 	outer: number;
 }
+
+export interface ICompetenceResult {
+	name: string;
+	description?: string;
+	averageRating: number;
+	averageRatingWithoutSelf: number;
+}

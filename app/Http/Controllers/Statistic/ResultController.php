@@ -142,7 +142,7 @@ class ResultController extends Controller
         $competenceRatingData = ClientCompetence::select([
             'type',
             'statistic_competences.name as competence',
-            //            'statistic_competences.description as description',
+            'description',
             DB::raw('YEAR(launched_at) as launched_year'),
             DB::raw('cast(avg(average_rating) as decimal(3, 2)) as average_rating'),
         ])
@@ -159,7 +159,7 @@ class ResultController extends Controller
                     ->orWhere('ratings.show_results_before_completion', true);
             })
             ->oldest('launched_year')
-            ->groupBy('launched_year', 'competence', 'type')
+            ->groupBy('launched_year', 'competence', 'description', 'type')
             ->get();
 
         $groupedCorporateMarkerResult = $corporateMarkerResults->groupBy('launched_year')->flatMap(function (Collection $collection, string $year) {
@@ -186,13 +186,19 @@ class ResultController extends Controller
                             return [$client['type'] => $client['average_rating']];
                         })->filter(fn ($rating) => ! is_null($rating));
 
-                        return [
+                        $result = [
                             'competence' => $competence,
-                            //                            'description' => $item->first()['description'],
+                            'name' => $competence,
                             'averageRating' => round($clients->avg(), 2),
                             'averageRatingWithoutSelf' => round($clients->except('self')->avg(), 2),
                             'clients' => $clients,
                         ];
+
+                        if (isset($item->first()['description'])) {
+                            $result['description'] = $item->first()['description'];
+                        }
+
+                        return $result;
                     });
             });
 

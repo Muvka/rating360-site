@@ -7,7 +7,6 @@ import './styles.scss';
 
 export const CompetencyResultCard = ({
 	competence,
-	description,
 	averageRatingByClient,
 	averageRating,
 	averageRatingWithoutSelf,

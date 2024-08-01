@@ -1,9 +1,14 @@
 import React, { useId } from 'react';
 import clsx from 'clsx';
 
-import CompetencyResultItem from './CompetencyResultItem.jsx';
+import { ICompetencyResultListProps } from './types.ts';
+import { CompetencyResultItem } from '@js/Components/Statistic/competency-result-item';
+import './styles.scss';
 
-const CompetencyResultList = ({ results = [], className = '' }) => {
+export const CompetencyResultList = ({
+	results,
+	className
+}: ICompetencyResultListProps) => {
 	const titleId = useId();
 
 	if (!results.length) {
@@ -12,17 +17,18 @@ const CompetencyResultList = ({ results = [], className = '' }) => {
 
 	return (
 		<section
-			className={clsx('rating-result-list', className)}
+			className={clsx('competency-result-list', className)}
 			aria-labelledby={titleId}
 		>
 			<h2 id={titleId} className='visually-hidden'>
 				Результаты оценки по компетенциям
 			</h2>
-			<ul className='rating-result-list__list'>
+			<ul className='competency-result-list__list'>
 				{results.map(result => (
 					<CompetencyResultItem
-						key={result.competence}
-						name={result.competence}
+						key={result.name}
+						name={result.name}
+						description={result.description}
 						averageRating={result.averageRating}
 						averageRatingWithoutSelf={result.averageRatingWithoutSelf}
 					/>
@@ -31,5 +37,3 @@ const CompetencyResultList = ({ results = [], className = '' }) => {
 		</section>
 	);
 };
-
-export default CompetencyResultList;
