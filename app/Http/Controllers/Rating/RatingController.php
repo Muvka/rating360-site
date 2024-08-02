@@ -21,7 +21,8 @@ class RatingController extends Controller
                         'clients' => function (Builder $query) {
                             $employeeId = Auth::user()?->id ?? 0;
 
-                            $query->with('employee')
+                            $query->whereHas('employee')
+                                ->with('employee')
                                 ->where('company_employee_id', $employeeId);
                         },
                     ]);
