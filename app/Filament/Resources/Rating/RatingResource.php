@@ -3,22 +3,19 @@
 namespace App\Filament\Resources\Rating;
 
 use App\Filament\Resources\Rating\RatingResource\Pages;
-use App\Models\Rating\MatrixTemplateClient;
 use App\Models\Rating\Rating;
-use App\Models\Statistic\Client;
 use App\Services\Rating\ProgressService;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
-use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 use RyanChandler\FilamentProgressColumn\ProgressColumn;
 
 class RatingResource extends Resource
@@ -119,6 +116,16 @@ class RatingResource extends Resource
                         ->label('Запустить')
                         ->icon('heroicon-o-play')
                         ->action(function (Rating $record) {
+                            if (! $record->template || ! $record->matrix) {
+                                Notification::make()
+                                    ->danger()
+                                    ->title('Невозможно запустить оценку')
+                                    ->body('Шаблон или матрица не выбраны')
+                                    ->send();
+
+                                return;
+                            }
+
                             $record->setAttribute('status', 'in progress');
                             $record->save();
                         })

@@ -8,10 +8,12 @@ use App\Models\Rating\Matrix;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Collection;
 
 class MatrixResource extends Resource
 {
@@ -59,10 +61,18 @@ class MatrixResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()->action(function (Matrix $record) {
+                    static::deleteMatrixIfNotUsedInActiveRating($record);
+                }),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\DeleteBulkAction::make()->action(function (Collection $records) {
+                    $records->each(
+                        function (Matrix $record) {
+                            static::deleteMatrixIfNotUsedInActiveRating($record);
+                        }
+                    );
+                }),
             ]);
     }
 
@@ -80,5 +90,20 @@ class MatrixResource extends Resource
             'create' => Pages\CreateMatrix::route('/create'),
             'edit' => Pages\EditMatrix::route('/{record}/edit'),
         ];
+    }
+
+    private static function deleteMatrixIfNotUsedInActiveRating(Matrix $matrix): void
+    {
+        if ($matrix->ratings()->whereIn('status', ['in progress', 'paused'])->exists()) {
+            Notification::make()
+                ->danger()
+                ->title('Невозможно удалить матрицу')
+                ->body(sprintf('Матрица "%s" используется в активной оценке!', $matrix->name))
+                ->send();
+
+            return;
+        }
+
+        $matrix->delete();
     }
 }

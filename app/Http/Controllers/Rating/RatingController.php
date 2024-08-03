@@ -15,14 +15,16 @@ class RatingController extends Controller
     public function index(GeneralSettings $settings)
     {
         $ratings = Rating::with([
-            'matrixTemplates' => function (Builder $query) {
-                $query->whereHas('clients')
+            'matrixTemplates' => function (Builder $query): Builder {
+                return $query->whereHas('clients', function (Builder $query): Builder {
+                    return $query->whereHas('employee');
+                })
+                    ->whereHas('employee')
                     ->with([
-                        'clients' => function (Builder $query) {
+                        'clients' => function (Builder $query): Builder {
                             $employeeId = Auth::user()?->id ?? 0;
 
-                            $query->whereHas('employee')
-                                ->with('employee')
+                            return $query->with('employee')
                                 ->where('company_employee_id', $employeeId);
                         },
                     ]);

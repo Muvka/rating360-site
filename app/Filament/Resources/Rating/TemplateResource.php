@@ -8,10 +8,12 @@ use App\Models\Rating\Template;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Collection;
 
 class TemplateResource extends Resource
 {
@@ -61,10 +63,18 @@ class TemplateResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()->action(function (Template $record) {
+                    static::deleteTemplateIfNotUsedInActiveRating($record);
+                }),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\DeleteBulkAction::make()->action(function (Collection $records) {
+                    $records->each(
+                        function (Template $record) {
+                            static::deleteTemplateIfNotUsedInActiveRating($record);
+                        }
+                    );
+                }),
             ]);
     }
 
@@ -82,5 +92,20 @@ class TemplateResource extends Resource
             'create' => Pages\CreateTemplate::route('/create'),
             'edit' => Pages\EditTemplate::route('/{record}/edit'),
         ];
+    }
+
+    private static function deleteTemplateIfNotUsedInActiveRating(Template $template): void
+    {
+        if ($template->ratings()->whereIn('status', ['in progress', 'paused'])->exists()) {
+            Notification::make()
+                ->danger()
+                ->title('Невозможно удалить шаблон')
+                ->body(sprintf('Шаблон "%s" используется в активной оценке!', $template->name))
+                ->send();
+
+            return;
+        }
+
+        $template->delete();
     }
 }
