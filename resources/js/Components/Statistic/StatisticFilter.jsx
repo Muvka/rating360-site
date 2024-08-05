@@ -104,6 +104,7 @@ const StatisticFilter = ({ className = '' }) => {
 									defaultValue={field.value}
 									isMulti
 									isClearable
+									defaultOptions
 									loadOptions={employeeAutocomplete}
 									onChange={newValues => {
 										setData(
