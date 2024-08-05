@@ -198,8 +198,10 @@ class ProgressPage extends Page
             ->join('rating_matrix_templates', 'rating_matrix_templates.id', '=', 'rating_matrix_template_clients.rating_matrix_template_id')
             ->join('rating_matrices', 'rating_matrices.id', '=', 'rating_matrix_templates.rating_matrix_id')
             ->join('ratings', 'ratings.rating_matrix_id', '=', 'rating_matrices.id')
+            ->join('company_employees', 'rating_matrix_templates.company_employee_id', '=', 'company_employees.id')
             ->whereNot('ratings.status', 'closed')
             ->whereNull('ratings.deleted_at')
+            ->whereNull('company_employees.deleted_at')
             ->groupBy('rating_matrix_template_clients.company_employee_id')
             ->get()
             ->pluck('count', 'company_employee_id');
@@ -238,6 +240,7 @@ class ProgressPage extends Page
             }, 'employee',
             'matrix.ratings.results.clients',
         ])
+            ->whereHas('employee')
             ->whereHas('matrix.ratings', function (Builder $query) use ($validation) {
                 $query->where('id', $validation['rating_id']);
             })
